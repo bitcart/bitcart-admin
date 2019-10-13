@@ -1,16 +1,25 @@
 <template>
-  <v-row>
-    <v-col v-for="card in cards" :key="card.id">
-      <InfoCard :texts="card.texts" :link="card.link" />
-    </v-col>
-  </v-row>
+  <v-container>
+    <v-row>
+      <v-col v-for="card in cards" :key="card.id">
+        <InfoCard :texts="card.texts" :link="card.link" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <products-data />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import InfoCard from '@/components/InfoCard.vue'
+import ProductsData from '@/components/ProductsData.vue'
 export default {
   layout: 'dashboard',
   components: {
-    InfoCard
+    InfoCard,
+    ProductsData
   },
   data () {
     return {
