@@ -3,7 +3,10 @@
     :headers="headers"
     :items="products"
     :items-per-page="5"
-    :search="search"
+    :server-items-length="numProducts"
+    :options.sync="options"
+    :loading="loading"
+    loading-text="Loading..."
     class="elevation-1"
   >
     <template v-slot:top>
@@ -81,11 +84,15 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce'
 export default {
   data () {
     return {
       search: '',
+      options: {},
+      numProducts: 0,
       dialog: false,
+      loading: true,
       headers: [
         { text: 'Store name', value: 'store_name' },
         { text: 'Status', value: 'status' },
@@ -117,10 +124,27 @@ export default {
       return this.editedIndex === -1 ? 'New Product' : 'Edit Product'
     }
   },
-  mounted () {
-    this.$axios.get('http://localhost:8000/products').then(resp => (this.products = resp.data))
+  watch: {
+    options:
+    {
+      handler () {
+        const { sortBy, sortDesc, page, itemsPerPage } = this.options
+        this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+      },
+      deep: true
+    },
+    search () {
+      const { page, itemsPerPage } = this.options
+      this.getItems(page, itemsPerPage, this.search)
+    }
   },
   methods: {
+    getItems: debounce(function (sortBy, sortDesc, page, itemsPerPage, search) {
+      this.loading = true
+      let url = `http://localhost:8000/products?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
+      if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
+      this.$axios.get(url).then((resp) => { this.products = resp.data.result; this.numProducts = resp.data.count; this.loading = false })
+    }, 250),
     addItem (item) {
       this.$axios.get(`http://localhost:8000/stores/${item.store_id}`).then((resp) => { item.store_name = resp.data.name; this.productsVal.push(item) })
     },
