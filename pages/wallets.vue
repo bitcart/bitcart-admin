@@ -1,11 +1,5 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <item-data :headers="headers" :url="url" :title="title" />
-      </v-col>
-    </v-row>
-  </v-container>
+  <item-data :headers="headers" :url="url" :title="title" />
 </template>
 <script>
 import ItemData from '@/components/ItemData.vue'
@@ -17,12 +11,12 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Status', value: 'status' },
-        { text: 'Amount', value: 'amount' },
+        { text: 'Wallet name', value: 'name' },
+        { text: 'Amount', value: 'balance' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
-      url: 'products',
-      title: 'Product'
+      url: 'wallets',
+      title: 'Wallet'
     }
   }
 }

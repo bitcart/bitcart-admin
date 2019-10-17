@@ -1,11 +1,5 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col>
-        <item-data :headers="headers" :url="url" :title="title" />
-      </v-col>
-    </v-row>
-  </v-container>
+  <item-data :headers="headers" :url="url" :title="title" />
 </template>
 <script>
 import ItemData from '@/components/ItemData.vue'

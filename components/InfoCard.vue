@@ -9,7 +9,7 @@
       </v-card-text>
     </div>
     <v-card-actions>
-      <v-btn color="primary">
+      <v-btn :to="link" color="primary">
         Details
       </v-btn>
     </v-card-actions>

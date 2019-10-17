@@ -2,7 +2,7 @@
   <v-layout>
     <v-toolbar align="center">
       <v-toolbar-items>
-        <v-btn text>
+        <v-btn to="/" text>
           <v-icon left>
             mdi-view-dashboard-outline
           </v-icon>Dashboard

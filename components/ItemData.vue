@@ -1,9 +1,9 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="products"
+    :items="items"
     :items-per-page="5"
-    :server-items-length="numProducts"
+    :server-items-length="numItems"
     :options.sync="options"
     :loading="loading"
     loading-text="Loading..."
@@ -11,7 +11,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Products</v-toolbar-title>
+        <v-toolbar-title>{{ title+'s' }}</v-toolbar-title>
         <div class="flex-grow-1" />
         <v-text-field
           v-model="search"
@@ -24,7 +24,7 @@
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
             <v-btn color="primary" dark v-on="on">
-              New Item
+              New {{ title }}
             </v-btn>
           </template>
           <v-card>
@@ -35,17 +35,14 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.title" label="Product name" />
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.amount" label="Amount" />
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.quantity" label="Quantity" />
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.store_id" label="Store ID" />
+                  <v-col
+                    v-for="header in toEdit"
+                    :key="header.value"
+                    cols="12"
+                    sm="6"
+                    md="4"
+                  >
+                    <v-text-field :label="header.text" :value="editedItem[header.value]" @input="update(header.value, $event)" />
                   </v-col>
                 </v-row>
               </v-container>
@@ -86,42 +83,44 @@
 <script>
 import debounce from 'lodash.debounce'
 export default {
+  props: {
+    headers: {
+      type: Array,
+      default () { return [] }
+    },
+    url: {
+      type: String,
+      default: ''
+    },
+    title: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       search: '',
       options: {},
-      numProducts: 0,
+      numItems: 0,
       dialog: false,
       loading: true,
-      headers: [
-        { text: 'Store name', value: 'store_name' },
-        { text: 'Status', value: 'status' },
-        { text: 'Amount', value: 'amount' },
-        { text: 'Actions', value: 'action', sortable: false }
-      ],
       editedIndex: -1,
-      editedItem:
-      {
-        title: '',
-        amount: '',
-        quantity: '',
-        store_id: ''
-      },
-      productsVal: []
+      editedItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
+      itemsVal: []
     }
   },
   computed: {
-    products: {
-      get () { return this.productsVal },
+    items: {
+      get () { return this.itemsVal },
       set (val) {
-        for (const product in val) {
-          this.$axios.get(`http://localhost:8000/stores/${val[product].store_id}`).then(resp => (this.$set(val[product], 'store_name', resp.data.name)))
-        }
-        this.productsVal = val
+        this.itemsVal = val
       }
     },
     formTitle () {
-      return this.editedIndex === -1 ? 'New Product' : 'Edit Product'
+      return this.editedIndex === -1 ? `New ${this.title}` : `Edit ${this.title}`
+    },
+    toEdit () {
+      return this.headers.filter(item => item.value !== 'action')
     }
   },
   watch: {
@@ -134,28 +133,31 @@ export default {
       deep: true
     },
     search () {
-      const { page, itemsPerPage } = this.options
-      this.getItems(page, itemsPerPage, this.search)
+      const { sortBy, sortDesc, page, itemsPerPage } = this.options
+      this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
     }
   },
   methods: {
+    update (key, value) {
+      this.editedItem[key] = value
+    },
     getItems: debounce(function (sortBy, sortDesc, page, itemsPerPage, search) {
       this.loading = true
-      let url = `http://localhost:8000/products?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
+      let url = `http://localhost:8000/${this.url}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
       if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
-      this.$axios.get(url).then((resp) => { this.products = resp.data.result; this.numProducts = resp.data.count; this.loading = false })
+      this.$axios.get(url).then((resp) => { this.items = resp.data.result; this.numItems = resp.data.count; this.loading = false })
     }, 250),
     addItem (item) {
-      this.$axios.get(`http://localhost:8000/stores/${item.store_id}`).then((resp) => { item.store_name = resp.data.name; this.productsVal.push(item) })
+      this.itemsVal.push(item)
     },
     editItem (item) {
-      this.editedIndex = this.productsVal.indexOf(item)
+      this.editedIndex = this.itemsVal.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
     deleteItem (item) {
-      const index = this.productsVal.indexOf(item)
-      this.$axios.delete(`http://localhost:8000/products/${item.id}`).then(resp => (this.productsVal.splice(index, 1)))
+      const index = this.itemsVal.indexOf(item)
+      this.$axios.delete(`http://localhost:8000/${this.url}/${item.id}`).then(resp => (this.itemsVal.splice(index, 1)))
     },
     close () {
       this.dialog = false
@@ -166,9 +168,9 @@ export default {
     },
     save () {
       if (this.editedIndex > -1) {
-        this.$axios.patch(`http://localhost:8000/products/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { Object.assign(this.products[this.editedIndex], this.editedItem); this.$axios.get(`http://localhost:8000/stores/${this.editedItem.store_id}`).then((resp) => { this.editedItem.store_name = resp.data.name }) } })
+        this.$axios.patch(`http://localhost:8000/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], this.editedItem) } })
       } else {
-        this.$axios.post('http://localhost:8000/products', this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(this.editedItem) } })
+        this.$axios.post(`http://localhost:8000/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(this.editedItem) } })
       }
       this.close()
     }
