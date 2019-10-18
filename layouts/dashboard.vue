@@ -55,6 +55,18 @@ export default {
         }
         ],
         link: '/products'
+      },
+      {
+        texts: [{
+          header: 'Total invoices',
+          value: '4'
+        },
+        {
+          header: 'Total invoices created:',
+          value: '4 invoices in stores'
+        }
+        ],
+        link: '/invoices'
       }
       ]
     }

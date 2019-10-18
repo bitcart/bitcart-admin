@@ -11,18 +11,16 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Name', value: 'title' },
-        { text: 'Amount', value: 'amount' },
-        { text: 'Quantity', value: 'quantity' },
+        { text: 'Amount', value: 'amount', mode: 'display' },
+        { text: 'Products', value: 'products' },
         { text: 'Status', value: 'status' },
-        { text: 'Store', value: 'store_id' },
         { text: 'Date', value: 'date' },
-        { text: 'Description', value: 'description', expand: true },
-        { text: 'Quantity', value: 'quantity' },
+        { text: 'Address', value: 'bitcoin_address' },
+        { text: 'URL', value: 'bitcoin_url' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
-      url: 'products',
-      title: 'Product'
+      url: 'invoices',
+      title: 'Invoice'
     }
   }
 }

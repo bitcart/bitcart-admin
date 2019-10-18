@@ -17,8 +17,14 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Status', value: 'status' },
+        { text: 'Name', value: 'title' },
         { text: 'Amount', value: 'amount' },
+        { text: 'Quantity', value: 'quantity' },
+        { text: 'Status', value: 'status' },
+        { text: 'Store', value: 'store_id' },
+        { text: 'Date', value: 'date' },
+        { text: 'Description', value: 'description', expand: true },
+        { text: 'Quantity', value: 'quantity' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'products',

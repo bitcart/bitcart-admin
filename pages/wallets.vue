@@ -12,7 +12,9 @@ export default {
     return {
       headers: [
         { text: 'Wallet name', value: 'name' },
-        { text: 'Amount', value: 'balance' },
+        { text: 'Balance', value: 'balance', mode: 'display' },
+        { text: 'User', value: 'user_id' },
+        { text: 'Xpub', value: 'xpub', expand: true },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'wallets',

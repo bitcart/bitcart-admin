@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-    :headers="headers"
+    :headers="defaultHeaders"
     :items="items"
     :items-per-page="5"
     :server-items-length="numItems"
@@ -8,6 +8,7 @@
     :loading="loading"
     loading-text="Loading..."
     class="elevation-1"
+    :show-expand="shouldExpand"
   >
     <template v-slot:top>
       <v-toolbar flat>
@@ -62,6 +63,19 @@
       </v-toolbar>
     </template>
 
+    <template v-slot:expanded-item="{ item, headers }">
+      <td v-for="header in toExpand" :key="header.text">
+        {{ header.text }}: {{ item[header.value] }}
+      </td>
+    </template>
+    <template v-slot:item.date="{ item }">
+      {{ Date(item).toLocaleString() }}
+    </template>
+    <template v-slot:item.products="{ item }">
+      <td v-for="product in item.products" :key="product">
+        {{ product }}
+      </td>
+    </template>
     <template v-slot:item.action="{ item }">
       <v-icon
         small
@@ -116,11 +130,20 @@ export default {
         this.itemsVal = val
       }
     },
+    shouldExpand () {
+      return this.headers.some(header => header.expand)
+    },
     formTitle () {
       return this.editedIndex === -1 ? `New ${this.title}` : `Edit ${this.title}`
     },
     toEdit () {
-      return this.headers.filter(item => item.value !== 'action')
+      return this.headers.filter(item => (item.value !== 'action' && (item.mode === 'edit' || item.mode === 'all' || typeof item.mode === 'undefined')))
+    },
+    defaultHeaders () {
+      return this.headers.filter(item => !item.expand)
+    },
+    toExpand () {
+      return this.headers.filter(item => item.expand)
     }
   },
   watch: {
