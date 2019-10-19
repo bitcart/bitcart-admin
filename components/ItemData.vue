@@ -122,7 +122,7 @@
       v-model="showSnackbar"
       color="success"
       bottom
-      timeout="2500"
+      :timeout="2500"
     >
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied to clipboard!
@@ -201,6 +201,9 @@ export default {
     search () {
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
       this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+    },
+    dialog (val) {
+      if (!val) { this.close() }
     }
   },
   methods: {
