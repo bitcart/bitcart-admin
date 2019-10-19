@@ -32,7 +32,7 @@
                 <qrcode :options="{width: 500}" class="image-preview" :value="qrItem[forQR.value]" />
               </div>
               <v-card-actions class="justify-center">
-                <v-btn class="justify-center" color="primary" @click="copyText">
+                <v-btn class="justify-center" color="primary" @click="copyText(qrItem[forQR.value])">
                   <v-icon left="left">
                     mdi-content-copy
                   </v-icon><span>Copy</span>
@@ -55,7 +55,7 @@
                 <v-container>
                   <v-row>
                     <v-col
-                      v-for="header in toEdit"
+                      v-for="header in dialogData"
                       :key="header.value"
                       cols="12"
                       sm="6"
@@ -98,12 +98,19 @@
         <v-icon
           small
           class="mr-2"
+          @click="copyText(item.id)"
+        >
+          mdi-content-copy
+        </v-icon>
+        <v-icon
+          small
+          class="mr-2"
           @click="editItem(item)"
         >
           edit
         </v-icon>
         <v-icon
-          v-if="forQR"
+          v-if="!(Object.entries(forQR).length === 0 && forQR.constructor === Object)"
           small
           class="mr-2"
           @click="displayQR(item)"
@@ -125,7 +132,7 @@
       :timeout="2500"
     >
       <v-icon>mdi-content-copy</v-icon>
-      Successfully copied to clipboard!
+      Successfully copied {{ whatToCopy }} to clipboard!
     </v-snackbar>
     <v-container />
   </v-container>
@@ -157,21 +164,16 @@ export default {
       showQR: false,
       showSnackbar: false,
       qrItem: {},
+      whatToCopy: '',
       loading: true,
       editedIndex: -1,
       editedItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
-      itemsVal: []
+      items: []
     }
   },
   computed: {
     forQR () {
-      return this.headers.find(header => header.qr)
-    },
-    items: {
-      get () { return this.itemsVal },
-      set (val) {
-        this.itemsVal = val
-      }
+      return this.headers.find(header => header.qr) || {}
     },
     shouldExpand () {
       return this.headers.some(header => header.expand)
@@ -181,6 +183,12 @@ export default {
     },
     toEdit () {
       return this.headers.filter(item => (item.value !== 'action' && (item.mode === 'edit' || item.mode === 'all' || typeof item.mode === 'undefined')))
+    },
+    toCreate () {
+      return this.headers.filter(item => (item.value !== 'action' && (item.mode === 'create' || typeof item.mode === 'undefined')))
+    },
+    dialogData () {
+      return this.editedIndex === -1 ? this.toCreate : this.toEdit
     },
     defaultHeaders () {
       return this.headers.filter(item => !item.expand)
@@ -218,8 +226,9 @@ export default {
       document.execCommand('copy')
       document.body.removeChild(el)
     },
-    copyText () {
-      this.copyToClipboard(this.qrItem[this.forQR.value])
+    copyText (text) {
+      this.copyToClipboard(text)
+      this.whatToCopy = 'ID'
       this.showSnackbar = true
     },
     displayQR (item) {
@@ -236,16 +245,22 @@ export default {
       this.$axios.get(url).then((resp) => { this.items = resp.data.result; this.numItems = resp.data.count; this.loading = false })
     }, 250),
     addItem (item) {
-      this.itemsVal.push(item)
+      this.numItems++
+      this.items.push(item)
     },
     editItem (item) {
-      this.editedIndex = this.itemsVal.indexOf(item)
+      this.editedIndex = this.items.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
     deleteItem (item) {
-      const index = this.itemsVal.indexOf(item)
-      this.$axios.delete(`http://localhost:8000/${this.url}/${item.id}`).then(resp => (this.itemsVal.splice(index, 1)))
+      const index = this.items.indexOf(item)
+      const self = this
+      this.$axios.delete(`http://localhost:8000/${this.url}/${item.id}`).then(function (resp) {
+        self.items.splice(index, 1)
+        self.numItems--
+        if (self.items.length === 0 && self.options.page > 1) { self.options.page-- }
+      })
     },
     close () {
       this.dialog = false
@@ -255,10 +270,11 @@ export default {
       }, 300)
     },
     save () {
+      if ('products' in this.editedItem) { this.editedItem.products = this.editedItem.products.split(' ') }
       if (this.editedIndex > -1) {
         this.$axios.patch(`http://localhost:8000/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], this.editedItem) } })
       } else {
-        this.$axios.post(`http://localhost:8000/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(this.editedItem) } })
+        this.$axios.post(`http://localhost:8000/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data) } })
       }
       this.close()
     }

@@ -15,6 +15,7 @@ export default {
         { text: 'Store domain', value: 'domain' },
         { text: 'Store template', value: 'template' },
         { text: 'Store email', value: 'email' },
+        { text: 'Wallet', value: 'wallet_id' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'stores',

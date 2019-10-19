@@ -11,12 +11,12 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Amount', value: 'amount', mode: 'display' },
+        { text: 'Amount', value: 'amount' },
         { text: 'Products', value: 'products' },
-        { text: 'Status', value: 'status' },
-        { text: 'Date', value: 'date' },
-        { text: 'Address', value: 'bitcoin_address' },
-        { text: 'URL', value: 'bitcoin_url', qr: true },
+        { text: 'Status', value: 'status', mode: 'edit' },
+        { text: 'Date', value: 'date', mode: 'display' },
+        { text: 'Address', value: 'bitcoin_address', mode: 'display' },
+        { text: 'URL', value: 'bitcoin_url', qr: true, mode: 'display' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'invoices',
