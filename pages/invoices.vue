@@ -16,7 +16,7 @@ export default {
         { text: 'Status', value: 'status' },
         { text: 'Date', value: 'date' },
         { text: 'Address', value: 'bitcoin_address' },
-        { text: 'URL', value: 'bitcoin_url' },
+        { text: 'URL', value: 'bitcoin_url', qr: true },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'invoices',

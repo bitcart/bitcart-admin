@@ -1,97 +1,134 @@
 <template>
-  <v-data-table
-    :headers="defaultHeaders"
-    :items="items"
-    :items-per-page="5"
-    :server-items-length="numItems"
-    :options.sync="options"
-    :loading="loading"
-    loading-text="Loading..."
-    class="elevation-1"
-    :show-expand="shouldExpand"
-  >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>{{ title+'s' }}</v-toolbar-title>
-        <div class="flex-grow-1" />
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-          hide-details
-        />
-        <v-spacer />
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark v-on="on">
-              New {{ title }}
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    v-for="header in toEdit"
-                    :key="header.value"
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                    <v-text-field :label="header.text" :value="editedItem[header.value]" @input="update(header.value, $event)" />
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <div class="flex-grow-1" />
-              <v-btn color="blue darken-1" text @click="close">
-                Cancel
+  <v-container>
+    <v-data-table
+      :headers="defaultHeaders"
+      :items="items"
+      :items-per-page="5"
+      :server-items-length="numItems"
+      :options.sync="options"
+      :loading="loading"
+      loading-text="Loading..."
+      class="elevation-1"
+      :show-expand="shouldExpand"
+    >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>{{ title+'s' }}</v-toolbar-title>
+          <div class="flex-grow-1" />
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+          />
+          <v-spacer />
+          <v-dialog v-model="showQR" max-width="500px">
+            <v-card class="accent--border" raised="raised">
+              <v-card-title class="justify-center">
+                QR code
+              </v-card-title>
+              <div class="d-flex justify-center">
+                <qrcode :options="{width: 500}" class="image-preview" :value="qrItem[forQR.value]" />
+              </div>
+              <v-card-actions class="justify-center">
+                <v-btn class="justify-center" color="primary" @click="copyText">
+                  <v-icon left="left">
+                    mdi-content-copy
+                  </v-icon><span>Copy</span>
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="dialog" max-width="500px">
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" dark v-on="on">
+                New {{ title }}
               </v-btn>
-              <v-btn color="blue darken-1" text @click="save">
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
 
-    <template v-slot:expanded-item="{ item, headers }">
-      <td v-for="header in toExpand" :key="header.text">
-        {{ header.text }}: {{ item[header.value] }}
-      </td>
-    </template>
-    <template v-slot:item.date="{ item }">
-      {{ Date(item).toLocaleString() }}
-    </template>
-    <template v-slot:item.products="{ item }">
-      <td v-for="product in item.products" :key="product">
-        {{ product }}
-      </td>
-    </template>
-    <template v-slot:item.action="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        edit
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        delete
-      </v-icon>
-    </template>
-  </v-data-table>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col
+                      v-for="header in toEdit"
+                      :key="header.value"
+                      cols="12"
+                      sm="6"
+                      md="4"
+                    >
+                      <v-text-field :label="header.text" :value="editedItem[header.value]" @input="update(header.value, $event)" />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <div class="flex-grow-1" />
+                <v-btn color="blue darken-1" text @click="close">
+                  Cancel
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="save">
+                  Save
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+
+      <template v-slot:expanded-item="{ item, headers }">
+        <td v-for="header in toExpand" :key="header.text">
+          {{ header.text }}: {{ item[header.value] }}
+        </td>
+      </template>
+      <template v-slot:item.date="{ item }">
+        {{ Date(item).toLocaleString() }}
+      </template>
+      <template v-slot:item.products="{ item }">
+        <td v-for="product in item.products" :key="product">
+          {{ product }}
+        </td>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-icon
+          small
+          class="mr-2"
+          @click="editItem(item)"
+        >
+          edit
+        </v-icon>
+        <v-icon
+          v-if="forQR"
+          small
+          class="mr-2"
+          @click="displayQR(item)"
+        >
+          mdi-qrcode
+        </v-icon>
+        <v-icon
+          small
+          @click="deleteItem(item)"
+        >
+          delete
+        </v-icon>
+      </template>
+    </v-data-table>
+    <v-snackbar
+      v-model="showSnackbar"
+      color="success"
+      bottom
+      timeout="2500"
+    >
+      <v-icon>mdi-content-copy</v-icon>
+      Successfully copied to clipboard!
+    </v-snackbar>
+    <v-container />
+  </v-container>
 </template>
 
 <script>
@@ -117,6 +154,9 @@ export default {
       options: {},
       numItems: 0,
       dialog: false,
+      showQR: false,
+      showSnackbar: false,
+      qrItem: {},
       loading: true,
       editedIndex: -1,
       editedItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
@@ -124,6 +164,9 @@ export default {
     }
   },
   computed: {
+    forQR () {
+      return this.headers.find(header => header.qr)
+    },
     items: {
       get () { return this.itemsVal },
       set (val) {
@@ -161,6 +204,25 @@ export default {
     }
   },
   methods: {
+    copyToClipboard (text) {
+      const el = document.createElement('textarea')
+      el.value = text
+      el.setAttribute('readonly', '')
+      el.style.position = 'absolute'
+      el.style.left = '-9999px'
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+    },
+    copyText () {
+      this.copyToClipboard(this.qrItem[this.forQR.value])
+      this.showSnackbar = true
+    },
+    displayQR (item) {
+      this.qrItem = item
+      this.showQR = true
+    },
     update (key, value) {
       this.editedItem[key] = value
     },
