@@ -4,7 +4,7 @@ WORKDIR /usr/src/nuxt-app
 COPY . /usr/src/nuxt-app/
 ENV NODE_GYP_FORCE_PYTHON=python3
 ENV PYTHON=python3
-RUN apk add --virtual build-deps git build-base python3 && npm install && npm run build && apk del build-deps
+RUN apk add --virtual build-deps git build-base python3 && npm install -g node-gyp && npm install && npm run build && apk del build-deps
 EXPOSE 4000
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=4000
