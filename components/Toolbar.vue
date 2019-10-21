@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-container>
     <v-toolbar align="center">
       <v-toolbar-items>
         <v-btn to="/" text>
@@ -14,5 +14,5 @@
         </v-btn>
       </v-toolbar-items>
     </v-toolbar>
-  </v-layout>
+  </v-container>
 </template>
