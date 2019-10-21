@@ -240,7 +240,7 @@ export default {
     },
     getItems: debounce(function (sortBy, sortDesc, page, itemsPerPage, search) {
       this.loading = true
-      let url = `http://localhost:8000/${this.url}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
+      let url = `/${this.url}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
       if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
       this.$axios.get(url).then((resp) => { this.items = resp.data.result; this.numItems = resp.data.count; this.loading = false })
     }, 250),
@@ -256,7 +256,7 @@ export default {
     deleteItem (item) {
       const index = this.items.indexOf(item)
       const self = this
-      this.$axios.delete(`http://localhost:8000/${this.url}/${item.id}`).then(function (resp) {
+      this.$axios.delete(`/${this.url}/${item.id}`).then(function (resp) {
         self.items.splice(index, 1)
         self.numItems--
         if (self.items.length === 0 && self.options.page > 1) { self.options.page-- }
@@ -272,9 +272,9 @@ export default {
     save () {
       if ('products' in this.editedItem) { this.editedItem.products = this.editedItem.products.split(' ') }
       if (this.editedIndex > -1) {
-        this.$axios.patch(`http://localhost:8000/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], this.editedItem) } })
+        this.$axios.patch(`/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], this.editedItem) } })
       } else {
-        this.$axios.post(`http://localhost:8000/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data) } })
+        this.$axios.post(`/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data) } })
       }
       this.close()
     }
