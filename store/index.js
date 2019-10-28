@@ -11,7 +11,7 @@ export const actions = {
   nuxtServerInit ({ commit }) {
     if (process.server) {
       commit('setEnv', {
-        URL: process.env.BITCART_ADMIN_URL,
+        URL: process.env.BITCART_ADMIN_URL || 'http://localhost:8000',
         TOKEN: process.env.BITCART_ADMIN_TOKEN
       })
     }

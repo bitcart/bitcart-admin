@@ -37,6 +37,11 @@
                     mdi-content-copy
                   </v-icon><span>Copy</span>
                 </v-btn>
+                <v-btn class="justify-center" color="primary" @click="checkout()">
+                  <v-icon left="left">
+                    mdi-open-in-new
+                  </v-icon><span>Open checkout</span>
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -277,6 +282,9 @@ export default {
         this.$axios.post(`/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data) } })
       }
       this.close()
+    },
+    checkout () {
+      this.$router.replace({ path: `/i/${this.qrItem.id}` })
     }
   }
 }
