@@ -23,11 +23,14 @@ export default {
       cards: [{
         texts: [{
           header: 'Wallets Balance',
-          value: '0.00018474 BTC'
+          key: 'balance',
+          balance: true,
+          value: 'BTC'
         },
         {
           header: 'Total wallets connected:',
-          value: '1 wallets connected'
+          key: 'wallets',
+          value: 'wallets connected'
         }
         ],
         link: '/wallets'
@@ -35,11 +38,13 @@ export default {
       {
         texts: [{
           header: 'Stores',
-          value: '1'
+          key: 'stores',
+          value: ''
         },
         {
           header: 'Total stores:',
-          value: '1 stores created'
+          key: 'stores',
+          value: `stores created`
         }
         ],
         link: '/stores'
@@ -47,11 +52,13 @@ export default {
       {
         texts: [{
           header: 'Total products',
-          value: '4'
+          key: 'products',
+          value: ''
         },
         {
           header: 'Total products created:',
-          value: '4 product in stores'
+          key: 'products',
+          value: 'product in stores'
         }
         ],
         link: '/products'
@@ -59,17 +66,22 @@ export default {
       {
         texts: [{
           header: 'Total invoices',
-          value: '4'
+          key: 'invoices',
+          value: ''
         },
         {
           header: 'Total invoices created:',
-          value: '4 invoices in stores'
+          key: 'invoices',
+          value: 'invoices in stores'
         }
         ],
         link: '/invoices'
       }
       ]
     }
+  },
+  beforeCreate () {
+    this.$store.dispatch('syncStats')
   }
 }
 </script>

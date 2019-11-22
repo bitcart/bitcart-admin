@@ -11,11 +11,11 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Store name', value: 'name' },
+        { text: 'Store name', value: 'name', rules: ['required'] },
         { text: 'Store domain', value: 'domain' },
         { text: 'Store template', value: 'template' },
-        { text: 'Store email', value: 'email' },
-        { text: 'Wallet', value: 'wallet_id' },
+        { text: 'Store email', value: 'email', rules: ['email'] },
+        { text: 'Wallet', value: 'wallet_id', rules: ['required'] },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'stores',

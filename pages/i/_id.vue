@@ -24,7 +24,7 @@
         </v-card-title>
         <div v-if="showCheckout">
           <div class="d-flex justify-center">
-            <qrcode :options="{width: 500}" class="image-preview" :value="invoice.bitcoin_url" />
+            <qrcode tag="v-img" :options="{width: 500}" class="image-preview" :value="invoice.bitcoin_url" />
           </div>
           <div class="d-flex justify-center">
             <p>
@@ -57,6 +57,7 @@
 
 <script>
 export default {
+  auth: false,
   data () {
     return {
       showSnackbar: false,

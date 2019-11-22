@@ -29,7 +29,6 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/axios.js',
     '~/plugins/vueQR.js'
   ],
   /*
@@ -46,6 +45,7 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
     '@nuxtjs/pwa'
   ],
   /*
@@ -53,7 +53,25 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    baseURL: 'http://localhost:8000'
   },
+  router: {
+    middleware: ['auth']
+  },
+  auth: {
+    localStorage: false,
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/token', method: 'post', propertyName: false },
+          logout: false,
+          user: { url: '/users/me', method: 'get', propertyName: false }
+        }
+      }
+    },
+    plugins: [{ src: '~/plugins/axios.js', ssr: true }]
+  },
+
   /*
   ** vuetify module configuration
   ** https://github.com/nuxt-community/vuetify-module

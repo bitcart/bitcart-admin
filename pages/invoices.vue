@@ -11,8 +11,8 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Amount', value: 'amount' },
-        { text: 'Products', value: 'products' },
+        { text: 'Amount', value: 'amount', rules: ['required'] },
+        { text: 'Products', value: 'products', rules: ['required'] },
         { text: 'Status', value: 'status', mode: 'edit' },
         { text: 'Date', value: 'date', mode: 'display' },
         { text: 'Address', value: 'bitcoin_address', mode: 'display' },

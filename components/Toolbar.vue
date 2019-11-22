@@ -7,7 +7,7 @@
             mdi-view-dashboard-outline
           </v-icon>Dashboard
         </v-btn>
-        <v-btn text>
+        <v-btn to="/settings" text>
           <v-icon left>
             mdi-coins
           </v-icon>Setting

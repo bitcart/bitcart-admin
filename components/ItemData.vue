@@ -29,7 +29,7 @@
                 QR code
               </v-card-title>
               <div class="d-flex justify-center">
-                <qrcode :options="{width: 500}" class="image-preview" :value="qrItem[forQR.value]" />
+                <qrcode tag="v-img" :options="{width: 500}" class="image-preview" :value="qrItem[forQR.value]" />
               </div>
               <v-card-actions class="justify-center">
                 <v-btn class="justify-center" color="primary" @click="copyText(qrItem[forQR.value])">
@@ -57,19 +57,34 @@
               </v-card-title>
 
               <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col
-                      v-for="header in dialogData"
-                      :key="header.value"
-                      cols="12"
-                      sm="6"
-                      md="4"
-                    >
-                      <v-text-field :label="header.text" :value="editedItem[header.value]" @input="update(header.value, $event)" />
-                    </v-col>
-                  </v-row>
-                </v-container>
+                <v-form ref="form" v-model="formValid">
+                  <v-container>
+                    <v-row>
+                      <v-col
+                        v-for="header in dialogData"
+                        :key="header.value"
+                        cols="12"
+                        sm="6"
+                        md="4"
+                      >
+                        <v-text-field v-if="header.input === 'text' || typeof header.input === 'undefined'" :rules="header.rules" :label="header.text" :value="editedItem[header.value]" @input="update(header.value, $event)" />
+                        <v-switch v-else-if="header.input === 'switch'" v-model="editedItem[header.value]" :rules="header.rules" :label="header.text" />
+                        <v-text-field
+                          v-else
+                          v-model="editedItem[header.value]"
+                          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                          :rules="header.rules"
+                          :type="showPassword ? 'text' : 'password'"
+                          name="input-10-1"
+                          :label="header.text"
+                          :hint="header.hint"
+                          counter
+                          @click:append="showPassword = !showPassword"
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-form>
               </v-card-text>
 
               <v-card-actions>
@@ -92,7 +107,10 @@
         </td>
       </template>
       <template v-slot:item.date="{ item }">
-        {{ Date(item).toLocaleString() }}
+        {{ new Date(item.date).toLocaleString() }}
+      </template>
+      <template v-slot:item.is_superuser="{item}">
+        <v-switch v-model="item.is_superuser" @change="updateSuperuser(item)" />
       </template>
       <template v-slot:item.products="{ item }">
         <td v-for="product in item.products" :key="product">
@@ -162,6 +180,7 @@ export default {
   },
   data () {
     return {
+      formValid: false,
       search: '',
       options: {},
       numItems: 0,
@@ -173,33 +192,45 @@ export default {
       loading: true,
       editedIndex: -1,
       editedItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
-      items: []
+      items: [],
+      showPassword: false,
+      rules: {
+        required: value => (typeof value !== 'undefined' && !!value) || 'Required.',
+        min: v => (typeof v !== 'undefined' && v.length >= 8) || 'Min 8 characters',
+        email: (value) => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return (typeof value === 'undefined' || value === '' || value == null || pattern.test(value)) || 'Invalid e-mail.'
+        }
+      }
     }
   },
   computed: {
+    editedHeaders () {
+      return this.headers.map((x) => { if (x.rules && !x.rules.some(y => typeof y === 'undefined')) { x.rules = x.rules.map((y) => { return this.rules[y] }) } else { x.rules = [] } return x })
+    },
     forQR () {
-      return this.headers.find(header => header.qr) || {}
+      return this.editedHeaders.find(header => header.qr) || {}
     },
     shouldExpand () {
-      return this.headers.some(header => header.expand)
+      return this.editedHeaders.some(header => header.expand)
     },
     formTitle () {
       return this.editedIndex === -1 ? `New ${this.title}` : `Edit ${this.title}`
     },
     toEdit () {
-      return this.headers.filter(item => (item.value !== 'action' && (item.mode === 'edit' || item.mode === 'all' || typeof item.mode === 'undefined')))
+      return this.editedHeaders.filter(item => (item.value !== 'action' && (item.mode === 'edit' || item.mode === 'all' || item.mode === 'nodisplay' || typeof item.mode === 'undefined')))
     },
     toCreate () {
-      return this.headers.filter(item => (item.value !== 'action' && (item.mode === 'create' || typeof item.mode === 'undefined')))
+      return this.editedHeaders.filter(item => (item.value !== 'action' && (item.mode === 'create' || item.mode === 'nodisplay' || typeof item.mode === 'undefined')))
     },
     dialogData () {
       return this.editedIndex === -1 ? this.toCreate : this.toEdit
     },
     defaultHeaders () {
-      return this.headers.filter(item => !item.expand)
+      return this.editedHeaders.filter(item => (!item.expand && item.mode !== 'nodisplay'))
     },
     toExpand () {
-      return this.headers.filter(item => item.expand)
+      return this.editedHeaders.filter(item => item.expand)
     }
   },
   watch: {
@@ -252,6 +283,8 @@ export default {
     addItem (item) {
       this.numItems++
       this.items.push(item)
+      if (this.items.length > this.options.itemsPerPage * this.options.page) { this.options.page++ }
+      this.$store.dispatch('syncStats', false)
     },
     editItem (item) {
       this.editedIndex = this.items.indexOf(item)
@@ -265,6 +298,7 @@ export default {
         self.items.splice(index, 1)
         self.numItems--
         if (self.items.length === 0 && self.options.page > 1) { self.options.page-- }
+        self.$store.dispatch('syncStats', false)
       })
     },
     close () {
@@ -272,19 +306,22 @@ export default {
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
+        this.$refs.form.resetValidation()
       }, 300)
     },
     save () {
       if ('products' in this.editedItem) { this.editedItem.products = this.editedItem.products.split(' ') }
       if (this.editedIndex > -1) {
-        this.$axios.patch(`/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], this.editedItem) } })
+        this.$axios.patch(`/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.editedItem.password = ''; Object.assign(this.items[this.editedIndex], this.editedItem); this.$store.dispatch('syncStats', false); this.close() } })
       } else {
-        this.$axios.post(`/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data) } })
+        this.$axios.post(`/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.close() } })
       }
-      this.close()
     },
     checkout () {
       this.$router.replace({ path: `/i/${this.qrItem.id}` })
+    },
+    updateSuperuser (item) {
+      this.$axios.patch(`/${this.url}/${item.id}`, item)
     }
   }
 }

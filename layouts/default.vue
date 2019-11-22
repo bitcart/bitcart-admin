@@ -27,6 +27,40 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-img max-height="60" contain src="/icon.png" />
+      <v-menu
+        offset-y
+        origin="center center"
+        :nudge-bottom="10"
+        transition="scale-transition"
+        @click.native.stop
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn icon large text v-on="on">
+            <v-icon size="30px">
+              account_circle
+            </v-icon>
+          </v-btn>
+        </template>
+        <v-list class="pa-0">
+          <v-list-item
+            v-for="(item, index) in availableItems"
+            :key="index"
+            :to="item.href"
+            ripple="ripple"
+            :disabled="item.disabled"
+            :target="item.target"
+            rel="noopener"
+            @click="item.click"
+          >
+            <v-list-item-action v-if="item.icon">
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-icon @click.stop="changeTheme">
         mdi-moon-waning-crescent
       </v-icon>
@@ -62,14 +96,60 @@ export default {
         {
           icon: 'mdi-login',
           title: 'Login',
-          to: '/accounts/login'
+          to: '/login'
         },
         {
           icon: 'mdi-account-plus',
-          title: 'Signup',
-          to: '/accounts/signup'
+          title: 'Register',
+          to: '/register'
+        }
+      ],
+      profileItems: [
+        {
+          icon: 'mdi-view-dashboard-outline',
+          href: '/manage',
+          title: 'Server management',
+          superuser: true,
+          click: () => {}
+        },
+        {
+          icon: 'account_circle',
+          href: '/profile',
+          title: 'Profile',
+          click: () => {}
+        },
+        {
+          icon: 'settings',
+          href: '/settings',
+          title: 'Settings',
+          click: () => {}
+        },
+        {
+          icon: 'fullscreen_exit',
+          href: '#',
+          title: 'Logout',
+          click: this.handleLogout
+        }
+      ],
+      guestItems: [
+        {
+          icon: 'mdi-login',
+          href: '/login',
+          title: 'Login',
+          click: () => {}
+        },
+        {
+          icon: 'mdi-account-plus',
+          href: '/register',
+          title: 'Register',
+          click: () => {}
         }
       ]
+    }
+  },
+  computed: {
+    availableItems () {
+      return this.$auth.loggedIn ? this.profileItems.filter(x => !x.superuser || (x.superuser && this.$auth.user.is_superuser)) : this.guestItems
     }
   },
   beforeCreate () {
@@ -80,6 +160,10 @@ export default {
   methods: {
     changeTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+    },
+    handleLogout () {
+      this.$auth.logout()
+      this.$router.push('/login')
     }
   }
 }
