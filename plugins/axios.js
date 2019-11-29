@@ -13,7 +13,7 @@ export default ({ $auth, $axios, store, redirect }) => {
         reject(error)
       })
     }
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response.status === 401 && !originalRequest._retry && store.state.auth.loggedIn) {
       originalRequest._retry = true
       return $axios.post('/refresh_token',
         {

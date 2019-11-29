@@ -12,7 +12,7 @@ export default {
     return {
       headers: [
         { text: 'Amount', value: 'amount', rules: ['required'] },
-        { text: 'Products', value: 'products', rules: ['required'] },
+        { text: 'Products', value: 'products', rules: ['required'], input: 'autocomplete', url: 'products', multiple: true },
         { text: 'Status', value: 'status', mode: 'edit' },
         { text: 'Date', value: 'date', mode: 'display' },
         { text: 'Address', value: 'bitcoin_address', mode: 'display' },

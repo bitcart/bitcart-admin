@@ -12,7 +12,6 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Username', value: 'username', rules: ['required'] },
         { text: 'Password', value: 'password', mode: 'nodisplay', input: 'password', rules: ['required', 'min'], hint: 'At least 8 characters' },
         { text: 'Email', value: 'email', rules: ['email'] },
         { text: 'Superuser', value: 'is_superuser', input: 'switch' },

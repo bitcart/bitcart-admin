@@ -65,10 +65,55 @@
                         :key="header.value"
                         cols="12"
                         sm="6"
-                        md="4"
                       >
-                        <v-text-field v-if="header.input === 'text' || typeof header.input === 'undefined'" :rules="header.rules" :label="header.text" :value="editedItem[header.value]" @input="update(header.value, $event)" />
-                        <v-switch v-else-if="header.input === 'switch'" v-model="editedItem[header.value]" :rules="header.rules" :label="header.text" />
+                        <v-text-field
+                          v-if="header.input === 'text' || typeof header.input === 'undefined'"
+                          :rules="header.rules"
+                          :error-messages="errors[header.text]"
+                          :label="header.text"
+                          :value="editedItem[header.value]"
+                          @input="update(header.value, $event)"
+                        />
+                        <v-switch v-else-if="header.input === 'switch'" v-model="editedItem[header.value]" :rules="header.rules" :error-messages="errors[header.text]" :label="header.text" />
+                        <v-autocomplete
+                          v-else-if="header.input === 'autocomplete'"
+                          v-model="editedItem[header.value]"
+                          :loading="loadingSearch"
+                          :items="searchItems"
+                          :search-input.sync="autosearch"
+                          :multiple="header.multiple"
+                          :chips="header.multiple"
+                          :rules="header.rules"
+                          :error-messages="errors[header.text]"
+                          color="blue-grey lighten-2"
+                          :label="header.text"
+                          item-text="name"
+                          item-value="id"
+                        >
+                          <template v-if="header.multiple" v-slot:selection="data">
+                            <v-chip
+                              v-bind="data.attrs"
+                              :input-value="data.selected"
+                              close
+                              @click="data.select"
+                              @click:close="removeMultiple(editedItem[header.value], data.item)"
+                            >
+                              {{ data.item.name }}
+                            </v-chip>
+                          </template>
+                          <template v-slot:item="data">
+                            <template v-if="typeof data.item !== 'object'">
+                              <v-list-item-content v-text="data.item" />
+                            </template>
+                            <template v-else>
+                              <v-list-item-content>
+                                <v-list-item-title>
+                                  {{ data.item.name }}
+                                </v-list-item-title>
+                              </v-list-item-content>
+                            </template>
+                          </template>
+                        </v-autocomplete>
                         <v-text-field
                           v-else
                           v-model="editedItem[header.value]"
@@ -181,6 +226,10 @@ export default {
   data () {
     return {
       formValid: false,
+      loadingSearch: false,
+      searchItems: [],
+      autosearch: null,
+      errors: {},
       search: '',
       options: {},
       numItems: 0,
@@ -238,17 +287,28 @@ export default {
     {
       handler () {
         const { sortBy, sortDesc, page, itemsPerPage } = this.options
-        this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+        this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search)
       },
       deep: true
     },
     search () {
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
-      this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+      this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search)
     },
     dialog (val) {
       if (!val) { this.close() }
+    },
+    autosearch (val) {
+      if (val === null || typeof val === 'undefined') { val = '' }
+      let limit = -1
+      if (!val) { limit = 5 }
+      this.getItems('searchItems', 'loadingSearch', this.headers.find(x => x.input === 'autocomplete').url, [], [], 1, limit, val)
     }
+  },
+  beforeMount () {
+    this.getItems = debounce(this.getItemsNolimit, 250)
+    const urlObj = this.headers.find(x => x.input === 'autocomplete')
+    if (urlObj) { this.getItemsNolimit('searchItems', 'loadingSearch', urlObj.url, [], [], 1, 5, '') }
   },
   methods: {
     copyToClipboard (text) {
@@ -274,12 +334,16 @@ export default {
     update (key, value) {
       this.editedItem[key] = value
     },
-    getItems: debounce(function (sortBy, sortDesc, page, itemsPerPage, search) {
-      this.loading = true
-      let url = `/${this.url}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
+    getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search) {
+      this[loadingVal] = true
+      let url = `/${baseUrl}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
       if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
-      this.$axios.get(url).then((resp) => { this.items = resp.data.result; this.numItems = resp.data.count; this.loading = false })
-    }, 250),
+      this.$axios.get(url).then((resp) => {
+        this[toSave] = resp.data.result
+        if (toSave === 'items') { this.numItems = resp.data.count }
+        this[loadingVal] = false
+      })
+    },
     addItem (item) {
       this.numItems++
       this.items.push(item)
@@ -287,8 +351,14 @@ export default {
       this.$store.dispatch('syncStats', false)
     },
     editItem (item) {
+      const urlObj = this.headers.find(x => x.input === 'autocomplete')
       this.editedIndex = this.items.indexOf(item)
       this.editedItem = Object.assign({}, item)
+      if (urlObj) {
+        let limit = -1
+        if (!this.editedItem[urlObj.value]) { limit = 5 }
+        this.getItemsNolimit('searchItems', 'loadingSearch', urlObj.url, [], [], 1, limit, this.editedItem[urlObj.value])
+      }
       this.dialog = true
     },
     deleteItem (item) {
@@ -306,15 +376,27 @@ export default {
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
+        this.errors = {}
         this.$refs.form.resetValidation()
       }, 300)
     },
+    handleErr (err) {
+      if (err.response) {
+        const errText = err.response.data.detail
+        for (const header of this.headers) {
+          if (header.errors && errText in header.errors) {
+            this.$set(this.errors, header.text, [header.errors[errText]])
+          }
+        }
+      }
+    },
     save () {
-      if ('products' in this.editedItem) { this.editedItem.products = this.editedItem.products.split(' ') }
-      if (this.editedIndex > -1) {
-        this.$axios.patch(`/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.editedItem.password = ''; Object.assign(this.items[this.editedIndex], this.editedItem); this.$store.dispatch('syncStats', false); this.close() } })
-      } else {
-        this.$axios.post(`/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.close() } })
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          this.$axios.patch(`/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.editedItem.password = ''; Object.assign(this.items[this.editedIndex], this.editedItem); this.$store.dispatch('syncStats', false); this.close() } }).catch(err => this.handleErr(err))
+        } else {
+          this.$axios.post(`/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.close() } }).catch(err => this.handleErr(err))
+        }
       }
     },
     checkout () {
@@ -322,6 +404,10 @@ export default {
     },
     updateSuperuser (item) {
       this.$axios.patch(`/${this.url}/${item.id}`, item)
+    },
+    removeMultiple (arr, item) {
+      const index = arr.indexOf(item.id)
+      if (index >= 0) { arr.splice(index, 1) }
     }
   }
 }

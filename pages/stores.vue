@@ -15,7 +15,7 @@ export default {
         { text: 'Store domain', value: 'domain' },
         { text: 'Store template', value: 'template' },
         { text: 'Store email', value: 'email', rules: ['email'] },
-        { text: 'Wallet', value: 'wallet_id', rules: ['required'] },
+        { text: 'Wallet', value: 'wallet_id', rules: ['required'], input: 'autocomplete', url: 'wallets' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'stores',

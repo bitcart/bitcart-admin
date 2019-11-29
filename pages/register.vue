@@ -19,15 +19,7 @@
           <div class="flex-grow-1" />
         </v-toolbar>
         <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="username"
-              label="Name"
-              name="name"
-              prepend-icon="person"
-              type="text"
-            />
-
+          <v-form ref="form">
             <v-text-field
               id="email"
               v-model="email"
@@ -35,6 +27,8 @@
               name="email"
               prepend-icon="email"
               type="email"
+              :rules="[rules.required, rules.email]"
+              :error-messages="errors"
             />
             <v-text-field
               id="password"
@@ -43,6 +37,7 @@
               name="password"
               prepend-icon="lock"
               type="password"
+              :rules="[rules.required, rules.min]"
             />
             <v-text-field
               id="password2"
@@ -51,6 +46,7 @@
               name="password2"
               prepend-icon="lock"
               type="password"
+              :rules="[rules.required,rules.min,rules.match]"
             />
             <div>
               Already have an account ? <NuxtLink to="/login">
@@ -69,36 +65,51 @@
     </v-col>
   </v-row>
 </template>
-
 <script>
 export default {
   data () {
     return {
-      username: '',
       email: '',
       password: '',
-      repeat_password: ''
+      repeat_password: '',
+      errors: [],
+      rules: {
+        required: value => (typeof value !== 'undefined' && !!value) || 'Required.',
+        min: v => (typeof v !== 'undefined' && v.length >= 8) || 'Min 8 characters',
+        email: (value) => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return (typeof value === 'undefined' || value === '' || value == null || pattern.test(value)) || 'Invalid e-mail.'
+        },
+        match: v => this.password === this.repeat_password || 'Passwords must match'
+      }
     }
   },
   auth: 'guest',
   methods: {
-    async register () {
-      await this.$axios.post('users', {
-        username: this.username,
-        email: this.email,
-        password: this.password
-      })
-      const self = this
-      this.$axios.post('/token', {
-        username: this.username,
-        password: this.password
-      }).then(function (resp) {
-        self.$auth.setToken('local', 'Bearer ' + resp.data.access_token)
-        self.$auth.setRefreshToken('local', resp.data.refresh_token)
-        self.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
-        self.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
-        self.$axios.get('/users/me').then((resp) => { self.$auth.setUser(resp.data); self.$router.push('/') })
-      })
+    register () {
+      if (this.$refs.form.validate()) {
+        this.$axios.post('users', {
+          email: this.email,
+          password: this.password
+        }).then((r) => {
+          this.$axios.post('/token', {
+            email: this.email,
+            password: this.password
+          }).then((resp) => {
+            this.$auth.setToken('local', 'Bearer ' + resp.data.access_token)
+            this.$auth.setRefreshToken('local', resp.data.refresh_token)
+            this.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
+            this.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
+            this.$axios.get('/users/me').then((resp) => { this.$auth.setUser(resp.data); this.$router.push('/') })
+          })
+        }).catch((err) => {
+          if (err.response) {
+            if (err.response.data.detail.includes('users_email')) {
+              this.errors = ['That username is already taken']
+            }
+          }
+        })
+      }
     }
   }
 }

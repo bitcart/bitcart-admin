@@ -30,15 +30,17 @@ export const actions = {
     }
   },
   syncStats ({ commit, dispatch }, alwaysRun = true) {
-    this.$axios.get('/wallets/balance').then(resp => commit('balance', resp.data))
-    this.$axios.get('/wallets/count').then(resp => commit('setCount', { name: 'wallets', value: resp.data }))
-    this.$axios.get('/stores/count').then(resp => commit('setCount', { name: 'stores', value: resp.data }))
-    this.$axios.get('/products/count').then(resp => commit('setCount', { name: 'products', value: resp.data }))
-    this.$axios.get('/invoices/count').then(resp => commit('setCount', { name: 'invoices', value: resp.data }))
-    if (alwaysRun) {
-      setTimeout(() => {
-        dispatch('syncStats')
-      }, 60000)
+    if (this.state.auth.loggedIn) {
+      this.$axios.get('/wallets/balance').then(resp => commit('balance', resp.data))
+      this.$axios.get('/wallets/count').then(resp => commit('setCount', { name: 'wallets', value: resp.data }))
+      this.$axios.get('/stores/count').then(resp => commit('setCount', { name: 'stores', value: resp.data }))
+      this.$axios.get('/products/count').then(resp => commit('setCount', { name: 'products', value: resp.data }))
+      this.$axios.get('/invoices/count').then(resp => commit('setCount', { name: 'invoices', value: resp.data }))
+      if (alwaysRun) {
+        setTimeout(() => {
+          dispatch('syncStats')
+        }, 60000)
+      }
     }
   }
 }

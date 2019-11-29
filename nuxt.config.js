@@ -60,6 +60,11 @@ export default {
   },
   auth: {
     localStorage: false,
+    cookie: {
+      options: {
+        expires: 7
+      }
+    },
     strategies: {
       local: {
         endpoints: {
