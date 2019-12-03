@@ -44,9 +44,9 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
+    '@nuxtjs/pwa',
     '@nuxtjs/axios',
-    '@nuxtjs/auth',
-    '@nuxtjs/pwa'
+    '@nuxtjs/auth'
   ],
   /*
   ** Axios module configuration
@@ -74,7 +74,7 @@ export default {
         }
       }
     },
-    plugins: [{ src: '~/plugins/axios.js', ssr: true }]
+    plugins: ['~/plugins/axios.js', { src: '~/plugins/auth.js', mode: 'client' }]
   },
 
   /*
