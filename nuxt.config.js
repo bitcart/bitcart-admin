@@ -62,7 +62,8 @@ export default {
     localStorage: false,
     cookie: {
       options: {
-        expires: 7
+        expires: 7,
+        secure: true
       }
     },
     strategies: {
