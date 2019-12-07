@@ -56,14 +56,13 @@ export default {
     baseURL: 'http://localhost:8000'
   },
   router: {
-    middleware: ['auth']
+    middleware: ['loggedIn']
   },
   auth: {
     localStorage: false,
     cookie: {
       options: {
-        expires: 7,
-        secure: true
+        expires: 7
       }
     },
     strategies: {
