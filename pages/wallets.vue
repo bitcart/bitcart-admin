@@ -13,7 +13,6 @@ export default {
       headers: [
         { text: 'Wallet name', value: 'name', rules: ['required'] },
         { text: 'Balance', value: 'balance', mode: 'display' },
-        { text: 'User', value: 'user_id', mode: 'display' },
         { text: 'Xpub', value: 'xpub', expand: true, rules: ['required'], errors: { 'Wallet key invalid': 'Invalid xpub' } },
         { text: 'Actions', value: 'action', sortable: false }
       ],

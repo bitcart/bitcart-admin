@@ -30,11 +30,11 @@ export default async function ({ app }) {
   let token = $auth.getToken(strategy)
   let refreshToken = $auth.getRefreshToken(strategy)
 
-  const refreshInterval = FALLBACK_INTERVAL
+  let refreshInterval = FALLBACK_INTERVAL
   if (token && refreshToken) {
     $axios.get('/users/me').then((resp) => { $auth.setUser(resp.data) })
     const tokenParsed = decodeToken.call(this, token)
-    let refreshInterval = (tokenParsed.exp * 1000 - Date.now()) * 0.75
+    refreshInterval = (tokenParsed.exp * 1000 - Date.now()) * 0.75
 
     if (refreshInterval < 10000 && refreshInterval > 0) {
       refreshInterval = 10000

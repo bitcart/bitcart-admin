@@ -186,7 +186,17 @@
           mdi-qrcode
         </v-icon>
         <v-icon
+          v-for="action in actions"
+          :key="action.icon"
           small
+          class="mr-2"
+          @click="action.process(item, items.indexOf(item))"
+        >
+          {{ action.icon }}
+        </v-icon>
+        <v-icon
+          small
+          class="mr-2"
           @click="deleteItem(item)"
         >
           delete
@@ -211,6 +221,10 @@ import debounce from 'lodash.debounce'
 export default {
   props: {
     headers: {
+      type: Array,
+      default () { return [] }
+    },
+    actions: {
       type: Array,
       default () { return [] }
     },
@@ -306,11 +320,15 @@ export default {
     }
   },
   beforeMount () {
+    this.$bus.$on('updateitem', (item, index) => { this.editItemObj(item, index) })
     this.getItems = debounce(this.getItemsNolimit, 250)
     const urlObj = this.headers.find(x => x.input === 'autocomplete')
     if (urlObj) { this.getItemsNolimit('searchItems', 'loadingSearch', urlObj.url, [], [], 1, 5, '') }
   },
   methods: {
+    editItemObj (item, index) {
+      Object.assign(this.items[index], item)
+    },
     copyToClipboard (text) {
       const el = document.createElement('textarea')
       el.value = text

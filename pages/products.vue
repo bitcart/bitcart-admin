@@ -15,6 +15,7 @@ export default {
         { text: 'Amount', value: 'amount', rules: ['required'] },
         { text: 'Quantity', value: 'quantity', rules: ['required'] },
         { text: 'Status', value: 'status', mode: 'edit' },
+        { text: 'Download URL', value: 'download_url' },
         { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },
         { text: 'Date', value: 'date', mode: 'display' },
         { text: 'Description', value: 'description', expand: true },
