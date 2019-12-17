@@ -45,7 +45,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog v-model="dialog" max-width="650px">
             <template v-slot:activator="{ on }">
               <v-btn color="primary" dark v-on="on">
                 New {{ title }}
@@ -63,8 +63,7 @@
                       <v-col
                         v-for="header in dialogData"
                         :key="header.value"
-                        cols="12"
-                        sm="6"
+                        :cols="header.input === 'image' ? 12: 6"
                       >
                         <v-text-field
                           v-if="header.input === 'text' || typeof header.input === 'undefined'"
@@ -114,6 +113,16 @@
                             </template>
                           </template>
                         </v-autocomplete>
+                        <v-image-input
+                          v-else-if="header.input === 'image'"
+                          ref="imageInput"
+                          v-model="editedItem[header.value]"
+                          clearable
+                          :image-height="400"
+                          :image-width="400"
+                          image-min-scaling="contain"
+                          :image-max-scaling="2"
+                        />
                         <v-text-field
                           v-else
                           v-model="editedItem[header.value]"
@@ -255,6 +264,7 @@ export default {
       loading: true,
       editedIndex: -1,
       editedItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
+      defaultItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
       items: [],
       showPassword: false,
       rules: {
@@ -368,6 +378,11 @@ export default {
       if (this.items.length > this.options.itemsPerPage * this.options.page) { this.options.page++ }
       this.$store.dispatch('syncStats', false)
     },
+    combineURLs (baseURL, relativeURL) {
+      return relativeURL
+        ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+        : baseURL
+    },
     editItem (item) {
       const urlObj = this.headers.find(x => x.input === 'autocomplete')
       this.editedIndex = this.items.indexOf(item)
@@ -376,6 +391,22 @@ export default {
         let limit = -1
         if (!this.editedItem[urlObj.value]) { limit = 5 }
         this.getItemsNolimit('searchItems', 'loadingSearch', urlObj.url, [], [], 1, limit, this.editedItem[urlObj.value])
+      }
+      const imageH = this.headers.find(x => x.input === 'image')
+      if (imageH && this.editedItem[imageH.value] === null) { this.editedItem[imageH.value] = '' }
+      if (imageH && this.editedItem[imageH.value]) {
+        const img = new Image()
+        img.crossOrigin = 'Anonymous'
+        img.src = this.combineURLs(`${this.$store.state.env.URL}`, this.editedItem[imageH.value])
+        this.editedItem[imageH.value] = ''
+        const canvas = document.createElement('canvas')
+        img.onload = () => {
+          canvas.width = img.width
+          canvas.height = img.height
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0)
+          this.editedItem[imageH.value] = canvas.toDataURL('image/png')
+        }
       }
       this.dialog = true
     },
@@ -392,6 +423,10 @@ export default {
     close () {
       this.dialog = false
       setTimeout(() => {
+        const imageH = this.headers.find(x => x.input === 'image')
+        if (imageH) {
+          for (const imageInput of this.$refs.imageInput) { imageInput.clear() }
+        }
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
         this.errors = {}
@@ -408,12 +443,33 @@ export default {
         }
       }
     },
+    dataURLtoBlob (dataurl) {
+      if (!dataurl) { return new Blob([]) }
+      const arr = dataurl.split(','); const mime = arr[0].match(/:(.*?);/)[1]
+      const bstr = atob(arr[1]); let n = bstr.length; const u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new Blob([u8arr], { type: mime })
+    },
     save () {
       if (this.$refs.form.validate()) {
+        let data = Object.assign({}, this.editedItem)
+        let headers = {}
+        if (this.headers.some(x => x.input === 'image')) {
+          const header = this.headers.find(x => x.input === 'image')
+          const dataForm = new FormData()
+          if (data[header.value]) { dataForm.append(header.value, this.dataURLtoBlob(data[header.value])) }
+          delete data[header.value]
+          delete data.action
+          dataForm.append('data', JSON.stringify(data))
+          data = dataForm
+          headers = { 'content-type': 'application/x-www-form-urlencoded' }
+        }
         if (this.editedIndex > -1) {
-          this.$axios.patch(`/${this.url}/${this.editedItem.id}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.editedItem.password = ''; Object.assign(this.items[this.editedIndex], this.editedItem); this.$store.dispatch('syncStats', false); this.close() } }).catch(err => this.handleErr(err))
+          this.$axios.patch(`/${this.url}/${this.editedItem.id}`, data, headers).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], resp.data); this.items[this.editedIndex].password = ''; this.$store.dispatch('syncStats', false); this.close() } }).catch(err => this.handleErr(err))
         } else {
-          this.$axios.post(`/${this.url}`, this.editedItem).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.close() } }).catch(err => this.handleErr(err))
+          this.$axios.post(`/${this.url}`, data, headers).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.close() } }).catch(err => this.handleErr(err))
         }
       }
     },

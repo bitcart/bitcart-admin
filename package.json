@@ -25,7 +25,8 @@
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/pwa": "^3.0.0-0",
     "lodash.debounce": "^4.0.8",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.0.0",
+    "vuetify-image-input": "^19.1.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",

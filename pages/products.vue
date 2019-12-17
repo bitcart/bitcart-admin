@@ -19,6 +19,7 @@ export default {
         { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },
         { text: 'Date', value: 'date', mode: 'display' },
         { text: 'Description', value: 'description', expand: true },
+        { text: 'Image', value: 'image', input: 'image' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'products',
