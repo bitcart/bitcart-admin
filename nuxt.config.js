@@ -30,7 +30,7 @@ export default {
   */
   plugins: [
     '~/plugins/eventbus.js',
-    '~/plugins/imageinput.js',
+    { src: '~/plugins/imageinput.js', mode: 'client' },
     '~/plugins/vueQR.js'
   ],
   /*

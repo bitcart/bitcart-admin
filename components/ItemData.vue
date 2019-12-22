@@ -155,7 +155,7 @@
         </v-toolbar>
       </template>
 
-      <template v-slot:expanded-item="{ item, headers }">
+      <template v-slot:expanded-item="{ item }">
         <td v-for="header in toExpand" :key="header.text">
           {{ header.text }}: {{ item[header.value] }}
         </td>

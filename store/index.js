@@ -36,11 +36,11 @@ export const actions = {
       this.$axios.get('/stores/count').then(resp => commit('setCount', { name: 'stores', value: resp.data }))
       this.$axios.get('/products/count').then(resp => commit('setCount', { name: 'products', value: resp.data }))
       this.$axios.get('/invoices/count').then(resp => commit('setCount', { name: 'invoices', value: resp.data }))
-      if (alwaysRun) {
-        setTimeout(() => {
-          dispatch('syncStats')
-        }, 60000)
-      }
+    }
+    if (alwaysRun) {
+      setTimeout(() => {
+        dispatch('syncStats')
+      }, 60000)
     }
   }
 }
