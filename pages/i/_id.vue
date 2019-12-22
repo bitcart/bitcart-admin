@@ -2,14 +2,14 @@
   <v-container>
     <v-snackbar
       v-model="showSnackbar"
+      :timeout="2500"
       color="success"
       bottom
-      :timeout="2500"
     >
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied to clipboard!
     </v-snackbar>
-    <v-card class="accent--border" raised="raised" :loading="loading && !errorText">
+    <v-card :loading="loading && !errorText" class="accent--border" raised="raised">
       <div v-if="loading">
         <v-card-text v-if="errorText" class="d-flex justify-center">
           {{ errorText }}
@@ -24,7 +24,7 @@
         </v-card-title>
         <div v-if="showCheckout">
           <div class="d-flex justify-center">
-            <qrcode tag="v-img" :options="{width: 500}" class="image-preview" :value="invoice.bitcoin_url" />
+            <qrcode :options="{width: 500}" :value="invoice.bitcoin_url" tag="v-img" class="image-preview" />
           </div>
           <div class="d-flex justify-center">
             <p>
@@ -33,7 +33,7 @@
             </p>
           </div>
           <v-card-actions class="justify-center">
-            <v-btn class="justify-center" color="primary" @click="copyText(invoice.bitcoin_url)">
+            <v-btn @click="copyText(invoice.bitcoin_url)" class="justify-center" color="primary">
               <v-icon left="left">
                 mdi-content-copy
               </v-icon><span>Copy</span>

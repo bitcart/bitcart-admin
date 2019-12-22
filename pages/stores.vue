@@ -2,14 +2,14 @@
   <div>
     <item-data :headers="headers" :url="url" :title="title" :actions="actions" />
     <edit-card
-      title="store email settings"
       :url="url"
-      mode="edit"
       :on.sync="showDialog"
       :headers="emailHeaders"
       :item.sync="item"
       :custom-props="{loadingEmail, emailCheck, emailStatus}"
       @reset-custom-props="resetCustomProps"
+      title="store email settings"
+      mode="edit"
     />
   </div>
 </template>

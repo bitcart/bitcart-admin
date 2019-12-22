@@ -28,14 +28,14 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-img max-height="60" contain src="/icon.png" />
       <v-menu
+        :nudge-bottom="10"
+        @click.native.stop
         offset-y
         origin="center center"
-        :nudge-bottom="10"
         transition="scale-transition"
-        @click.native.stop
       >
         <template v-slot:activator="{ on }">
-          <v-btn icon large text v-on="on">
+          <v-btn v-on="on" icon large text>
             <v-icon size="30px">
               account_circle
             </v-icon>
@@ -46,11 +46,11 @@
             v-for="(item, index) in availableItems"
             :key="index"
             :to="item.href"
-            ripple="ripple"
             :disabled="item.disabled"
             :target="item.target"
-            rel="noopener"
             @click="item.click"
+            ripple="ripple"
+            rel="noopener"
           >
             <v-list-item-action v-if="item.icon">
               <v-icon>{{ item.icon }}</v-icon>

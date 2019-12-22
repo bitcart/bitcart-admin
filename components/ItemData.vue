@@ -7,9 +7,9 @@
       :server-items-length="numItems"
       :options.sync="options"
       :loading="loading"
+      :show-expand="shouldExpand"
       loading-text="Loading..."
       class="elevation-1"
-      :show-expand="shouldExpand"
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -29,15 +29,15 @@
                 QR code
               </v-card-title>
               <div class="d-flex justify-center">
-                <qrcode tag="v-img" :options="{width: 500}" class="image-preview" :value="qrItem[forQR.value]" />
+                <qrcode :options="{width: 500}" :value="qrItem[forQR.value]" tag="v-img" class="image-preview" />
               </div>
               <v-card-actions class="justify-center">
-                <v-btn class="justify-center" color="primary" @click="copyText(qrItem[forQR.value])">
+                <v-btn @click="copyText(qrItem[forQR.value])" class="justify-center" color="primary">
                   <v-icon left="left">
                     mdi-content-copy
                   </v-icon><span>Copy</span>
                 </v-btn>
-                <v-btn class="justify-center" color="primary" @click="checkout()">
+                <v-btn @click="checkout()" class="justify-center" color="primary">
                   <v-icon left="left">
                     mdi-open-in-new
                   </v-icon><span>Open checkout</span>
@@ -47,7 +47,7 @@
           </v-dialog>
           <v-dialog v-model="dialog" max-width="650px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" dark v-on="on">
+              <v-btn v-on="on" color="primary" dark>
                 New {{ title }}
               </v-btn>
             </template>
@@ -84,8 +84,8 @@
                           :chips="header.multiple"
                           :rules="header.rules"
                           :error-messages="errors[header.text]"
-                          color="blue-grey lighten-2"
                           :label="header.text"
+                          color="blue-grey lighten-2"
                           item-text="name"
                           item-value="id"
                         >
@@ -93,9 +93,9 @@
                             <v-chip
                               v-bind="data.attrs"
                               :input-value="data.selected"
-                              close
                               @click="data.select"
                               @click:close="removeMultiple(editedItem[header.value], data.item)"
+                              close
                             >
                               {{ data.item.name }}
                             </v-chip>
@@ -114,14 +114,14 @@
                           </template>
                         </v-autocomplete>
                         <v-image-input
-                          v-else-if="header.input === 'image'"
                           ref="imageInput"
+                          v-else-if="header.input === 'image'"
                           v-model="editedItem[header.value]"
-                          clearable
                           :image-height="400"
                           :image-width="400"
-                          image-min-scaling="contain"
                           :image-max-scaling="2"
+                          clearable
+                          image-min-scaling="contain"
                         />
                         <v-text-field
                           v-else
@@ -129,11 +129,11 @@
                           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                           :rules="header.rules"
                           :type="showPassword ? 'text' : 'password'"
-                          name="input-10-1"
                           :label="header.text"
                           :hint="header.hint"
-                          counter
                           @click:append="showPassword = !showPassword"
+                          name="input-10-1"
+                          counter
                         />
                       </v-col>
                     </v-row>
@@ -143,10 +143,10 @@
 
               <v-card-actions>
                 <div class="flex-grow-1" />
-                <v-btn color="blue darken-1" text @click="close">
+                <v-btn @click="close" color="blue darken-1" text>
                   Cancel
                 </v-btn>
-                <v-btn color="blue darken-1" text @click="save">
+                <v-btn @click="save" color="blue darken-1" text>
                   Save
                 </v-btn>
               </v-card-actions>
@@ -173,40 +173,40 @@
       </template>
       <template v-slot:item.action="{ item }">
         <v-icon
+          @click="copyText(item.id)"
           small
           class="mr-2"
-          @click="copyText(item.id)"
         >
           mdi-content-copy
         </v-icon>
         <v-icon
+          @click="editItem(item)"
           small
           class="mr-2"
-          @click="editItem(item)"
         >
           edit
         </v-icon>
         <v-icon
           v-if="!(Object.entries(forQR).length === 0 && forQR.constructor === Object)"
+          @click="displayQR(item)"
           small
           class="mr-2"
-          @click="displayQR(item)"
         >
           mdi-qrcode
         </v-icon>
         <v-icon
           v-for="action in actions"
           :key="action.icon"
+          @click="action.process(item, items.indexOf(item))"
           small
           class="mr-2"
-          @click="action.process(item, items.indexOf(item))"
         >
           {{ action.icon }}
         </v-icon>
         <v-icon
+          @click="deleteItem(item)"
           small
           class="mr-2"
-          @click="deleteItem(item)"
         >
           delete
         </v-icon>
@@ -214,9 +214,9 @@
     </v-data-table>
     <v-snackbar
       v-model="showSnackbar"
+      :timeout="2500"
       color="success"
       bottom
-      :timeout="2500"
     >
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied {{ whatToCopy }} to clipboard!

@@ -23,30 +23,30 @@
             <v-text-field
               id="email"
               v-model="email"
+              :rules="[rules.required, rules.email]"
+              :error-messages="errors"
               label="Email"
               name="email"
               prepend-icon="email"
               type="email"
-              :rules="[rules.required, rules.email]"
-              :error-messages="errors"
             />
             <v-text-field
               id="password"
               v-model="password"
+              :rules="[rules.required, rules.min]"
               label="Password"
               name="password"
               prepend-icon="lock"
               type="password"
-              :rules="[rules.required, rules.min]"
             />
             <v-text-field
               id="password2"
               v-model="repeat_password"
+              :rules="[rules.required,rules.min,rules.match]"
               label="Repeat Password"
               name="password2"
               prepend-icon="lock"
               type="password"
-              :rules="[rules.required,rules.min,rules.match]"
             />
             <div>
               Already have an account ? <NuxtLink to="/login">
@@ -57,7 +57,7 @@
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1" />
-          <v-btn color="primary" @click.stop="register">
+          <v-btn @click.stop="register" color="primary">
             Create account
           </v-btn>
         </v-card-actions>

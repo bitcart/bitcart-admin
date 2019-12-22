@@ -22,23 +22,23 @@
           <v-form ref="form">
             <v-text-field
               v-model="email"
+              :rules="[rules.required, rules.email]"
+              :error-messages="usernameErrors"
               label="Login"
               name="login"
               prepend-icon="person"
               type="text"
-              :rules="[rules.required, rules.email]"
-              :error-messages="usernameErrors"
             />
 
             <v-text-field
               id="password"
               v-model="password"
+              :rules="[rules.required, rules.min]"
+              :error-messages="passwordErrors"
               label="Password"
               name="password"
               prepend-icon="lock"
               type="password"
-              :rules="[rules.required, rules.min]"
-              :error-messages="passwordErrors"
             />
             <div>
               Don't have an account? <NuxtLink to="/register">
@@ -49,7 +49,7 @@
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1" />
-          <v-btn color="primary" @click.stop="login">
+          <v-btn @click.stop="login" color="primary">
             Login
           </v-btn>
         </v-card-actions>
