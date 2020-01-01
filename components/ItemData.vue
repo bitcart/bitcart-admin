@@ -32,7 +32,7 @@
                 <qrcode :options="{width: 500}" :value="qrItem[forQR.value]" tag="v-img" class="image-preview" />
               </div>
               <v-card-actions class="justify-center">
-                <v-btn @click="copyText(qrItem[forQR.value])" class="justify-center" color="primary">
+                <v-btn @click="copyText(qrItem[forQR.value], forQR.text.toUpperCase())" class="justify-center" color="primary">
                   <v-icon left="left">
                     mdi-content-copy
                   </v-icon><span>Copy</span>
@@ -43,6 +43,18 @@
                   </v-icon><span>Open checkout</span>
                 </v-btn>
               </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="showTabDialog" max-width="500px">
+            <TabbedCheckout :showProp="showTabDialog" :tabitem="tabbedDialogItem[tabbedName]" :invoice="tabbedDialogItem" />
+          </v-dialog>
+          <v-dialog v-model="showImageDialog" max-width="500px">
+            <v-card>
+              <v-card-title>Image preview</v-card-title>
+              <v-img v-if="showImageItem.image" :src="imageURL(showImageItem.image)" />
+              <v-card-text v-else class="title">
+                No image
+              </v-card-text>
             </v-card>
           </v-dialog>
           <v-dialog v-model="dialog" max-width="650px">
@@ -77,9 +89,9 @@
                         <v-autocomplete
                           v-else-if="header.input === 'autocomplete'"
                           v-model="editedItem[header.value]"
-                          :loading="loadingSearch"
-                          :items="searchItems"
-                          :search-input.sync="autosearch"
+                          :loading="loadingSearches[header.value]"
+                          :items="searchItems[header.value]"
+                          :search-input.sync="autosearches[header.value]"
                           :multiple="header.multiple"
                           :chips="header.multiple"
                           :rules="header.rules"
@@ -123,6 +135,8 @@
                           clearable
                           image-min-scaling="contain"
                         />
+                        <div v-else-if="header.input === 'tabbed'" />
+                        <v-datetime-picker v-else-if="header.input === 'datetime'" :label="header.txt" v-model="editedItem[header.value]" date-format="dd.MM.yyyy" />
                         <v-text-field
                           v-else
                           v-model="editedItem[header.value]"
@@ -163,13 +177,47 @@
       <template v-slot:item.date="{ item }">
         {{ new Date(item.date).toLocaleString() }}
       </template>
+      <template v-slot:item.end_date="{ item }">
+        {{ new Date(item.end_date).toLocaleString() }}
+      </template>
       <template v-slot:item.is_superuser="{item}">
         <v-switch v-model="item.is_superuser" @change="updateSuperuser(item)" />
       </template>
-      <template v-slot:item.products="{ item }">
-        <td v-for="product in item.products" :key="product">
-          {{ product }}
-        </td>
+      <template v-for="(slotName, key) in dropdownSlotNames" v-slot:[slotName]="{ item }">
+        <v-menu :key="slotName" offset-y allow-overflow max-height="300">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              color="primary"
+            >
+              Show
+            </v-btn>
+          </template>
+          <v-list v-if="item[dropdownNames[key]].length > 0">
+            <v-list-item
+              v-for="(itemv, index) in item[dropdownNames[key]]"
+              :key="index"
+              @click="copyText(itemv)"
+            >
+              <v-list-item-title>{{ itemv }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+          <v-list v-else>
+            <v-list-item>
+              <v-list-item-title>No entries</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+      <template v-slot:[tabbedSlotName]="{ item }">
+        <v-btn @click="showTabbedDialog(item, item.id)" color="primary">
+          Show
+        </v-btn>
+      </template>
+      <template v-slot:[imageSlotName]="{ item }">
+        <v-btn @click="showImage(item)" color="primary">
+          Show
+        </v-btn>
       </template>
       <template v-slot:item.action="{ item }">
         <v-icon
@@ -227,7 +275,11 @@
 
 <script>
 import debounce from 'lodash.debounce'
+import TabbedCheckout from '@/components/TabbedCheckout'
 export default {
+  components: {
+    TabbedCheckout
+  },
   props: {
     headers: {
       type: Array,
@@ -247,19 +299,25 @@ export default {
     }
   },
   data () {
-    return {
+    const autosearchA = Array.from(this.headers.filter(x => x.input === 'autocomplete'), x => x.value).map((k, i) => ({ [k]: null }))
+    const lsearchA = Array.from(this.headers.filter(x => x.input === 'autocomplete'), x => x.value).map((k, i) => ({ [k]: false }))
+    const dt = {
       formValid: false,
-      loadingSearch: false,
-      searchItems: [],
-      autosearch: null,
+      loadingSearches: lsearchA.length > 0 ? Object.assign(...lsearchA) : {},
+      searchItems: {},
+      autosearches: autosearchA.length > 0 ? Object.assign(...autosearchA) : {},
       errors: {},
       search: '',
       options: {},
       numItems: 0,
       dialog: false,
       showQR: false,
+      showTabDialog: false,
+      showImageDialog: false,
       showSnackbar: false,
       qrItem: {},
+      showImageItem: {},
+      tabbedDialogItem: {},
       whatToCopy: '',
       loading: true,
       editedIndex: -1,
@@ -276,6 +334,8 @@ export default {
         }
       }
     }
+    dt.oldAutosearches = Object.assign({}, dt.autosearches)
+    return dt
   },
   computed: {
     editedHeaders () {
@@ -304,6 +364,29 @@ export default {
     },
     toExpand () {
       return this.editedHeaders.filter(item => item.expand)
+    },
+    dropdownNames () {
+      return this.headers.filter(x => x.input === 'autocomplete' && x.multiple).map(x => x.value)
+    },
+    dropdownSlotNames () {
+      return this.dropdownNames.map(x => 'item.' + x)
+    },
+    tabbedName () {
+      const header = this.headers.find(x => x.input === 'tabbed')
+      return header ? header.value : ''
+    },
+    tabbedSlotName () {
+      return this.tabbedName ? 'item.' + this.tabbedName : undefined
+    },
+    noTabs () {
+      return Object.entries(this.tabbedDialogItem).length === 0 && this.tabbedDialogItem.constructor === Object
+    },
+    imageName () {
+      const header = this.headers.find(x => x.input === 'image')
+      return header ? header.value : ''
+    },
+    imageSlotName () {
+      return this.imageName ? 'item.' + this.imageName : undefined
     }
   },
   watch: {
@@ -311,29 +394,40 @@ export default {
     {
       handler () {
         const { sortBy, sortDesc, page, itemsPerPage } = this.options
-        this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search)
+        this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search, false)
       },
       deep: true
     },
     search () {
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
-      this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search)
+      this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search, false)
     },
     dialog (val) {
       if (!val) { this.close() }
     },
-    autosearch (val) {
-      if (val === null || typeof val === 'undefined') { val = '' }
-      let limit = -1
-      if (!val) { limit = 5 }
-      this.getItems('searchItems', 'loadingSearch', this.headers.find(x => x.input === 'autocomplete').url, [], [], 1, limit, val)
+    autosearches: {
+      handler (val) {
+        const vm = this
+        const key = Object.keys(val).filter(function (p) {
+          return val[p] !== vm.oldAutosearches[p]
+        })[0]
+        val = val[key]
+        this.oldAutosearches[key] = val
+        if (val === null || typeof val === 'undefined') { val = '' }
+        let limit = -1
+        if (!val) { limit = 5 }
+        const header = this.headers.find(x => x.value === key)
+        this.getItems(header.value, header.value, header.url, [], [], 1, limit, val, header.multiple || false, true)
+      },
+      deep: true
     }
   },
   beforeMount () {
     this.$bus.$on('updateitem', (item, index) => { this.editItemObj(item, index) })
     this.getItems = debounce(this.getItemsNolimit, 250)
-    const urlObj = this.headers.find(x => x.input === 'autocomplete')
-    if (urlObj) { this.getItemsNolimit('searchItems', 'loadingSearch', urlObj.url, [], [], 1, 5, '') }
+    for (const urlObj of this.headers.filter(x => x.input === 'autocomplete')) {
+      this.getItemsNolimit(urlObj.value, urlObj.value, urlObj.url, [], [], 1, 5, '', false, true)
+    }
   },
   methods: {
     editItemObj (item, index) {
@@ -341,6 +435,7 @@ export default {
     },
     copyToClipboard (text) {
       const el = document.createElement('textarea')
+      el.addEventListener('focusin', e => e.stopPropagation())
       el.value = text
       el.setAttribute('readonly', '')
       el.style.position = 'absolute'
@@ -350,26 +445,26 @@ export default {
       document.execCommand('copy')
       document.body.removeChild(el)
     },
-    copyText (text) {
+    copyText (text, desc) {
       this.copyToClipboard(text)
-      this.whatToCopy = 'ID'
+      this.whatToCopy = desc || 'ID'
       this.showSnackbar = true
     },
     displayQR (item) {
-      this.qrItem = item
+      this.qrItem = Object.assign({}, item)
       this.showQR = true
     },
     update (key, value) {
       this.editedItem[key] = value
     },
-    getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search) {
-      this[loadingVal] = true
-      let url = `/${baseUrl}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}`
+    getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search, multiple, autosearch) {
+      if (autosearch) { this.loadingSearches[loadingVal] = true } else { this[loadingVal] = true }
+      let url = `/${baseUrl}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
       if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
       this.$axios.get(url).then((resp) => {
-        this[toSave] = resp.data.result
+        if (autosearch) { this.searchItems[toSave] = resp.data.result } else { this[toSave] = resp.data.result }
         if (toSave === 'items') { this.numItems = resp.data.count }
-        this[loadingVal] = false
+        if (autosearch) { this.loadingSearches[loadingVal] = false } else { this[loadingVal] = false }
       })
     },
     addItem (item) {
@@ -384,20 +479,24 @@ export default {
         : baseURL
     },
     editItem (item) {
-      const urlObj = this.headers.find(x => x.input === 'autocomplete')
+      const urlObjs = this.headers.filter(x => x.input === 'autocomplete')
+      const dateH = this.headers.find(x => x.input === 'datetime')
       this.editedIndex = this.items.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      if (urlObj) {
+      this.editedItem = JSON.parse(JSON.stringify(item))
+      for (const urlObj of urlObjs) {
         let limit = -1
         if (!this.editedItem[urlObj.value]) { limit = 5 }
-        this.getItemsNolimit('searchItems', 'loadingSearch', urlObj.url, [], [], 1, limit, this.editedItem[urlObj.value])
+        this.getItemsNolimit(urlObj.value, urlObj.value, urlObj.url, [], [], 1, limit, this.editedItem[urlObj.value], urlObj.multiple, true)
+      }
+      if (dateH) {
+        this.editedItem[dateH.value] = new Date(this.editedItem[dateH.value])
       }
       const imageH = this.headers.find(x => x.input === 'image')
       if (imageH && this.editedItem[imageH.value] === null) { this.editedItem[imageH.value] = '' }
       if (imageH && this.editedItem[imageH.value]) {
         const img = new Image()
         img.crossOrigin = 'Anonymous'
-        img.src = this.combineURLs(`${this.$store.state.env.URL}`, this.editedItem[imageH.value])
+        img.src = this.imageURL(this.editedItem[imageH.value])
         this.editedItem[imageH.value] = ''
         const canvas = document.createElement('canvas')
         img.onload = () => {
@@ -473,8 +572,9 @@ export default {
         }
       }
     },
-    checkout () {
-      this.$router.replace({ path: `/i/${this.qrItem.id}` })
+    checkout (id) {
+      if (!id) { id = this.qrItem.id }
+      this.$router.replace({ path: `/i/${id}` })
     },
     updateSuperuser (item) {
       this.$axios.patch(`/${this.url}/${item.id}`, item)
@@ -482,6 +582,17 @@ export default {
     removeMultiple (arr, item) {
       const index = arr.indexOf(item.id)
       if (index >= 0) { arr.splice(index, 1) }
+    },
+    showTabbedDialog (item, id) {
+      this.tabbedDialogItem = Object.assign({}, item)
+      this.showTabDialog = true
+    },
+    imageURL (url) {
+      return this.combineURLs(this.$store.state.env.URL, url)
+    },
+    showImage (item) {
+      this.showImageItem = item
+      this.showImageDialog = true
     }
   }
 }

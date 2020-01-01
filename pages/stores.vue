@@ -33,7 +33,7 @@ export default {
         { text: 'Store name', value: 'name', rules: ['required'] },
         { text: 'Store domain', value: 'domain' },
         { text: 'Store template', value: 'template' },
-        { text: 'Wallet', value: 'wallet_id', rules: ['required'], input: 'autocomplete', url: 'wallets' },
+        { text: 'Wallets', value: 'wallets', rules: ['required'], input: 'autocomplete', url: 'wallets', multiple: true, sortable: false },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       actions: [

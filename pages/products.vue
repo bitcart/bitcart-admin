@@ -14,6 +14,8 @@ export default {
         { text: 'Name', value: 'name', rules: ['required'] },
         { text: 'Amount', value: 'amount', rules: ['required'] },
         { text: 'Quantity', value: 'quantity', rules: ['required'] },
+        { text: 'Category', value: 'category' },
+        { text: 'Discounts', value: 'discounts', rules: ['required'], input: 'autocomplete', url: 'discounts', multiple: true, sortable: false },
         { text: 'Status', value: 'status', mode: 'edit' },
         { text: 'Download URL', value: 'download_url' },
         { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },

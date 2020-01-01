@@ -31,6 +31,7 @@ export default {
   plugins: [
     '~/plugins/eventbus.js',
     { src: '~/plugins/imageinput.js', mode: 'client' },
+    { src: '~/plugins/datetimepicker.js', mode: 'client' },
     '~/plugins/vueQR.js'
   ],
   /*

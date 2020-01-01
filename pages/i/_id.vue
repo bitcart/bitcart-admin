@@ -9,7 +9,7 @@
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied to clipboard!
     </v-snackbar>
-    <v-card :loading="loading && !errorText" class="accent--border" raised="raised">
+    <v-card :loading="loading && !errorText" width="500px" class="accent--border mx-auto my-12" raised margin>
       <div v-if="loading">
         <v-card-text v-if="errorText" class="d-flex justify-center">
           {{ errorText }}
@@ -19,35 +19,15 @@
         </v-card-text>
       </div>
       <div v-else>
-        <v-card-title class="justify-center">
-          {{ product.title }}
-        </v-card-title>
-        <div v-if="showCheckout">
-          <div class="d-flex justify-center">
-            <qrcode :options="{width: 500}" :value="invoice.bitcoin_url" tag="v-img" class="image-preview" />
-          </div>
-          <div class="d-flex justify-center">
-            <p>
-              {{ invoice.bitcoin_address }}<br>
-              Waiting for {{ invoice.amount }} BTC payment
-            </p>
-          </div>
-          <v-card-actions class="justify-center">
-            <v-btn @click="copyText(invoice.bitcoin_url)" class="justify-center" color="primary">
-              <v-icon left="left">
-                mdi-content-copy
-              </v-icon><span>Copy</span>
-            </v-btn>
-          </v-card-actions>
-        </div>
+        <TabbedCheckout v-if="status === 'Pending' || status === 'active'" :checkoutPage="true" :tabitem="invoice.payments" :invoice="invoice" :product="product" />
         <div v-else>
-          <div class="d-flex justify-center success-circle success-icon">
-            <v-icon class="d-flex justify-center" color="green">
-              mdi-check
+          <div v-bind:class="colorClass(texts[status].icon)" class="d-flex justify-center success-circle success-icon">
+            <v-icon :color="texts[status].icon === 'mdi-check' ? 'green' : 'red'" class="d-flex justify-center">
+              {{ texts[status].icon }}
             </v-icon>
           </div>
           <div class="d-flex justify-center">
-            This invoice has been paid
+            {{ texts[status].text }}
           </div>
         </div>
       </div>
@@ -56,43 +36,69 @@
 </template>
 
 <script>
+import TabbedCheckout from '@/components/TabbedCheckout'
 export default {
   auth: false,
+  components: {
+    TabbedCheckout
+  },
   data () {
     return {
       showSnackbar: false,
-      showCheckout: true,
+      status: 'Pending',
       invoice: {},
       product: {},
       loading: true,
-      errorText: ''
+      errorText: '',
+      texts: {
+        expired: {
+          icon: 'mdi-close',
+          text: 'This invoice has expired'
+        },
+        complete: {
+          icon: 'mdi-check',
+          text: 'This invoice has been paid'
+        },
+        'Failed':
+        {
+          icon: 'mdi-close',
+          text: 'This invoice has failed'
+        },
+        'Invalid':
+        {
+          icon: 'mdi-close',
+          text: 'This invoice is invalid'
+        },
+        '': {
+          icon: 'mdi-close',
+          text: 'This invoice is invalid'
+        }
+      }
     }
   },
   mounted () {
     const self = this
     this.$axios.get(`/invoices/${this.$route.params.id}`).then(function (resp) {
       self.invoice = resp.data
-      if (resp.data.status === 'complete') {
-        self.showCheckout = false
-        self.loading = false
-        return
-      }
+      self.status = resp.data.status
+      self.loading = false
       self.$axios.get(`/products/${resp.data.products[0]}`).then(function (resp1) {
         self.product = resp1.data
         self.loading = false
-        let url = self.combineURLs(`${self.$store.state.env.URL}`, `/ws/invoices/${self.$route.params.id}`)
+        let url = self.combineURLs(`${self.$store.state.env.URL}`, `/ws/invoices/${self.$route.params.id}?token=${self.$auth.getToken('local').replace('Bearer ', '')}`)
         url = url.replace(`http://`, `ws://`).replace(`https://`, `wss://`)
         const websocket = new WebSocket(url)
         websocket.onmessage = function (event) {
           const status = JSON.parse(event.data).status
-          if (status === 'complete') {
-            self.showCheckout = false
-          }
+          self.status = status
         }
       }).catch(err => (self.errorText = err))
     }).catch(err => (self.errorText = err))
   },
   methods: {
+    colorClass (icon) {
+      return { 'green-color': icon === 'mdi-check', 'red-color': icon !== 'mdi-check' }
+    },
     copyToClipboard (text) {
       const el = document.createElement('textarea')
       el.value = text
@@ -177,7 +183,14 @@ export default {
   height: 154px;
   width: 154px;
   margin: 0 auto;
-  border: 2px solid #13e5b6;
+  border-width: 2px;
+  border-style: solid;
+}
+.green-color {
+  border-color: #13e5b6;
+}
+.red-color {
+  border-color: red;
 }
 .success-icon {
   animation: checkbounce 750ms linear both;

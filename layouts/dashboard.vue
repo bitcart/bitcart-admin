@@ -25,7 +25,7 @@ export default {
           header: 'Wallets Balance',
           key: 'balance',
           balance: true,
-          value: 'BTC'
+          value: ''
         },
         {
           header: 'Total wallets connected:',
@@ -48,6 +48,20 @@ export default {
         }
         ],
         link: '/stores'
+      },
+      {
+        texts: [{
+          header: 'Discounts',
+          key: 'discounts',
+          value: ''
+        },
+        {
+          header: 'Total discounts:',
+          key: 'discounts',
+          value: `discounts created`
+        }
+        ],
+        link: '/discounts'
       },
       {
         texts: [{
