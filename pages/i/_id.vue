@@ -59,12 +59,12 @@ export default {
           icon: 'mdi-check',
           text: 'This invoice has been paid'
         },
-        'Failed':
+        Failed:
         {
           icon: 'mdi-close',
           text: 'This invoice has failed'
         },
-        'Invalid':
+        Invalid:
         {
           icon: 'mdi-close',
           text: 'This invoice is invalid'
