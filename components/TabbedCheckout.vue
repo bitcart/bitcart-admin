@@ -111,7 +111,7 @@ export default {
     },
     checkout (id) {
       if (!id) { id = this.qrItem.id }
-      this.$router.replace({ path: `/i/${id}` })
+      this.$router.push({ path: `/i/${id}` })
     },
     copyToClipboard (text) {
       const el = document.createElement('textarea')

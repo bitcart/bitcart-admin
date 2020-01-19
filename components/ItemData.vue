@@ -331,6 +331,15 @@ export default {
         email: (value) => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return (typeof value === 'undefined' || value === '' || value == null || pattern.test(value)) || 'Invalid e-mail.'
+        },
+        url: (value) => {
+          if (typeof value === 'undefined' || value === '' || value == null) { return true }
+          try {
+            new URL(value) // eslint-disable-line no-new
+            return true
+          } catch (_) {
+            return 'Invalid URL'
+          }
         }
       }
     }
@@ -574,7 +583,7 @@ export default {
     },
     checkout (id) {
       if (!id) { id = this.qrItem.id }
-      this.$router.replace({ path: `/i/${id}` })
+      this.$router.push({ path: `/i/${id}` })
     },
     updateSuperuser (item) {
       this.$axios.patch(`/${this.url}/${item.id}`, item)

@@ -98,6 +98,7 @@ export default {
       const websocket = new WebSocket(url)
       websocket.onmessage = (event) => {
         const status = JSON.parse(event.data).status
+        if (status === 'complete' && this.invoice.redirect_url) { window.location = this.invoice.redirect_url }
         this.status = status
       }
     },

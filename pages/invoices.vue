@@ -15,6 +15,8 @@ export default {
         { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },
         { text: 'Products', value: 'products', input: 'autocomplete', url: 'products', multiple: true, sortable: false },
         { text: 'Promocode', value: 'promocode' },
+        { text: 'Notification url', value: 'notification_url', rules: ['url'] },
+        { text: 'Redirect url', value: 'redirect_url', rules: ['url'] },
         { text: 'Buyer email', value: 'buyer_email', rules: ['email'] },
         { text: 'Order', value: 'order_id' },
         { text: 'Discount', value: 'discount', mode: 'edit' },
