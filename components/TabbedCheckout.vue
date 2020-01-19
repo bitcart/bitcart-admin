@@ -12,7 +12,7 @@
       >
         <v-card class="accent--border" raised="raised">
           <v-card-title class="justify-center">
-            {{ checkoutPage ? product.name : 'QR code' }}
+            {{ checkoutPage && !isEmpty(product) ? product.name : 'QR code' }}
           </v-card-title>
           <v-card-text class="d-flex justify-center">
             <v-container>
@@ -97,7 +97,7 @@ export default {
   },
   computed: {
     noTabs () {
-      return Object.entries(this.tabitem).length === 0 && this.tabitem.constructor === Object
+      return this.isEmpty(this.tabitem)
     }
   },
   watch: {
@@ -106,6 +106,9 @@ export default {
     }
   },
   methods: {
+    isEmpty (obj) {
+      return Object.entries(obj).length === 0 && obj.constructor === Object
+    },
     checkout (id) {
       if (!id) { id = this.qrItem.id }
       this.$router.replace({ path: `/i/${id}` })

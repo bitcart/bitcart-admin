@@ -82,20 +82,25 @@ export default {
       self.invoice = resp.data
       self.status = resp.data.status
       self.loading = false
-      self.$axios.get(`/products/${resp.data.products[0]}`).then(function (resp1) {
-        self.product = resp1.data
-        self.loading = false
-        let url = self.combineURLs(`${self.$store.state.env.URL}`, `/ws/invoices/${self.$route.params.id}?token=${self.$auth.getToken('local').replace('Bearer ', '')}`)
-        url = url.replace(`http://`, `ws://`).replace(`https://`, `wss://`)
-        const websocket = new WebSocket(url)
-        websocket.onmessage = function (event) {
-          const status = JSON.parse(event.data).status
-          self.status = status
-        }
-      }).catch(err => (self.errorText = err))
+      if (resp.data.products.length > 0) {
+        self.$axios.get(`/products/${resp.data.products[0]}`).then(function (resp1) {
+          self.product = resp1.data
+          self.loading = false
+          self.startWebsocket()
+        }).catch(err => (self.errorText = err))
+      } else { self.startWebsocket() }
     }).catch(err => (self.errorText = err))
   },
   methods: {
+    startWebsocket () {
+      let url = this.combineURLs(`${this.$store.state.env.URL}`, `/ws/invoices/${this.$route.params.id}?token=${this.$auth.getToken('local').replace('Bearer ', '')}`)
+      url = url.replace(`http://`, `ws://`).replace(`https://`, `wss://`)
+      const websocket = new WebSocket(url)
+      websocket.onmessage = (event) => {
+        const status = JSON.parse(event.data).status
+        this.status = status
+      }
+    },
     colorClass (icon) {
       return { 'green-color': icon === 'mdi-check', 'red-color': icon !== 'mdi-check' }
     },

@@ -12,8 +12,11 @@ export default {
     return {
       headers: [
         { text: 'Amount', value: 'amount', rules: ['required'] },
-        { text: 'Products', value: 'products', rules: ['required'], input: 'autocomplete', url: 'products', multiple: true, sortable: false },
+        { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },
+        { text: 'Products', value: 'products', input: 'autocomplete', url: 'products', multiple: true, sortable: false },
         { text: 'Promocode', value: 'promocode' },
+        { text: 'Buyer email', value: 'buyer_email', rules: ['email'] },
+        { text: 'Order', value: 'order_id' },
         { text: 'Discount', value: 'discount', mode: 'edit' },
         { text: 'Status', value: 'status', mode: 'edit' },
         { text: 'Date', value: 'date', mode: 'display' },
