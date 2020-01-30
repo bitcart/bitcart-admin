@@ -12,11 +12,11 @@ export default {
     return {
       headers: [
         { text: 'Name', value: 'name', rules: ['required'] },
-        { text: 'Percent', value: 'percent', rules: ['required'] },
+        { text: 'Percent', value: 'percent', rules: ['required', 'int'] },
         { text: 'Description', value: 'description', expand: true },
         { text: 'Promocode', value: 'promocode' },
         { text: 'Currencies', value: 'currencies' },
-        { text: 'End date', value: 'end_date', input: 'datetime' },
+        { text: 'End date', value: 'end_date', input: 'datetime', rules: ['required'] },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'discounts',

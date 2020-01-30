@@ -136,7 +136,14 @@
                           image-min-scaling="contain"
                         />
                         <div v-else-if="header.input === 'tabbed'" />
-                        <v-datetime-picker v-else-if="header.input === 'datetime'" :label="header.txt" v-model="editedItem[header.value]" date-format="dd.MM.yyyy" />
+                        <v-datetime-picker
+                          ref="dateInput"
+                          v-else-if="header.input === 'datetime'"
+                          v-model="editedItem[header.value]"
+                          :textFieldProps="{rules: header.rules}"
+                          :label="header.text"
+                          date-format="dd.MM.yyyy"
+                        />
                         <v-text-field
                           v-else
                           v-model="editedItem[header.value]"
@@ -332,6 +339,7 @@ export default {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
           return (typeof value === 'undefined' || value === '' || value == null || pattern.test(value)) || 'Invalid e-mail.'
         },
+        int: v => isFinite(v) || 'Integer required',
         url: (value) => {
           if (typeof value === 'undefined' || value === '' || value == null) { return true }
           try {
@@ -532,8 +540,12 @@ export default {
       this.dialog = false
       setTimeout(() => {
         const imageH = this.headers.find(x => x.input === 'image')
+        const dateH = this.headers.find(x => x.input === 'datetime')
         if (imageH) {
           for (const imageInput of this.$refs.imageInput) { imageInput.clear() }
+        }
+        if (dateH) {
+          for (const dateInput of this.$refs.dateInput) { dateInput.clearHandler() }
         }
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
