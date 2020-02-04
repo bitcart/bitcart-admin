@@ -45,7 +45,7 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="showTabDialog" max-width="500px">
+          <v-dialog v-model="showTabDialog" :fullscreen="$vuetify.breakpoint.smAndDown" max-width="500px">
             <TabbedCheckout :showProp="showTabDialog" :tabitem="tabbedDialogItem[tabbedName]" :invoice="tabbedDialogItem" />
           </v-dialog>
           <v-dialog v-model="showImageDialog" max-width="500px">
@@ -328,8 +328,8 @@ export default {
       whatToCopy: '',
       loading: true,
       editedIndex: -1,
-      editedItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
-      defaultItem: Object.assign(...Array.from(this.headers, x => x.value).map((k, i) => ({ [k]: '' }))),
+      editedItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
+      defaultItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
       items: [],
       showPassword: false,
       rules: {
@@ -434,7 +434,7 @@ export default {
         let limit = -1
         if (!val) { limit = 5 }
         const header = this.headers.find(x => x.value === key)
-        this.getItems(header.value, header.value, header.url, [], [], 1, limit, val, header.multiple || false, true)
+        this.getItems(header.value, header.value, header.url, [], [], 1, limit, val, header.multiple || false, true, header.body)
       },
       deep: true
     }
@@ -443,7 +443,7 @@ export default {
     this.$bus.$on('updateitem', (item, index) => { this.editItemObj(item, index) })
     this.getItems = debounce(this.getItemsNolimit, 250)
     for (const urlObj of this.headers.filter(x => x.input === 'autocomplete')) {
-      this.getItemsNolimit(urlObj.value, urlObj.value, urlObj.url, [], [], 1, 5, '', false, true)
+      this.getItemsNolimit(urlObj.value, urlObj.value, urlObj.url, [], [], 1, 5, '', false, true, urlObj.body)
     }
   },
   methods: {
@@ -474,13 +474,21 @@ export default {
     update (key, value) {
       this.editedItem[key] = value
     },
-    getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search, multiple, autosearch) {
+    getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search, multiple, autosearch, getBody) {
       if (autosearch) { this.loadingSearches[loadingVal] = true } else { this[loadingVal] = true }
       let url = `/${baseUrl}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
       if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
       this.$axios.get(url).then((resp) => {
-        if (autosearch) { this.searchItems[toSave] = resp.data.result } else { this[toSave] = resp.data.result }
-        if (toSave === 'items') { this.numItems = resp.data.count }
+        let num, items
+        if (getBody) {
+          items = resp.data
+          num = items.length
+        } else {
+          items = resp.data.result
+          num = resp.data.count
+        }
+        if (autosearch) { this.searchItems[toSave] = items } else { this[toSave] = items }
+        if (toSave === 'items') { this.numItems = num }
         if (autosearch) { this.loadingSearches[loadingVal] = false } else { this[loadingVal] = false }
       })
     },

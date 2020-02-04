@@ -14,14 +14,15 @@
           <v-card-title class="justify-center">
             {{ checkoutPage && !isEmpty(product) ? product.name : 'QR code' }}
           </v-card-title>
-          <v-card-text class="d-flex justify-center">
+          <v-card-text>
             <v-container>
               <v-row class="d-flex justify-center">
                 <div class="d-flex justify-center">
-                  <qrcode :options="{width: 256}" :value="itemv.payment_url" tag="v-img" />
+                  <qrcode :options="{width: 240}" :value="itemv.payment_url" tag="v-img" />
                 </div>
-                <v-col class="d-flex justify-center" cols="12">
+                <v-col cols="12">
                   <p class="mt-6 mb-0 title">
+                    1 {{ itemv.currency.toUpperCase() }} = {{ (invoice.price/itemv.amount).toFixed(8).replace(/0{0,7}$/, "") }} {{ invoice.currency }}<br>
                     {{ itemv.payment_address }}<br>
                     Waiting for {{ itemv.amount }} {{ itemv.currency.toUpperCase() }} payment
                   </p>

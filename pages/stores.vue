@@ -30,9 +30,10 @@ export default {
       emailStatus: '',
       itemIndex: -1,
       headers: [
-        { text: 'Store name', value: 'name', rules: ['required'] },
-        { text: 'Store domain', value: 'domain' },
-        { text: 'Store template', value: 'template' },
+        { text: 'Name', value: 'name', rules: ['required'] },
+        { text: 'Default currency', value: 'default_currency', default: 'USD', input: 'autocomplete', url: 'fiatlist', body: true },
+        { text: 'Domain', value: 'domain' },
+        { text: 'Template', value: 'template' },
         { text: 'Wallets', value: 'wallets', rules: ['required'], input: 'autocomplete', url: 'wallets', multiple: true, sortable: false },
         { text: 'Actions', value: 'action', sortable: false }
       ],

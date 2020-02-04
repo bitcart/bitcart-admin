@@ -12,7 +12,7 @@ export default {
     return {
       headers: [
         { text: 'Name', value: 'name', rules: ['required'] },
-        { text: 'Amount', value: 'amount', rules: ['required'] },
+        { text: 'Price', value: 'price', rules: ['required'] },
         { text: 'Quantity', value: 'quantity', rules: ['required'] },
         { text: 'Category', value: 'category' },
         { text: 'Discounts', value: 'discounts', input: 'autocomplete', url: 'discounts', multiple: true, sortable: false },

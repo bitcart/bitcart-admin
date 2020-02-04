@@ -11,9 +11,9 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Wallet name', value: 'name', rules: ['required'] },
+        { text: 'Name', value: 'name', rules: ['required'] },
         { text: 'Balance', value: 'balance', mode: 'display' },
-        { text: 'Currency', value: 'currency' },
+        { text: 'Currency', value: 'currency', default: 'btc' },
         { text: 'Xpub', value: 'xpub', expand: true, rules: ['required'], errors: { 'Wallet key invalid': 'Invalid xpub' } },
         { text: 'Actions', value: 'action', sortable: false }
       ],
