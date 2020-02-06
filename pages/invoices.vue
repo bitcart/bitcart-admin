@@ -12,7 +12,7 @@ export default {
     return {
       headers: [
         { text: 'Price', value: 'price', rules: ['required'] },
-        { text: 'Currency', value: 'currency', default: 'USD', input: 'autocomplete', url: 'fiatlist', body: true },
+        { text: 'Currency', value: 'currency', input: 'autocomplete', url: 'fiatlist', body: true },
         { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },
         { text: 'Products', value: 'products', input: 'autocomplete', url: 'products', multiple: true, sortable: false },
         { text: 'Promocode', value: 'promocode' },

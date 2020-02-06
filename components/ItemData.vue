@@ -475,6 +475,7 @@ export default {
       this.editedItem[key] = value
     },
     getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search, multiple, autosearch, getBody) {
+      multiple = multiple || false
       if (autosearch) { this.loadingSearches[loadingVal] = true } else { this[loadingVal] = true }
       let url = `/${baseUrl}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
       if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
