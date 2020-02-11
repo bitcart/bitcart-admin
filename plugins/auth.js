@@ -14,7 +14,9 @@ async function refreshTokenF ($auth, $axios, token, refreshToken, store, redirec
       $auth.setToken(strategy, token)
       $auth.setRefreshToken(strategy, refreshToken)
       $axios.setToken(token)
-      $auth.fetchUserOnce().then(() => store.dispatch('syncStats', false))
+      if (process.client) {
+        $auth.fetchUserOnce().then(() => store.dispatch('syncStats', false))
+      }
       return decodeToken.call(this, token).exp
     } catch (error) {
       $auth.logout()

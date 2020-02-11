@@ -85,6 +85,7 @@ export default {
     }
   },
   auth: 'guest',
+  middleware: 'registeroff',
   methods: {
     register () {
       if (this.$refs.form.validate()) {

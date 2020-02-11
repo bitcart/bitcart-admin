@@ -4,7 +4,7 @@
 <script>
 import ItemData from '@/components/ItemData.vue'
 export default {
-  layout: 'dashboard',
+  layout: 'admin',
   middleware: 'superuserOnly',
   components: {
     ItemData
@@ -12,9 +12,9 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Password', value: 'password', mode: 'nodisplay', input: 'password', rules: ['required', 'min'], hint: 'At least 8 characters' },
         { text: 'Email', value: 'email', rules: ['email'] },
-        { text: 'Superuser', value: 'is_superuser', input: 'switch' },
+        { text: 'Password', value: 'password', mode: 'nodisplay', input: 'password', rules: ['required', 'min'], hint: 'At least 8 characters' },
+        { text: 'Superuser', value: 'is_superuser', input: 'switch', default: false },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'users',

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-data-table
       :headers="defaultHeaders"
       :items="items"
@@ -276,8 +276,7 @@
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied {{ whatToCopy }} to clipboard!
     </v-snackbar>
-    <v-container />
-  </v-container>
+  </div>
 </template>
 
 <script>

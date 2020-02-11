@@ -82,6 +82,13 @@
 
 <script>
 export default {
+  head () {
+    return this.$store.state.policies.discourage_index ? {
+      meta: [
+        { name: 'robots', content: 'noindex' }
+      ]
+    } : {}
+  },
   data () {
     return {
       toolbar: false,

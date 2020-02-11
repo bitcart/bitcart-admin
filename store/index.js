@@ -7,7 +7,8 @@ export const state = () => ({
     discounts: 0,
     products: 0,
     invoices: 0
-  }
+  },
+  policies: {}
 })
 
 export const mutations = {
@@ -17,20 +18,27 @@ export const mutations = {
   balance (state, balance) {
     state.balance = balance
   },
+  policies (state, value) {
+    state.policies = value
+  },
   setCount (state, { name, value }) {
     state.counts[name] = value
   }
 }
 export const actions = {
-  nuxtServerInit ({ commit }) {
+  async nuxtServerInit ({ state, commit }) {
     if (process.server) {
       commit('setEnv', {
         URL: process.env.BITCART_ADMIN_URL || 'http://localhost:8000',
         TOKEN: process.env.BITCART_ADMIN_TOKEN
       })
     }
+    this.$axios.defaults.baseURL = state.env.URL
+    const { data } = await this.$axios.get('/manage/policies')
+    commit('policies', data)
   },
   syncStats ({ commit, dispatch }, alwaysRun = true) {
+    this.$axios.get('/manage/policies').then(resp => commit('policies', resp.data))
     if (this.state.auth.loggedIn) {
       this.$axios.get('/wallets/balance').then(resp => commit('balance', resp.data))
       this.$axios.get('/wallets/count').then(resp => commit('setCount', { name: 'wallets', value: resp.data }))

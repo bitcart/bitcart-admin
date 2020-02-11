@@ -6,6 +6,7 @@
         <InfoCard :texts="card.texts" :link="card.link" />
       </v-col>
     </v-row>
+    <slot />
   </Default>
 </template>
 <script>

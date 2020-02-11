@@ -40,7 +40,7 @@
               prepend-icon="lock"
               type="password"
             />
-            <div>
+            <div v-if="!$store.state.policies.disable_registration">
               Don't have an account? <NuxtLink to="/register">
                 Sign up here
               </NuxtLink>
