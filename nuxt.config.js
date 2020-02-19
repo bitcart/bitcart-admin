@@ -29,6 +29,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~/plugins/axios.js',
     '~/plugins/eventbus.js',
     { src: '~/plugins/imageinput.js', mode: 'client' },
     { src: '~/plugins/datetimepicker.js', mode: 'client' },
@@ -77,7 +78,7 @@ export default {
         }
       }
     },
-    plugins: ['~/plugins/axios.js', { src: '~/plugins/auth.js', mode: 'client' }]
+    plugins: [{ src: '~/plugins/auth.js', mode: 'client' }]
   },
 
   /*

@@ -8,18 +8,18 @@
       sm="8"
       md="4"
     >
-      <v-card class="elevation-12">
-        <v-toolbar
-          color="primary"
-          dark
-          flat
-        >
-          <v-spacer />
-          <v-toolbar-title>Sign up</v-toolbar-title>
-          <div class="flex-grow-1" />
-        </v-toolbar>
-        <v-card-text>
-          <v-form ref="form">
+      <v-form ref="form" @submit.prevent="register">
+        <v-card class="elevation-12">
+          <v-toolbar
+            color="primary"
+            dark
+            flat
+          >
+            <v-spacer />
+            <v-toolbar-title>Sign up</v-toolbar-title>
+            <div class="flex-grow-1" />
+          </v-toolbar>
+          <v-card-text>
             <v-text-field
               id="email"
               v-model="email"
@@ -53,15 +53,15 @@
                 Sign in
               </NuxtLink> instead
             </div>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <div class="flex-grow-1" />
-          <v-btn @click.stop="register" color="primary">
-            Create account
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+          </v-card-text>
+          <v-card-actions>
+            <div class="flex-grow-1" />
+            <v-btn type="submit" color="primary">
+              Create account
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-col>
   </v-row>
 </template>
