@@ -8,7 +8,7 @@
       </v-btn>
       <v-btn to="/settings" text>
         <v-icon left>
-          mdi-coins
+          mdi-circle-multiple-outline
         </v-icon>Setting
       </v-btn>
     </v-toolbar-items>

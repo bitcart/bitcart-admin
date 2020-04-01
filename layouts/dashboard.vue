@@ -25,7 +25,6 @@ export default {
         texts: [{
           header: 'Wallets Balance',
           key: 'balance',
-          balance: true,
           value: ''
         },
         {
@@ -45,7 +44,7 @@ export default {
         {
           header: 'Total stores:',
           key: 'stores',
-          value: `stores created`
+          value: 'stores created'
         }
         ],
         link: '/stores'
@@ -59,7 +58,7 @@ export default {
         {
           header: 'Total discounts:',
           key: 'discounts',
-          value: `discounts created`
+          value: 'discounts created'
         }
         ],
         link: '/discounts'
@@ -96,7 +95,7 @@ export default {
     }
   },
   beforeCreate () {
-    this.$store.dispatch('syncStats')
+    if (process.client) { this.$store.dispatch('syncStats') }
   }
 }
 </script>

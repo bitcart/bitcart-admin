@@ -22,6 +22,7 @@ export default {
         { text: 'User management', to: '/manage' },
         { text: 'Maintenance commands', to: '/manage/maintenance' },
         { text: 'Policies', to: '/manage/policies' },
+        { text: 'Store Policies', to: '/manage/stores' },
         { text: 'Daemons management', to: '/manage/daemons' }
       ]
     }

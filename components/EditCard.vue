@@ -43,9 +43,9 @@
                     <v-chip
                       v-bind="data.attrs"
                       :input-value="data.selected"
+                      close
                       @click="data.select"
                       @click:close="removeMultiple(editedItem[header.value], data.item)"
-                      close
                     >
                       {{ data.item.name }}
                     </v-chip>
@@ -63,7 +63,7 @@
                     </template>
                   </template>
                 </v-autocomplete>
-                <v-btn v-else-if="header.input === 'button'" @click="header.click(editedItem)" color="primary">
+                <v-btn v-else-if="header.input === 'button'" color="primary" @click="header.click(editedItem)">
                   {{ header.text }}
                 </v-btn>
                 <div v-else-if="header.input === 'progress'" v-show="(customProps[header.loading] || customProps[header.status])">
@@ -90,9 +90,9 @@
                   :type="showPassword ? 'text' : 'password'"
                   :label="header.text"
                   :hint="header.hint"
-                  @click:append="showPassword = !showPassword"
                   name="input-10-1"
                   counter
+                  @click:append="showPassword = !showPassword"
                 />
               </v-col>
             </v-row>
@@ -102,10 +102,10 @@
 
       <v-card-actions>
         <div class="flex-grow-1" />
-        <v-btn @click="close" color="blue darken-1" text>
+        <v-btn color="blue darken-1" text @click="close">
           Cancel
         </v-btn>
-        <v-btn @click="save" color="blue darken-1" text>
+        <v-btn color="blue darken-1" text @click="save">
           Save
         </v-btn>
       </v-card-actions>

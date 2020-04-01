@@ -3,7 +3,7 @@
     <div v-for="(daemon, currency) in daemons" :key="currency">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title v-text="currency.toUpperCase()" class="display-1" />
+          <v-list-item-title class="display-1" v-text="currency.toUpperCase()" />
           <v-list-item-subtitle class="text--primary">
             <p class="display-1">
               Credentials

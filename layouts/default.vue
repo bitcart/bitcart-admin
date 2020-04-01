@@ -29,13 +29,13 @@
       <v-img max-height="60" contain src="/icon.png" />
       <v-menu
         :nudge-bottom="10"
-        @click.native.stop
         offset-y
         origin="center center"
         transition="scale-transition"
+        @click.native.stop
       >
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon large text>
+          <v-btn icon large text v-on="on">
             <v-icon size="30px">
               account_circle
             </v-icon>
@@ -48,9 +48,9 @@
             :to="item.href"
             :disabled="item.disabled"
             :target="item.target"
-            @click="item.click"
             ripple="ripple"
             rel="noopener"
+            @click="item.click"
           >
             <v-list-item-action v-if="item.icon">
               <v-icon>{{ item.icon }}</v-icon>
@@ -82,13 +82,6 @@
 
 <script>
 export default {
-  head () {
-    return this.$store.state.policies.discourage_index ? {
-      meta: [
-        { name: 'robots', content: 'noindex' }
-      ]
-    } : {}
-  },
   data () {
     return {
       toolbar: false,
@@ -172,6 +165,13 @@ export default {
       this.$auth.logout()
       this.$router.push('/login')
     }
+  },
+  head () {
+    return this.$store.state.policies.discourage_index ? {
+      meta: [
+        { name: 'robots', content: 'noindex' }
+      ]
+    } : {}
   }
 }
 </script>

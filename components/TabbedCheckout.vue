@@ -31,12 +31,12 @@
             </v-container>
           </v-card-text>
           <v-card-actions class="justify-center">
-            <v-btn @click="copyText(itemv.payment_url, 'URL')" class="justify-center" color="primary">
+            <v-btn class="justify-center" color="primary" @click="copyText(itemv.payment_url, 'URL')">
               <v-icon left="left">
                 mdi-content-copy
               </v-icon><span>Copy</span>
             </v-btn>
-            <v-btn v-if="!checkoutPage" @click="checkout(invoice.id)" class="justify-center" color="primary">
+            <v-btn v-if="!checkoutPage" class="justify-center" color="primary" @click="checkout(invoice.id)">
               <v-icon left="left">
                 mdi-open-in-new
               </v-icon><span>Open checkout</span>

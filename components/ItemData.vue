@@ -11,6 +11,7 @@
       loading-text="Loading..."
       class="elevation-1"
     >
+      <slot />
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>{{ title+'s' }}</v-toolbar-title>
@@ -32,12 +33,12 @@
                 <qrcode :options="{width: 500}" :value="qrItem[forQR.value]" tag="v-img" class="image-preview" />
               </div>
               <v-card-actions class="justify-center">
-                <v-btn @click="copyText(qrItem[forQR.value], forQR.text.toUpperCase())" class="justify-center" color="primary">
+                <v-btn class="justify-center" color="primary" @click="copyText(qrItem[forQR.value], forQR.text.toUpperCase())">
                   <v-icon left="left">
                     mdi-content-copy
                   </v-icon><span>Copy</span>
                 </v-btn>
-                <v-btn @click="checkout()" class="justify-center" color="primary">
+                <v-btn class="justify-center" color="primary" @click="checkout()">
                   <v-icon left="left">
                     mdi-open-in-new
                   </v-icon><span>Open checkout</span>
@@ -46,7 +47,7 @@
             </v-card>
           </v-dialog>
           <v-dialog v-model="showTabDialog" :fullscreen="$vuetify.breakpoint.smAndDown" max-width="500px">
-            <TabbedCheckout :showProp="showTabDialog" :tabitem="tabbedDialogItem[tabbedName]" :invoice="tabbedDialogItem" />
+            <TabbedCheckout :show-prop="showTabDialog" :tabitem="tabbedDialogItem[tabbedName]" :invoice="tabbedDialogItem" />
           </v-dialog>
           <v-dialog v-model="showImageDialog" max-width="500px">
             <v-card>
@@ -59,7 +60,7 @@
           </v-dialog>
           <v-dialog v-model="dialog" max-width="650px">
             <template v-slot:activator="{ on }">
-              <v-btn v-on="on" color="primary" dark>
+              <v-btn color="primary" dark v-on="on">
                 New {{ title }}
               </v-btn>
             </template>
@@ -88,10 +89,12 @@
                         <v-switch v-else-if="header.input === 'switch'" v-model="editedItem[header.value]" :rules="header.rules" :error-messages="errors[header.text]" :label="header.text" />
                         <v-autocomplete
                           v-else-if="header.input === 'autocomplete'"
+                          ref="autocomplete"
                           v-model="editedItem[header.value]"
                           :loading="loadingSearches[header.value]"
                           :items="searchItems[header.value]"
                           :search-input.sync="autosearches[header.value]"
+                          cache-items
                           :multiple="header.multiple"
                           :chips="header.multiple"
                           :rules="header.rules"
@@ -105,9 +108,9 @@
                             <v-chip
                               v-bind="data.attrs"
                               :input-value="data.selected"
+                              close
                               @click="data.select"
                               @click:close="removeMultiple(editedItem[header.value], data.item)"
-                              close
                             >
                               {{ data.item.name }}
                             </v-chip>
@@ -126,8 +129,8 @@
                           </template>
                         </v-autocomplete>
                         <v-image-input
-                          ref="imageInput"
                           v-else-if="header.input === 'image'"
+                          ref="imageInput"
                           v-model="editedItem[header.value]"
                           :image-height="400"
                           :image-width="400"
@@ -137,10 +140,10 @@
                         />
                         <div v-else-if="header.input === 'tabbed'" />
                         <v-datetime-picker
-                          ref="dateInput"
                           v-else-if="header.input === 'datetime'"
+                          ref="dateInput"
                           v-model="editedItem[header.value]"
-                          :textFieldProps="{rules: header.rules}"
+                          :text-field-props="{rules: header.rules}"
                           :label="header.text"
                           date-format="dd.MM.yyyy"
                         />
@@ -152,11 +155,12 @@
                           :type="showPassword ? 'text' : 'password'"
                           :label="header.text"
                           :hint="header.hint"
-                          @click:append="showPassword = !showPassword"
                           name="input-10-1"
                           counter
+                          @click:append="showPassword = !showPassword"
                         />
                       </v-col>
+                      <slot name="dialog" />
                     </v-row>
                   </v-container>
                 </v-form>
@@ -164,10 +168,10 @@
 
               <v-card-actions>
                 <div class="flex-grow-1" />
-                <v-btn @click="close" color="blue darken-1" text>
+                <v-btn color="blue darken-1" text @click="close">
                   Cancel
                 </v-btn>
-                <v-btn @click="save" color="blue darken-1" text>
+                <v-btn color="blue darken-1" text @click="save">
                   Save
                 </v-btn>
               </v-card-actions>
@@ -175,7 +179,9 @@
           </v-dialog>
         </v-toolbar>
       </template>
-
+      <template v-slot:item.current="{item}">
+        <v-switch v-model="switches[item.id]" readonly />
+      </template>
       <template v-slot:expanded-item="{ item }">
         <td v-for="header in toExpand" :key="header.text">
           {{ header.text }}: {{ item[header.value] }}
@@ -194,8 +200,8 @@
         <v-menu :key="slotName" offset-y allow-overflow max-height="300">
           <template v-slot:activator="{ on }">
             <v-btn
-              v-on="on"
               color="primary"
+              v-on="on"
             >
               Show
             </v-btn>
@@ -217,51 +223,51 @@
         </v-menu>
       </template>
       <template v-slot:[tabbedSlotName]="{ item }">
-        <v-btn @click="showTabbedDialog(item, item.id)" color="primary">
+        <v-btn color="primary" @click="showTabbedDialog(item, item.id)">
           Show
         </v-btn>
       </template>
       <template v-slot:[imageSlotName]="{ item }">
-        <v-btn @click="showImage(item)" color="primary">
+        <v-btn color="primary" @click="showImage(item)">
           Show
         </v-btn>
       </template>
       <template v-slot:item.action="{ item }">
         <v-icon
-          @click="copyText(item.id)"
           small
           class="mr-2"
+          @click="copyText(item.id)"
         >
           mdi-content-copy
         </v-icon>
         <v-icon
-          @click="editItem(item)"
           small
           class="mr-2"
+          @click="editItem(item)"
         >
           edit
         </v-icon>
         <v-icon
           v-if="!(Object.entries(forQR).length === 0 && forQR.constructor === Object)"
-          @click="displayQR(item)"
           small
           class="mr-2"
+          @click="displayQR(item)"
         >
           mdi-qrcode
         </v-icon>
         <v-icon
           v-for="action in actions"
           :key="action.icon"
-          @click="action.process(item, items.indexOf(item))"
           small
           class="mr-2"
+          @click="action.process(item, items.indexOf(item))"
         >
           {{ action.icon }}
         </v-icon>
         <v-icon
-          @click="deleteItem(item)"
           small
           class="mr-2"
+          @click="deleteItem(item)"
         >
           delete
         </v-icon>
@@ -302,6 +308,22 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    body: {
+      type: Boolean,
+      default: false
+    },
+    postprocess: {
+      type: Function,
+      default: (data) => { return data }
+    },
+    postsave: {
+      type: Function,
+      default: (data) => {}
+    },
+    postclose: {
+      type: Function,
+      default: () => {}
     }
   },
   data () {
@@ -327,6 +349,7 @@ export default {
       whatToCopy: '',
       loading: true,
       editedIndex: -1,
+      switches: {},
       editedItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
       defaultItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
       items: [],
@@ -356,6 +379,9 @@ export default {
   computed: {
     editedHeaders () {
       return this.headers.map((x) => { if (x.rules && !x.rules.some(y => typeof y === 'undefined')) { x.rules = x.rules.map((y) => { return this.rules[y] }) } else { x.rules = [] } return x })
+    },
+    token () {
+      return this.$auth.getToken('local')
     },
     forQR () {
       return this.editedHeaders.find(header => header.qr) || {}
@@ -410,13 +436,14 @@ export default {
     {
       handler () {
         const { sortBy, sortDesc, page, itemsPerPage } = this.options
-        this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search, false)
+        this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search, false, false, this.body)
       },
       deep: true
     },
     search () {
-      const { sortBy, sortDesc, page, itemsPerPage } = this.options
-      this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search, false)
+      const { sortBy, sortDesc, itemsPerPage } = this.options
+      const page = this.options.page = 1
+      this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search, false, false, this.body)
     },
     dialog (val) {
       if (!val) { this.close() }
@@ -448,6 +475,9 @@ export default {
   methods: {
     editItemObj (item, index) {
       Object.assign(this.items[index], item)
+    },
+    check (id) {
+      return `Bearer ${id}` === this.token
     },
     copyToClipboard (text) {
       const el = document.createElement('textarea')
@@ -487,14 +517,21 @@ export default {
           items = resp.data.result
           num = resp.data.count
         }
+        if (items) {
+          for (const item of items) {
+            this.switches[item.id] = this.check(item.id)
+          }
+        }
         if (autosearch) { this.searchItems[toSave] = items } else { this[toSave] = items }
         if (toSave === 'items') { this.numItems = num }
         if (autosearch) { this.loadingSearches[loadingVal] = false } else { this[loadingVal] = false }
       })
     },
     addItem (item) {
+      this.postsave(item)
       this.numItems++
       this.items.push(item)
+      this.switches[item.id] = this.check(item.id)
       if (this.items.length > this.options.itemsPerPage * this.options.page) { this.options.page++ }
       this.$store.dispatch('syncStats', false)
     },
@@ -536,12 +573,12 @@ export default {
     },
     deleteItem (item) {
       const index = this.items.indexOf(item)
-      const self = this
-      this.$axios.delete(`/${this.url}/${item.id}`).then(function (resp) {
-        self.items.splice(index, 1)
-        self.numItems--
-        if (self.items.length === 0 && self.options.page > 1) { self.options.page-- }
-        self.$store.dispatch('syncStats', false)
+      this.$axios.delete(`/${this.url}/${item.id}`).then((resp) => {
+        this.items.splice(index, 1)
+        delete this.switches[item.id]
+        this.numItems--
+        if (this.items.length === 0 && this.options.page > 1) { this.options.page-- }
+        this.$store.dispatch('syncStats', false)
       })
     },
     close () {
@@ -555,10 +592,14 @@ export default {
         if (dateH) {
           for (const dateInput of this.$refs.dateInput) { dateInput.clearHandler() }
         }
+        for (const key in this.autosearches) {
+          this.autosearches[key] = null
+        }
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
         this.errors = {}
         this.$refs.form.resetValidation()
+        this.postclose()
       }, 300)
     },
     handleErr (err) {
@@ -583,6 +624,7 @@ export default {
     save () {
       if (this.$refs.form.validate()) {
         let data = Object.assign({}, this.editedItem)
+        data = this.postprocess(data)
         let headers = {}
         if (this.headers.some(x => x.input === 'image')) {
           const header = this.headers.find(x => x.input === 'image')

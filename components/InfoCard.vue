@@ -3,11 +3,8 @@
     <div v-for="text in texts" :key="text.header">
       <v-card-title>{{ text.header }}</v-card-title>
       <v-card-text>
-        <h1 v-if="!text.balance" class="text--primary">
-          {{ $store.state.counts[text.key] }} {{ text.value }}
-        </h1>
-        <h1 v-else class="text--primary">
-          {{ $store.state.balance }} {{ text.value }}
+        <h1 class="text--primary">
+          {{ $store.state.stats[text.key] }} {{ text.value }}
         </h1>
       </v-card-text>
     </div>

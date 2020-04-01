@@ -81,22 +81,21 @@ export default {
   methods: {
     login () {
       if (this.$refs.form.validate()) {
-        const self = this
         this.$axios.post('/token', {
           email: this.email,
-          password: this.password
-        }).then(function (resp) {
-          self.$auth.setToken('local', 'Bearer ' + resp.data.access_token)
-          self.$auth.setRefreshToken('local', resp.data.refresh_token)
-          self.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
-          self.$auth.ctx.app.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
-          self.$axios.get('/users/me').then((resp) => { self.$auth.setUser(resp.data); self.$router.push('/') })
+          password: this.password,
+          permissions: ['full_control'],
+          strict: false
+        }).then((resp) => {
+          this.$auth.setToken('local', 'Bearer ' + resp.data.access_token)
+          this.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
+          this.$axios.get('/users/me').then((resp) => { this.$auth.setUser(resp.data); this.$router.push('/') })
         }).catch((err) => {
           if (err.response) {
-            self.usernameErrors = []
-            self.passwordErrors = []
+            this.usernameErrors = []
+            this.passwordErrors = []
             const status = err.response.data.detail.status
-            if (status === 404) { self.usernameErrors = ['That user does not exist'] } else if (status === 401) { self.passwordErrors = ['Invalid password'] }
+            if (status === 404) { this.usernameErrors = ['That user does not exist'] } else if (status === 401) { this.passwordErrors = ['Invalid password'] }
           }
         })
       }

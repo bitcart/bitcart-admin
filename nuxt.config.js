@@ -29,7 +29,6 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/axios.js',
     '~/plugins/eventbus.js',
     { src: '~/plugins/imageinput.js', mode: 'client' },
     { src: '~/plugins/datetimepicker.js', mode: 'client' },
@@ -60,7 +59,7 @@ export default {
     baseURL: 'http://localhost:8000'
   },
   router: {
-    middleware: ['loggedIn']
+    middleware: ['auth']
   },
   auth: {
     localStorage: false,
@@ -72,13 +71,13 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: { url: '/token', method: 'post', propertyName: false },
+          login: { url: '/token', method: 'post', propertyName: 'access_token' },
           logout: false,
           user: { url: '/users/me', method: 'get', propertyName: false }
         }
       }
     },
-    plugins: [{ src: '~/plugins/auth.js', mode: 'client' }]
+    plugins: ['~/plugins/axios.js']
   },
 
   /*
@@ -86,9 +85,7 @@ export default {
   ** https://github.com/nuxt-community/vuetify-module
   */
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
-    theme:
-      { dark: false }
+    customVariables: ['~/assets/variables.scss']
   },
   /*
   ** Build configuration

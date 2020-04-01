@@ -15,8 +15,8 @@ export default {
     return {
       policies: {},
       titles: {
-        'disable_registration': 'Disable user registration',
-        'discourage_index': 'Discourage search engines from indexing this site'
+        disable_registration: 'Disable user registration',
+        discourage_index: 'Discourage search engines from indexing this site'
       }
     }
   },

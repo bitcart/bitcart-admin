@@ -1,12 +1,12 @@
 export const state = () => ({
   env: {},
-  balance: 0.0,
-  counts: {
+  stats: {
     wallets: 0,
     stores: 0,
     discounts: 0,
     products: 0,
-    invoices: 0
+    invoices: 0,
+    balance: 0.0
   },
   policies: {}
 })
@@ -15,22 +15,18 @@ export const mutations = {
   setEnv (state, env) {
     state.env = env
   },
-  balance (state, balance) {
-    state.balance = balance
-  },
   policies (state, value) {
     state.policies = value
   },
-  setCount (state, { name, value }) {
-    state.counts[name] = value
+  setStats (state, value) {
+    state.stats = value
   }
 }
 export const actions = {
   async nuxtServerInit ({ state, commit }) {
     if (process.server) {
       commit('setEnv', {
-        URL: process.env.BITCART_ADMIN_URL || 'http://localhost:8000',
-        TOKEN: process.env.BITCART_ADMIN_TOKEN
+        URL: process.env.BITCART_ADMIN_URL || 'http://localhost:8000'
       })
     }
     this.$axios.defaults.baseURL = state.env.URL
@@ -40,17 +36,27 @@ export const actions = {
   syncStats ({ commit, dispatch }, alwaysRun = true) {
     this.$axios.get('/manage/policies').then(resp => commit('policies', resp.data))
     if (this.state.auth.loggedIn) {
-      this.$axios.get('/wallets/balance').then(resp => commit('balance', resp.data))
-      this.$axios.get('/wallets/count').then(resp => commit('setCount', { name: 'wallets', value: resp.data }))
-      this.$axios.get('/stores/count').then(resp => commit('setCount', { name: 'stores', value: resp.data }))
-      this.$axios.get('/discounts/count').then(resp => commit('setCount', { name: 'discounts', value: resp.data }))
-      this.$axios.get('/products/count').then(resp => commit('setCount', { name: 'products', value: resp.data }))
-      this.$axios.get('/invoices/count').then(resp => commit('setCount', { name: 'invoices', value: resp.data }))
+      this.$axios.get('/crud/stats').then(resp => commit('setStats', resp.data))
     }
     if (alwaysRun) {
       setTimeout(() => {
         dispatch('syncStats')
       }, 60000)
     }
+  },
+  redirectA (_, { where, token, permissions, userId }) {
+    return new Promise((resolve, reject) => {
+      if (where) {
+        let url
+        if (process.server) {
+          const URL = require('url').URL
+          url = new URL(where)
+        } else { url = new URL(where) }
+        url.searchParams.set('api-key', token)
+        for (const permission of permissions) { url.searchParams.append('permissions', permission) }
+        url.searchParams.set('user-id', userId)
+        resolve([false, url.href])
+      } else { resolve([true, '/']) }
+    })
   }
 }

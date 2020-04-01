@@ -9,7 +9,7 @@
       {{ title }}
     </p>
     <p>{{ details }}</p>
-    <v-btn @click="manage(what)" color="primary">
+    <v-btn color="primary" @click="manage(what)">
       {{ btnText }}
     </v-btn>
   </div>
