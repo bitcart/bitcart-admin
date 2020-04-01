@@ -4,7 +4,7 @@
       <ManagementCommand
         :title="command.title"
         :details="command.details"
-        :btnText="command.btnText"
+        :btn-text="command.btnText"
         :what="command.what"
         class="pb-3"
       />

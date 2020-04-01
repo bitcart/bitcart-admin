@@ -19,9 +19,9 @@
         </v-card-text>
       </div>
       <div v-else>
-        <TabbedCheckout v-if="status === 'Pending' || status === 'active'" :checkoutPage="true" :tabitem="invoice.payments" :invoice="invoice" :product="product" />
+        <TabbedCheckout v-if="status === 'Pending' || status === 'active'" :checkout-page="true" :tabitem="invoice.payments" :invoice="invoice" :product="product" />
         <div v-else>
-          <div v-bind:class="colorClass(texts[status].icon)" class="d-flex justify-center success-circle success-icon">
+          <div :class="colorClass(texts[status].icon)" class="d-flex justify-center success-circle success-icon">
             <v-icon :color="texts[status].icon === 'mdi-check' ? 'green' : 'red'" class="d-flex justify-center">
               {{ texts[status].icon }}
             </v-icon>
@@ -77,24 +77,23 @@ export default {
     }
   },
   mounted () {
-    const self = this
-    this.$axios.get(`/invoices/${this.$route.params.id}`).then(function (resp) {
-      self.invoice = resp.data
-      self.status = resp.data.status
-      self.loading = false
+    this.$axios.get(`/invoices/${this.$route.params.id}`).then((resp) => {
+      this.invoice = resp.data
+      this.status = resp.data.status
+      this.loading = false
       if (resp.data.products.length > 0) {
-        self.$axios.get(`/products/${resp.data.products[0]}`).then(function (resp1) {
-          self.product = resp1.data
-          self.loading = false
-          self.startWebsocket()
-        }).catch(err => (self.errorText = err))
-      } else { self.startWebsocket() }
-    }).catch(err => (self.errorText = err))
+        this.$axios.get(`/products/${resp.data.products[0]}`).then((resp1) => {
+          this.product = resp1.data
+          this.loading = false
+          this.startWebsocket()
+        }).catch(err => (this.errorText = err))
+      } else { this.startWebsocket() }
+    }).catch(err => (this.errorText = err))
   },
   methods: {
     startWebsocket () {
       let url = this.combineURLs(`${this.$store.state.env.URL}`, `/ws/invoices/${this.$route.params.id}?token=${this.$auth.getToken('local').replace('Bearer ', '')}`)
-      url = url.replace(`http://`, `ws://`).replace(`https://`, `wss://`)
+      url = url.replace('http://', 'ws://').replace('https://', 'wss://')
       const websocket = new WebSocket(url)
       websocket.onmessage = (event) => {
         const status = JSON.parse(event.data).status

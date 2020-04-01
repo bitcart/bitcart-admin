@@ -3,7 +3,15 @@
     <p class="title">
       {{ title }}
     </p>
-    <v-checkbox v-model="data" @change="updatePolicy" />
+    <v-checkbox v-if="type === 'checkbox'" v-model="data" @change="updatePolicy" />
+    <v-text-field
+      v-else
+      v-model="data"
+      hide-details
+      single-line
+      type="number"
+      @change="updatePolicy"
+    />
   </div>
 </template>
 <script>
@@ -20,6 +28,14 @@ export default {
     initialValue: {
       type: null,
       default: ''
+    },
+    type: {
+      type: String,
+      default: 'checkbox'
+    },
+    policyUrl: {
+      type: String,
+      default: '/manage/policies'
     }
   },
   data () {
@@ -29,7 +45,7 @@ export default {
   },
   methods: {
     updatePolicy (value) {
-      this.$axios.post('/manage/policies', { [this.what]: value })
+      this.$axios.post(this.policyUrl, { [this.what]: value })
     }
   }
 }

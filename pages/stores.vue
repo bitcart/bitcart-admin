@@ -7,9 +7,9 @@
       :headers="emailHeaders"
       :item.sync="item"
       :custom-props="{loadingEmail, emailCheck, emailStatus}"
-      @reset-custom-props="resetCustomProps"
       title="store email settings"
       mode="edit"
+      @reset-custom-props="resetCustomProps"
     />
   </div>
 </template>
@@ -44,11 +44,11 @@ export default {
         }
       ],
       emailHeaders: [
-        { text: 'Store email', value: 'email', rules: ['required', 'email'] },
-        { text: 'Email host', value: 'email_host', rules: ['required'] },
-        { text: 'Email port', value: 'email_port', rules: ['required', 'int'] },
-        { text: 'Email user', value: 'email_user', rules: ['required'] },
-        { text: 'Email password', value: 'email_password', rules: ['required'], input: 'password' },
+        { text: 'Store email', value: 'email', rules: ['email'] },
+        { text: 'Email host', value: 'email_host' },
+        { text: 'Email port', value: 'email_port', rules: ['int'] },
+        { text: 'Email user', value: 'email_user' },
+        { text: 'Email password', value: 'email_password', input: 'password' },
         { text: 'SSL/TLS', value: 'email_use_ssl', input: 'switch' },
         { text: 'Test ping', input: 'button', click: this.testping },
         { input: 'progress', text: 'emailCheck', loading: 'loadingEmail', status: 'emailStatus' }

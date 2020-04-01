@@ -20,9 +20,6 @@ export default {
       default: null
     }
   },
-  head () {
-    return { title: this.title }
-  },
   data () {
     return {
       pageNotFound: '404 Not Found',
@@ -33,6 +30,9 @@ export default {
     title () {
       return this.error.statusCode === 404 ? this.pageNotFound : this.otherError
     }
+  },
+  head () {
+    return { title: this.title }
   }
 }
 </script>
