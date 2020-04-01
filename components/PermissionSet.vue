@@ -1,20 +1,21 @@
 <template>
   <div>
-    <component :is="tag" v-for="permission in selectivePermissions" :key="permission" rows="12">
-      <selective-permission
-        v-if="freePermissions || check(permission)"
-        :value="selectedBool[permission]"
-        :all.sync="allSelected[permission]"
-        :title="permission"
-        :selective="truthy(selectiveProp[permission])"
-        :custom-title="customTitles[permission]"
-        :rules="rules"
-        :strict="strict"
-        @input="addPermission(permission, $event)"
-      >
-        <auto-complete v-model="selectedItems[permission]" :multiple="true" :url="permission" :display-prop="displayProp[permission] || 'name'" />
-      </selective-permission>
-    </component>
+    <div v-for="permission in selectivePermissions" :key="permission">
+      <component :is="tag" v-if="freePermissions || check(permission)" rows="12">
+        <selective-permission
+          :value="selectedBool[permission]"
+          :all.sync="allSelected[permission]"
+          :title="permission"
+          :selective="truthy(selectiveProp[permission])"
+          :custom-title="customTitles[permission]"
+          :rules="rules"
+          :strict="strict"
+          @input="addPermission(permission, $event)"
+        >
+          <auto-complete v-model="selectedItems[permission]" :multiple="true" :url="permission" :display-prop="displayProp[permission] || 'name'" />
+        </selective-permission>
+      </component>
+    </div>
   </div>
 </template>
 
@@ -72,6 +73,13 @@ export default {
         server: 'The app will have full control on your server.',
         full_control: 'Make the app access everything in your account, all current and further permissions included.',
         token: 'The app will be able to list, modify and delete all your API keys.'
+      }
+    }
+  },
+  mounted () {
+    for (const permission of this.selectivePermissions) {
+      if (this.check(permission)) {
+        this.permissions.add(permission)
       }
     }
   },

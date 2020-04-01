@@ -13,63 +13,14 @@
             If authorized, the generated API key will be provided to {{ redirect }}
           </p>
           <v-row>
-            <permission-set tag="v-col" :free-permissions="false" :permission-prop="permissions" :rules="[required]" :strict="strict" />
-            <v-col v-for="permission in permissions" :key="permission" cols="12">
-              <div v-if="(strict || $auth.user.is_superuser)">
-                <v-checkbox
-                  v-model="serverYes"
-                  :readonly="!$auth.user.is_superuser"
-                  :rules="[required]"
-                  class="form-check-inline"
-                >
-                  <template v-slot:label>
-                    <h3>
-                      The app will have total control on your server.
-                    </h3>
-                  </template>
-                </v-checkbox>
-                <span v-if="!$auth.user.is_superuser" class="red--text">
-                  The server management permission is being requested but your account is not an administrator
-                </span>
-              </div>
-            </v-col>
-            <v-col cols="12">
-              <div v-if="permissions.includes('store_management')">
-                <v-checkbox
-                  v-model="storeYes"
-                  :rules="[required]"
-                  class="form-check-inline"
-                >
-                  <template v-slot:label>
-                    <h3>
-                      The app will be able to create, modify and delete all your stores.
-                    </h3>
-                  </template>
-                </v-checkbox>
-                <div v-if="selectiveStores">
-                  <button v-if="allStores" class="green--text" @click="allStores = false">
-                    Give permission to specific stores instead
-                  </button>
-                  <div v-else>
-                    <button class="green--text" @click="allStores = true">
-                      Give permission to all stores instead
-                    </button>
-                    <v-autocomplete
-                      v-if="stores.length > 0"
-                      v-model="selectedStores"
-                      :items="stores"
-                      item-text="name"
-                      item-value="id"
-                      placeholder="Select stores"
-                      multiple
-                    />
-                    <p v-else class="red--text">
-                      You currently have no stores configured.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </v-col>
+            <permission-set
+              ref="permissionset"
+              tag="v-col"
+              :free-permissions="false"
+              :permission-prop="permissions"
+              :rules="[required]"
+              :strict="strict"
+            />
           </v-row>
         </div>
         <div v-else>
@@ -80,45 +31,46 @@
             </span>
           </p>
         </div>
+
+        <v-card-actions class="justify-center">
+          <v-btn
+            v-if="!token"
+            color="primary"
+            @click="createToken"
+          >
+            Authorize
+            app
+          </v-btn>
+          <v-btn
+            v-if="token"
+            color="primary"
+            @click="redirectToApp"
+          >
+            Authorize app(one time)
+          </v-btn>
+          <v-btn
+            v-if="token"
+            color="primary"
+            @click="changeRedirect"
+          >
+            Change current key's redirect URL
+          </v-btn>
+          <v-btn
+            v-if="token"
+            color="primary"
+            @click="createToken"
+          >
+            Generate a new key
+          </v-btn>
+          <v-btn
+            color="secondary"
+            value="No"
+            @click="$router.push('/')"
+          >
+            Cancel
+          </v-btn>
+        </v-card-actions>
       </v-container>
-      <v-card-actions class="justify-center">
-        <v-btn
-          v-if="!token"
-          color="primary"
-          @click="createToken"
-        >
-          Authorize
-          app
-        </v-btn>
-        <v-btn
-          v-if="token"
-          color="primary"
-          @click="redirectToApp"
-        >
-          Authorize app(one time)
-        </v-btn>
-        <v-btn
-          v-if="token"
-          color="primary"
-          @click="changeRedirect"
-        >
-          Change current key's redirect URL
-        </v-btn>
-        <v-btn
-          v-if="token"
-          color="primary"
-          @click="createToken"
-        >
-          Generate a new key
-        </v-btn>
-        <v-btn
-          color="secondary"
-          value="No"
-          @click="$router.push('/')"
-        >
-          Cancel
-        </v-btn>
-      </v-card-actions>
     </v-form>
     <v-snackbar
       v-model="showSnackbar"
@@ -140,7 +92,7 @@ export default {
     const { data } = await $axios.get('/stores?limit=-1')
     let redirectDomain = null
     let host = ''
-    let permissions = query.permissions
+    let permissions = query.permissions || []
     if (typeof permissions === 'string') { permissions = [permissions] }
     if (query.redirect) {
       if (process.server) {
@@ -162,14 +114,10 @@ export default {
     const { data: tokens2 } = await $axios.get(`/token${urlparams}`)
     let token = null
     if (tokens2.result.length > 0) { token = tokens2.result[0] }
-    return { stores: data.result, appName: query.app_name, permissions, appId: query.app_id, redirect: query.redirect, strict: JSON.parse(query.strict || true), selectiveStores: JSON.parse(query.selective_stores || false), redirectDomain: host, token }
+    return { stores: data.result, appName: query.app_name, permissions, appId: query.app_id, redirect: query.redirect, strict: JSON.parse(query.strict || true), redirectDomain: host, token }
   },
   data () {
     return {
-      allStores: true,
-      serverYes: this.$auth.user.is_superuser,
-      storeYes: true,
-      selectedStores: [],
       showSnackbar: false
     }
   },
@@ -193,7 +141,11 @@ export default {
     },
     createToken () {
       if (this.$refs.form.validate()) {
-        this.$axios.post('/token', { app_id: this.appId, permissions: this.permissions, redirect_url: this.redirectDomain, selective_stores: this.selectiveStores, selected_stores: this.selectedStores, strict: this.strict }).then((r) => {
+        let permissions
+        if (this.token) { permissions = this.token.permissions } else {
+          permissions = this.$refs.permissionset.postprocess({}).permissions
+        }
+        this.$axios.post('/token', { app_id: this.appId, permissions, redirect_url: this.redirectDomain, strict: this.strict }).then((r) => {
           this.copyText(r.data.access_token, 'key')
           setTimeout(() => {
             this.$store.dispatch('redirectA', { where: this.redirect, token: r.data.access_token, permissions: r.data.permissions, userId: r.data.user_id }).then((url) => {
