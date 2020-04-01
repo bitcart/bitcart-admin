@@ -168,7 +168,7 @@
 
               <v-card-actions>
                 <div class="flex-grow-1" />
-                <v-btn color="blue darken-1" text @click="close">
+                <v-btn color="blue darken-1" text @click="dialog = false">
                   Cancel
                 </v-btn>
                 <v-btn color="blue darken-1" text @click="save">
@@ -313,6 +313,14 @@ export default {
       type: Boolean,
       default: false
     },
+    editMode: {
+      type: Boolean,
+      default: false
+    },
+    dialogWatch: {
+      type: Boolean,
+      default: false
+    },
     postprocess: {
       type: Function,
       default: (data) => { return data }
@@ -446,6 +454,7 @@ export default {
       this.getItems('items', 'loading', this.url, sortBy, sortDesc, page, itemsPerPage, this.search, false, false, this.body)
     },
     dialog (val) {
+      this.$emit('update:dialogWatch', val)
       if (!val) { this.close() }
     },
     autosearches: {
@@ -541,6 +550,7 @@ export default {
         : baseURL
     },
     editItem (item) {
+      this.$emit('update:editMode', true)
       const urlObjs = this.headers.filter(x => x.input === 'autocomplete')
       const dateH = this.headers.find(x => x.input === 'datetime')
       this.editedIndex = this.items.indexOf(item)
@@ -582,25 +592,23 @@ export default {
       })
     },
     close () {
-      this.dialog = false
-      setTimeout(() => {
-        const imageH = this.headers.find(x => x.input === 'image')
-        const dateH = this.headers.find(x => x.input === 'datetime')
-        if (imageH) {
-          for (const imageInput of this.$refs.imageInput) { imageInput.clear() }
-        }
-        if (dateH) {
-          for (const dateInput of this.$refs.dateInput) { dateInput.clearHandler() }
-        }
-        for (const key in this.autosearches) {
-          this.autosearches[key] = null
-        }
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-        this.errors = {}
-        this.$refs.form.resetValidation()
-        this.postclose()
-      }, 300)
+      this.$emit('update:editMode', false)
+      const imageH = this.headers.find(x => x.input === 'image')
+      const dateH = this.headers.find(x => x.input === 'datetime')
+      if (imageH) {
+        for (const imageInput of this.$refs.imageInput) { imageInput.clear() }
+      }
+      if (dateH) {
+        for (const dateInput of this.$refs.dateInput) { dateInput.clearHandler() }
+      }
+      for (const key in this.autosearches) {
+        this.autosearches[key] = null
+      }
+      this.editedItem = Object.assign({}, this.defaultItem)
+      this.editedIndex = -1
+      this.errors = {}
+      this.$refs.form.resetValidation()
+      this.postclose()
     },
     handleErr (err) {
       if (err.response) {
@@ -637,9 +645,9 @@ export default {
           headers = { 'content-type': 'application/x-www-form-urlencoded' }
         }
         if (this.editedIndex > -1) {
-          this.$axios.patch(`/${this.url}/${this.editedItem.id}`, data, headers).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], resp.data); this.items[this.editedIndex].password = ''; this.$store.dispatch('syncStats', false); this.close() } }).catch(err => this.handleErr(err))
+          this.$axios.patch(`/${this.url}/${this.editedItem.id}`, data, headers).then((resp) => { if (resp.status === 200) { Object.assign(this.items[this.editedIndex], resp.data); this.items[this.editedIndex].password = ''; this.$store.dispatch('syncStats', false); this.dialog = false } }).catch(err => this.handleErr(err))
         } else {
-          this.$axios.post(`/${this.url}`, data, headers).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.close() } }).catch(err => this.handleErr(err))
+          this.$axios.post(`/${this.url}`, data, headers).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.dialog = false } }).catch(err => this.handleErr(err))
         }
       }
     },

@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import permissions from '@/data/permissions.json'
 import SelectivePermission from '@/components/SelectivePermission'
 import AutoComplete from '@/components/AutoComplete'
 export default {
@@ -50,7 +51,7 @@ export default {
 
   },
   data () {
-    const selectivePermissions = ['full_control', 'server', 'wallets', 'stores', 'discounts', 'products', 'invoices']
+    const selectivePermissions = permissions
     const defaultBool = Object.assign(...selectivePermissions.map((k, i) => ({ [k]: !this.freePermissions })))
     return {
       selectivePermissions,
@@ -64,11 +65,13 @@ export default {
       allSelected: {},
       selectiveProp: {
         server: false,
-        full_control: false
+        full_control: false,
+        token: false
       },
       customTitles: {
         server: 'The app will have full control on your server.',
-        full_control: 'Make the app access everything in your account, all current and further permissions included.'
+        full_control: 'Make the app access everything in your account, all current and further permissions included.',
+        token: 'The app will be able to list, modify and delete all your API keys.'
       }
     }
   },
@@ -84,7 +87,7 @@ export default {
       const permissions = []
       for (const permission of this.permissions) {
         let permissionName
-        if (permission === 'server') { permissionName = 'server_management' } else if (permission === 'full_control') { permissionName = permission } else { permissionName = `${permission.slice(0, -1)}_management` }
+        if (permission === 'server' || permission === 'token') { permissionName = `${permission}_management` } else if (permission === 'full_control') { permissionName = permission } else { permissionName = `${permission.slice(0, -1)}_management` }
         let allSelected = this.allSelected[permission]
         if (typeof allSelected === 'undefined') { allSelected = true }
         if (!allSelected && this.selectedItems[permission]) {
@@ -108,7 +111,7 @@ export default {
       return typeof val === 'undefined' ? true : val
     },
     check (val) {
-      if (val !== 'server' && val !== 'full_control') {
+      if (val !== 'server' && val !== 'token' && val !== 'full_control') {
         val = val.slice(0, -1)
       }
       if (val !== 'full_control') { val = `${val}_management` }

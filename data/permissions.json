@@ -1,6 +1,7 @@
 [
     "full_control",
     "server",
+    "token",
     "wallets",
     "stores",
     "discounts",

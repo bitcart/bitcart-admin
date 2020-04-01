@@ -7,9 +7,11 @@
       :postprocess="postprocess"
       :postsave="postsave"
       :postclose="postclose"
+      :dialog-watch.sync="dialogWatch"
+      :edit-mode.sync="editMode"
     >
       <template v-slot:dialog>
-        <permission-set ref="set" />
+        <permission-set v-show="dialogWatch && !editMode" ref="set" />
       </template>
     </item-data>
     <v-snackbar
@@ -54,7 +56,9 @@ export default {
       title: 'API Key',
       whatToCopy: 'ID',
       showSnackbar: false,
-      showSnackbar2: false
+      showSnackbar2: false,
+      dialogWatch: false,
+      editMode: false
     }
   },
   methods: {
