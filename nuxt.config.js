@@ -29,6 +29,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~/plugins/axios.js',
     '~/plugins/eventbus.js',
     { src: '~/plugins/imageinput.js', mode: 'client' },
     { src: '~/plugins/datetimepicker.js', mode: 'client' },
@@ -47,6 +48,11 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
+    ['nuxt-env', {
+      keys: [
+        { key: 'BITCART_ADMIN_URL', name: 'URL', default: 'http://localhost:8000' }
+      ]
+    }],
     '@nuxtjs/pwa',
     '@nuxtjs/axios',
     '@nuxtjs/auth'
@@ -77,7 +83,7 @@ export default {
         }
       }
     },
-    plugins: ['~/plugins/axios.js']
+    plugins: ['~/plugins/auth.js']
   },
 
   /*

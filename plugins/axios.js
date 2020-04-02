@@ -1,8 +1,3 @@
-export default ({ store, $axios, $auth }) => {
-  $axios.defaults.baseURL = store.state.env.URL
-  $axios.onError((error) => {
-    if (error.response && error.response.status === 401 && !error.config.url.endsWith('/token')) {
-      $auth.logout()
-    }
-  })
+export default ({ store, $axios }) => {
+  $axios.defaults.baseURL = store.$env.URL
 }

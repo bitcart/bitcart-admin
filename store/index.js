@@ -1,5 +1,4 @@
 export const state = () => ({
-  env: {},
   stats: {
     wallets: 0,
     stores: 0,
@@ -12,9 +11,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-  setEnv (state, env) {
-    state.env = env
-  },
   policies (state, value) {
     state.policies = value
   },
@@ -23,13 +19,8 @@ export const mutations = {
   }
 }
 export const actions = {
-  async nuxtServerInit ({ state, commit }) {
-    if (process.server) {
-      commit('setEnv', {
-        URL: process.env.BITCART_ADMIN_URL || 'http://localhost:8000'
-      })
-    }
-    this.$axios.defaults.baseURL = state.env.URL
+  async nuxtServerInit ({ commit }) {
+    this.$axios.defaults.baseURL = this.$env.URL
     const { data } = await this.$axios.get('/manage/policies')
     commit('policies', data)
   },
