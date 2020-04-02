@@ -81,15 +81,13 @@ export default {
   methods: {
     login () {
       if (this.$refs.form.validate()) {
-        this.$axios.post('/token', {
-          email: this.email,
-          password: this.password,
-          permissions: ['full_control'],
-          strict: false
-        }).then((resp) => {
-          this.$auth.setToken('local', 'Bearer ' + resp.data.access_token)
-          this.$axios.setHeader('Authorization', 'Bearer ' + resp.data.access_token)
-          this.$axios.get('/users/me').then((resp) => { this.$auth.setUser(resp.data); this.$router.push('/') })
+        this.$auth.loginWith('local', {
+          data: {
+            email: this.email,
+            password: this.password,
+            permissions: ['full_control'],
+            strict: false
+          }
         }).catch((err) => {
           if (err.response) {
             this.usernameErrors = []
