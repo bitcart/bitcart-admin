@@ -73,11 +73,7 @@
                 <v-form ref="form" v-model="formValid">
                   <v-container>
                     <v-row>
-                      <v-col
-                        v-for="header in dialogData"
-                        :key="header.value"
-                        :cols="header.input === 'image' ? 12: 6"
-                      >
+                      <component :is="header.input !== 'dynamic' ? 'v-col' : 'div'" v-for="header in dialogData" :key="header.value" :cols="header.input === 'image' ? 12: 6">
                         <v-text-field
                           v-if="header.input === 'text' || typeof header.input === 'undefined'"
                           :rules="header.rules"
@@ -86,6 +82,15 @@
                           :value="editedItem[header.value]"
                           @input="update(header.value, $event)"
                         />
+                        <template v-else-if="header.input === 'dynamic'">
+                          <v-container>
+                            <v-row>
+                              <v-col v-for="field in fields[header.value][editedItem[header.choice]]" :key="field" :cols="6">
+                                <v-text-field v-model="editedItem[header.value][field]" :label="field" />
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                        </template>
                         <v-switch v-else-if="header.input === 'switch'" v-model="editedItem[header.value]" :rules="header.rules" :error-messages="errors[header.text]" :label="header.text" />
                         <v-autocomplete
                           v-else-if="header.input === 'autocomplete'"
@@ -159,7 +164,7 @@
                           counter
                           @click:append="showPassword = !showPassword"
                         />
-                      </v-col>
+                      </component>
                       <slot name="dialog" />
                     </v-row>
                   </v-container>
@@ -183,9 +188,12 @@
         <v-switch v-model="switches[item.id]" readonly />
       </template>
       <template v-slot:expanded-item="{ item }">
-        <td v-for="header in toExpand" :key="header.text">
-          {{ header.text }}: {{ item[header.value] }}
-        </td>
+        <div v-for="header in toExpand" :key="header.text" style="white-space:pre;">
+          <component :is="header.component" v-if="header.component" :data="item[header.value]" />
+          <p v-else>
+            {{ header.text }}: {{ item[header.value] }}
+          </p>
+        </div>
       </template>
       <template v-slot:item.date="{ item }">
         {{ new Date(item.date).toLocaleString() }}
@@ -337,6 +345,7 @@ export default {
   data () {
     const autosearchA = Array.from(this.headers.filter(x => x.input === 'autocomplete'), x => x.value).map((k, i) => ({ [k]: null }))
     const lsearchA = Array.from(this.headers.filter(x => x.input === 'autocomplete'), x => x.value).map((k, i) => ({ [k]: false }))
+    const dsearchA = Array.from(this.headers.filter(x => x.input === 'dynamic'), x => x.value).map((k, i) => ({ [k]: {} }))
     const dt = {
       formValid: false,
       loadingSearches: lsearchA.length > 0 ? Object.assign(...lsearchA) : {},
@@ -358,6 +367,7 @@ export default {
       loading: true,
       editedIndex: -1,
       switches: {},
+      fields: dsearchA.length > 0 ? Object.assign(...dsearchA) : {},
       editedItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
       defaultItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
       items: [],
@@ -480,8 +490,18 @@ export default {
     for (const urlObj of this.headers.filter(x => x.input === 'autocomplete')) {
       this.getItemsNolimit(urlObj.value, urlObj.value, urlObj.url, [], [], 1, 5, '', false, true, urlObj.body)
     }
+    for (const field of this.headers.filter(x => x.input === 'dynamic')) {
+      this.fetchField(field)
+    }
   },
   methods: {
+    fetchField (field) {
+      this.defaultItem[field.choice] = undefined
+      this.editedItem[field.choice] = undefined
+      this.$axios.get(field.url).then((resp) => {
+        this.fields[field.value] = resp.data
+      })
+    },
     editItemObj (item, index) {
       Object.assign(this.items[index], item)
     },

@@ -1,4 +1,4 @@
 import Vue from 'vue'
-import VImageInput from '../node_modules/vuetify-image-input/a-la-carte'
+import VImageInput from 'vuetify-image-input'
 
 Vue.component('VImageInput', VImageInput)

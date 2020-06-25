@@ -35,6 +35,7 @@ export default {
         { text: 'Domain', value: 'domain' },
         { text: 'Template', value: 'template' },
         { text: 'Wallets', value: 'wallets', rules: ['required'], input: 'autocomplete', url: 'wallets', multiple: true, sortable: false },
+        { text: 'Notifications', value: 'notifications', input: 'autocomplete', url: 'notifications', multiple: true, sortable: false },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       actions: [
@@ -65,10 +66,13 @@ export default {
     }
   },
   methods: {
-    showEmail (item, itemIndex) {
-      this.showDialog = true
+    setup (item, itemIndex) {
       this.item = item
       this.itemIndex = itemIndex
+    },
+    showEmail (item, itemIndex) {
+      this.showDialog = true
+      this.setup(item, itemIndex)
     },
     testping (item) {
       this.emailCheck = ''
