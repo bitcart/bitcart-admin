@@ -1,6 +1,7 @@
 export const state = () => ({
   stats: {
     wallets: 0,
+    notifications: 0,
     stores: 0,
     discounts: 0,
     products: 0,

@@ -2,7 +2,7 @@
   <Default>
     <Toolbar />
     <v-row>
-      <v-col v-for="card in cards" :key="card.id">
+      <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
         <InfoCard :texts="card.texts" :link="card.link" />
       </v-col>
     </v-row>
@@ -34,6 +34,20 @@ export default {
         }
         ],
         link: '/wallets'
+      },
+      {
+        texts: [{
+          header: 'Notifications',
+          key: 'notifications',
+          value: ''
+        },
+        {
+          header: 'Total notifications:',
+          key: 'notifications',
+          value: 'notifications created'
+        }
+        ],
+        link: '/notifications'
       },
       {
         texts: [{

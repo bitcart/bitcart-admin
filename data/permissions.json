@@ -3,6 +3,7 @@
     "server",
     "token",
     "wallets",
+    "notifications",
     "stores",
     "discounts",
     "products",

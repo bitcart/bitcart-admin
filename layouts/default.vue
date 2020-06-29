@@ -26,7 +26,9 @@
       app
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-img max-height="60" contain src="/icon.png" />
+      <v-spacer />
+      <v-img max-height="60" max-width="65" contain src="/icon.png" />
+      <v-spacer />
       <v-menu
         :nudge-bottom="10"
         offset-y
