@@ -73,9 +73,18 @@
                 <v-form ref="form" v-model="formValid">
                   <v-container>
                     <v-row>
-                      <component :is="header.input !== 'dynamic' ? 'v-col' : 'div'" v-for="header in dialogData" :key="header.value" :cols="header.input === 'image' ? 12: 6">
+                      <component :is="header.input !== 'dynamic' ? 'v-col' : 'div'" v-for="header in dialogData" :key="header.value" :cols="['image','textarea'].includes(header.input) ? 12: 6">
                         <v-text-field
                           v-if="header.input === 'text' || typeof header.input === 'undefined'"
+                          :rules="header.rules"
+                          :error-messages="errors[header.text]"
+                          :label="header.text"
+                          :value="editedItem[header.value]"
+                          @input="update(header.value, $event)"
+                        />
+                        <v-textarea
+                          v-else-if="header.input === 'textarea'"
+                          :rows="10"
                           :rules="header.rules"
                           :error-messages="errors[header.text]"
                           :label="header.text"
@@ -92,7 +101,8 @@
                           </v-container>
                         </template>
                         <v-switch v-else-if="header.input === 'switch'" v-model="editedItem[header.value]" :rules="header.rules" :error-messages="errors[header.text]" :label="header.text" />
-                        <v-autocomplete
+                        <component
+                          :is="header.component || 'v-autocomplete'"
                           v-else-if="header.input === 'autocomplete'"
                           ref="autocomplete"
                           v-model="editedItem[header.value]"
@@ -132,7 +142,7 @@
                               </v-list-item-content>
                             </template>
                           </template>
-                        </v-autocomplete>
+                        </component>
                         <v-image-input
                           v-else-if="header.input === 'image'"
                           ref="imageInput"

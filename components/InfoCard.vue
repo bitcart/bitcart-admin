@@ -1,5 +1,5 @@
 <template>
-  <v-card height="100%" max-width="350" class="mx-auto">
+  <v-card height="100%" max-width="350" class="ml-1">
     <div v-for="text in texts" :key="text.header">
       <v-card-title>{{ text.header }}</v-card-title>
       <v-card-text>

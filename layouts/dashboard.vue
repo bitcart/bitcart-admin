@@ -51,6 +51,20 @@ export default {
       },
       {
         texts: [{
+          header: 'Templates',
+          key: 'templates',
+          value: ''
+        },
+        {
+          header: 'Total templates:',
+          key: 'templates',
+          value: 'templates created'
+        }
+        ],
+        link: '/templates'
+      },
+      {
+        texts: [{
           header: 'Stores',
           key: 'stores',
           value: ''
