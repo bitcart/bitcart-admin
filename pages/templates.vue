@@ -11,7 +11,7 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Name', value: 'name', input: 'autocomplete', component: 'v-combobox', url: 'templates/list', errors: { 'duplicate key value violates unique constraint "templates_name_key"': 'This template already exists' }, rules: ['required'] },
+        { text: 'Name', value: 'name', input: 'autocomplete', component: 'v-combobox', url: 'templates/list', errors: { 'duplicate key value violates unique constraint "templates_user_id_key"': 'This template already exists' }, rules: ['required'] },
         { text: 'Text', value: 'text', input: 'textarea', rules: ['required'] },
         { text: 'Actions', value: 'action', sortable: false }
       ],
