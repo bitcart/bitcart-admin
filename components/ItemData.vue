@@ -306,10 +306,14 @@
 <script>
 import debounce from 'lodash.debounce'
 import TabbedCheckout from '@/components/TabbedCheckout'
+let components = { TabbedCheckout }
+if (process.env.NODE_ENV === 'production') { // TODO: find a better way
+  const VAutocomplete = () => import('vuetify/lib/components/VAutocomplete').then(m => m.default)
+  const VCombobox = () => import('vuetify/lib/components/VCombobox').then(m => m.default)
+  components = Object.assign({}, components, { VAutocomplete, VCombobox })
+}
 export default {
-  components: {
-    TabbedCheckout
-  },
+  components,
   props: {
     headers: {
       type: Array,
