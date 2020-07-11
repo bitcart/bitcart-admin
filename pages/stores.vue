@@ -32,8 +32,6 @@ export default {
       headers: [
         { text: 'Name', value: 'name', rules: ['required'] },
         { text: 'Default currency', value: 'default_currency', default: 'USD', input: 'autocomplete', url: 'fiatlist', body: true },
-        { text: 'Domain', value: 'domain' },
-        { text: 'Template', value: 'template' },
         { text: 'Wallets', value: 'wallets', rules: ['required'], input: 'autocomplete', url: 'wallets', multiple: true, sortable: false },
         { text: 'Notifications', value: 'notifications', input: 'autocomplete', url: 'notifications', multiple: true, sortable: false },
         { text: 'Actions', value: 'action', sortable: false }
