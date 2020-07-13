@@ -6,11 +6,6 @@
           mdi-view-dashboard-outline
         </v-icon>Dashboard
       </v-btn>
-      <v-btn to="/settings" text>
-        <v-icon left>
-          mdi-circle-multiple-outline
-        </v-icon>Setting
-      </v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>

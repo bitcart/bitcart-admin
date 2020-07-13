@@ -13,8 +13,8 @@ export default {
     return {
       headers: [
         { text: 'Name', value: 'name', rules: ['required'] },
-        { text: 'Provider', value: 'provider', input: 'autocomplete', url: 'notifications/list' },
-        { text: 'Data', value: 'data', input: 'dynamic', url: '/notifications/schema', choice: 'provider', rules: ['required'], default: {}, expand: true, component: JSONField },
+        { text: 'Provider', value: 'provider', input: 'autocomplete', rules: ['required'], url: 'notifications/list' },
+        { text: 'Data', value: 'data', input: 'dynamic', url: '/notifications/schema', choice: 'provider', default: {}, expand: true, component: JSONField },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'notifications',

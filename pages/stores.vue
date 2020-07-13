@@ -5,10 +5,12 @@
       :url="url"
       :on.sync="showDialog"
       :headers="emailHeaders"
-      :item.sync="item"
+      :item="item"
+      :item-index="itemIndex"
       :custom-props="{loadingEmail, emailCheck, emailStatus}"
+      :show-new="false"
+      :edit-mode="true"
       title="store email settings"
-      mode="edit"
       @reset-custom-props="resetCustomProps"
     />
   </div>
@@ -57,11 +59,8 @@ export default {
       title: 'Store'
     }
   },
-  watch:
-  {
-    item (val) {
-      this.$bus.$emit('updateitem', val, this.itemIndex)
-    }
+  beforeMount () {
+    this.$bus.$on('updateitem', (item, index) => { this.item = item })
   },
   methods: {
     setup (item, itemIndex) {

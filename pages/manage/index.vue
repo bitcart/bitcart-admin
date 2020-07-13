@@ -1,5 +1,9 @@
 <template>
-  <item-data :headers="headers" :url="url" :title="title" />
+  <item-data :headers="headers" :url="url" :title="title">
+    <template v-slot:item.is_superuser="{item}">
+      <v-switch v-model="item.is_superuser" @change="updateSuperuser(item)" />
+    </template>
+  </item-data>
 </template>
 <script>
 import ItemData from '@/components/ItemData.vue'
@@ -12,13 +16,18 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Email', value: 'email', rules: ['email'] },
+        { text: 'Email', value: 'email', rules: ['required', 'email'] },
         { text: 'Password', value: 'password', mode: 'nodisplay', input: 'password', rules: ['required', 'min'], hint: 'At least 8 characters' },
         { text: 'Superuser', value: 'is_superuser', input: 'switch', default: false },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'users',
       title: 'User'
+    }
+  },
+  methods: {
+    updateSuperuser (item) {
+      this.$axios.patch(`/${this.url}/${item.id}`, item)
     }
   }
 }

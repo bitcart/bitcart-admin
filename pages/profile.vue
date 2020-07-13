@@ -10,6 +10,9 @@
       :dialog-watch.sync="dialogWatch"
       :edit-mode.sync="editMode"
     >
+      <template v-slot:item.current="{item}">
+        <v-switch :input-value="check(item.id)" readonly />
+      </template>
       <template v-slot:dialog>
         <permission-set v-show="dialogWatch && !editMode" ref="set" />
       </template>
@@ -61,7 +64,15 @@ export default {
       editMode: false
     }
   },
+  computed: {
+    token () {
+      return this.$auth.getToken('local')
+    }
+  },
   methods: {
+    check (id) {
+      return `Bearer ${id}` === this.token
+    },
     postprocess (data) {
       return this.$refs.set.postprocess(data)
     },
