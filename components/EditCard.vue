@@ -136,7 +136,7 @@
                     @click:append="showPassword = !showPassword"
                   />
                 </component>
-                <slot name="dialog" />
+                <slot :item="item" name="dialog" />
               </v-row>
             </v-container>
           </v-form>
@@ -199,6 +199,14 @@ export default {
       type: Boolean,
       default: false
     },
+    dialogWatch: {
+      type: Boolean,
+      default: false
+    },
+    body: {
+      type: Boolean,
+      default: false
+    },
     postprocess: {
       type: Function,
       default: (data) => { return data }
@@ -223,8 +231,7 @@ export default {
       autosearches: autosearchA.length > 0 ? Object.assign(...autosearchA) : {},
       errors: {},
       fields: dsearchA.length > 0 ? Object.assign(...dsearchA) : {},
-      editedItem: this.item,
-      defaultItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
+      defaultItem: this.headers.length > 0 ? Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))) : {},
       showPassword: false,
       rules: {
         required: value => (typeof value !== 'undefined' && !!value) || 'Required.',
@@ -286,10 +293,8 @@ export default {
   },
   watch: {
     dialog (val) {
+      this.$emit('update:dialogWatch', val)
       if (!val) { this.close() }
-    },
-    editedItem (val) {
-      this.$emit('update:item', val)
     },
     autosearches: {
       handler (val) {
@@ -319,8 +324,6 @@ export default {
   },
   methods: {
     fetchField (field) {
-      this.defaultItem[field.choice] = undefined
-      this.item[field.choice] = undefined
       this.$axios.get(field.url).then((resp) => {
         this.fields[field.value] = resp.data
       })
@@ -331,7 +334,8 @@ export default {
     getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search, multiple, autosearch, getBody) {
       multiple = multiple || false
       if (autosearch) { this.loadingSearches[loadingVal] = true } else { this[loadingVal] = true }
-      let url = `/${baseUrl}?offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
+      const paramString = baseUrl.includes('?') ? '&' : '?'
+      let url = `/${baseUrl}${paramString}offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
       if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
       this.$axios.get(url).then((resp) => {
         let items
@@ -361,7 +365,7 @@ export default {
       for (const key in this.autosearches) {
         this.autosearches[key] = null
       }
-      this.editedItem = Object.assign({}, this.defaultItem)
+      this.$emit('update:item', Object.assign({}, this.defaultItem))
       this.errors = {}
       this.showPassword = false
       this.$refs.form.resetValidation()
@@ -399,20 +403,36 @@ export default {
         let data = Object.assign({}, this.item)
         data = this.postprocess(data)
         let headers = {}
-        if (this.headers.some(x => x.input === 'image')) {
+        if (this.body || this.headers.some(x => x.input === 'image')) {
           const header = this.headers.find(x => x.input === 'image')
           const dataForm = new FormData()
-          if (data[header.value]) { dataForm.append(header.value, this.dataURLtoBlob(data[header.value])) }
-          delete data[header.value]
+          if (header) {
+            if (data[header.value]) { dataForm.append(header.value, this.dataURLtoBlob(data[header.value])) }
+            delete data[header.value]
+          }
           delete data.action
           dataForm.append('data', JSON.stringify(data))
           data = dataForm
           headers = { 'content-type': 'application/x-www-form-urlencoded' }
         }
         if (this.editMode) {
-          this.$axios.patch(`/${this.url}/${this.item.id}`, data, headers).then((resp) => { if (resp.status === 200) { resp.data.password = ''; this.$bus.$emit('updateitem', resp.data, this.itemIndex); this.$store.dispatch('syncStats', false); this.dialog = false } }).catch(err => this.handleErr(err))
+          this.$axios.patch(`/${this.url}/${this.item.id}`, data, headers).then((resp) => {
+            if (resp.status === 200) {
+              resp.data.password = ''
+              this.$bus.$emit('updateitem', resp.data, this.itemIndex)
+              this.$emit('update:item', Object.assign({}, this.defaultItem))
+              this.$store.dispatch('syncStats', false)
+              this.dialog = false
+            }
+          }).catch(err => this.handleErr(err))
         } else {
-          this.$axios.post(`/${this.url}`, data, headers).then((resp) => { if (resp.status === 200) { this.addItem(resp.data); this.dialog = false } }).catch(err => this.handleErr(err))
+          this.$axios.post(`/${this.url}`, data, headers).then((resp) => {
+            if (resp.status === 200) {
+              this.addItem(resp.data)
+              this.$emit('update:item', Object.assign({}, this.defaultItem))
+              this.dialog = false
+            }
+          }).catch(err => this.handleErr(err))
         }
       }
     },

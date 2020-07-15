@@ -1,12 +1,17 @@
 <template>
-  <item-data :headers="headers" :url="url" :title="title" />
+  <div>
+    <item-data :headers="headers" :url="url" :title="title" :actions="actions" />
+    <template-edit name="product" :item.sync="item" :item-index="itemIndex" :body="true" :show.sync="showTemplates" />
+  </div>
 </template>
 <script>
 import ItemData from '@/components/ItemData.vue'
+import TemplateEdit from '@/components/TemplateEdit.vue'
 export default {
   layout: 'dashboard',
   components: {
-    ItemData
+    ItemData,
+    TemplateEdit
   },
   data () {
     return {
@@ -24,8 +29,22 @@ export default {
         { text: 'Image', value: 'image', input: 'image' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
+      actions: [{
+        icon: 'mdi-text-box',
+        process: this.showTemplate
+      }],
+      item: {},
+      itemIndex: -1,
+      showTemplates: false,
       url: 'products',
       title: 'Product'
+    }
+  },
+  methods: {
+    showTemplate (item, itemIndex) {
+      this.showTemplates = true
+      this.item = JSON.parse(JSON.stringify(item))
+      this.itemIndex = itemIndex
     }
   }
 }

@@ -10,6 +10,7 @@
     :error-messages="errors"
     :label="text"
     :item-text="displayProp"
+    :clearable="clearable"
     color="blue-grey lighten-2"
     item-value="id"
     @input="updateValue"
@@ -55,6 +56,10 @@ export default {
       type: Boolean,
       default: false
     },
+    clearable: {
+      type: Boolean,
+      default: false
+    },
     rules: {
       type: Array,
       default () { return [] }
@@ -62,28 +67,32 @@ export default {
     displayProp: {
       type: String,
       default: 'name'
+    },
+    label: {
+      type: String,
+      default: null
+    },
+    initialItems: {
+      type: Array,
+      default () { return [] }
     }
-
   },
   data () {
     return {
       loading: false,
-      items: [],
+      items: this.initialItems,
       autosearch: '',
       errors: []
     }
   },
   computed: {
     text () {
-      return this.url.charAt(0).toUpperCase() + this.url.slice(1)
+      return this.label || this.url.charAt(0).toUpperCase() + this.url.slice(1)
     }
   },
   watch: {
-    autosearch: {
-      handler (val) {
-        this.fetchData(val)
-      },
-      deep: true
+    autosearch (val) {
+      this.fetchData(val)
     }
   },
   methods: {

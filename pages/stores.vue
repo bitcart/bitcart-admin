@@ -5,7 +5,7 @@
       :url="url"
       :on.sync="showDialog"
       :headers="emailHeaders"
-      :item="item"
+      :item.sync="item"
       :item-index="itemIndex"
       :custom-props="{loadingEmail, emailCheck, emailStatus}"
       :show-new="false"
@@ -13,16 +13,19 @@
       title="store email settings"
       @reset-custom-props="resetCustomProps"
     />
+    <template-edit name="store" :item.sync="item" :item-index="itemIndex" :show.sync="showTemplates" />
   </div>
 </template>
 <script>
 import ItemData from '@/components/ItemData.vue'
 import EditCard from '@/components/EditCard.vue'
+import TemplateEdit from '@/components/TemplateEdit.vue'
 export default {
   layout: 'dashboard',
   components: {
     ItemData,
-    EditCard
+    EditCard,
+    TemplateEdit
   },
   data () {
     return {
@@ -42,6 +45,10 @@ export default {
         {
           icon: 'mdi-email',
           process: this.showEmail
+        },
+        {
+          icon: 'mdi-text-box',
+          process: this.showTemplate
         }
       ],
       emailHeaders: [
@@ -55,6 +62,7 @@ export default {
         { input: 'progress', text: 'emailCheck', loading: 'loadingEmail', status: 'emailStatus' }
       ],
       showDialog: false,
+      showTemplates: false,
       url: 'stores',
       title: 'Store'
     }
@@ -64,11 +72,15 @@ export default {
   },
   methods: {
     setup (item, itemIndex) {
-      this.item = item
+      this.item = JSON.parse(JSON.stringify(item))
       this.itemIndex = itemIndex
     },
     showEmail (item, itemIndex) {
       this.showDialog = true
+      this.setup(item, itemIndex)
+    },
+    showTemplate (item, itemIndex) {
+      this.showTemplates = true
       this.setup(item, itemIndex)
     },
     testping (item) {
