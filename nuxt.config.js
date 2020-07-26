@@ -50,7 +50,8 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     ['nuxt-env', {
       keys: [
-        { key: 'BITCART_ADMIN_URL', name: 'URL', default: 'http://localhost:8000' }
+        { key: 'BITCART_ADMIN_URL', name: 'URL', default: 'http://localhost:8000' },
+        { key: 'BITCART_ADMIN_ONION_URL', name: 'ONION_URL' }
       ]
     }],
     '@nuxtjs/pwa',
@@ -65,7 +66,7 @@ export default {
     baseURL: 'http://localhost:8000'
   },
   router: {
-    middleware: ['auth']
+    middleware: ['onion', 'auth']
   },
   auth: {
     localStorage: false,

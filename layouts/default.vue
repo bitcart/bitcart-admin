@@ -29,6 +29,7 @@
       <v-spacer />
       <v-img max-height="60" max-width="65" contain src="/icon.png" />
       <v-spacer />
+      <onion-button v-if="onionURL" :url="onionURL" />
       <v-menu
         :nudge-bottom="10"
         offset-y
@@ -83,7 +84,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import OnionButton from '@/components/OnionButton'
 export default {
+  components: {
+    OnionButton
+  },
   data () {
     return {
       toolbar: false,
@@ -150,6 +156,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['onionURL']),
     availableItems () {
       return this.$auth.loggedIn ? this.profileItems.filter(x => !x.superuser || (x.superuser && this.$auth.user.is_superuser)) : this.guestItems
     }
@@ -165,6 +172,8 @@ export default {
     },
     handleLogout () {
       this.$auth.logout()
+      this.$store.commit('services', {})
+      this.$store.dispatch('fetchServices')
       this.$router.push('/login')
     }
   },
