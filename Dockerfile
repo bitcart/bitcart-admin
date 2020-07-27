@@ -1,4 +1,4 @@
-FROM node:11.13.0-alpine
+FROM node:10-alpine
 LABEL org.bitcartcc.image=admin
 RUN mkdir -p /usr/src/nuxt-app
 WORKDIR /usr/src/nuxt-app
