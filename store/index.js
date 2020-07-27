@@ -12,7 +12,8 @@ export const state = () => ({
   policies: {},
   services: {},
   path: '/',
-  onion: false
+  onion: false,
+  env: {}
 })
 
 export const mutations = {
@@ -30,15 +31,28 @@ export const mutations = {
   },
   path (state, value) {
     state.path = value
+  },
+  env (state, value) {
+    state.env = value
   }
 }
 export const actions = {
-  async nuxtServerInit ({ commit }) {
-    this.$axios.defaults.baseURL = this.$env.URL
-    const { data } = await this.$axios.get('/manage/policies')
-    const { data: services } = await this.$axios.get('/services')
+  async nuxtServerInit ({ commit, dispatch }, { req, $axios }) {
+    await dispatch('loadEnv', { env: this.$config, req })
+    const { data } = await $axios.get('/manage/policies')
+    const { data: services } = await $axios.get('/services')
     commit('policies', data)
     commit('services', services)
+  },
+  loadEnv ({ commit }, { env, req }) {
+    commit('env', {
+      URL: env.URL,
+      ONION_URL: env.ONION_URL,
+      SOCKS_PROXY: env.SOCKS_PROXY
+    })
+    if (req) {
+      commit('onion', req.headers.host.toLowerCase().endsWith('.onion'))
+    }
   },
   syncStats ({ commit, dispatch }, alwaysRun = true) {
     this.$axios.get('/manage/policies').then(resp => commit('policies', resp.data))
@@ -76,11 +90,11 @@ export const getters = {
     const service = services['BitcartCC Admin Panel']
     return service ? service.hostname + path : ''
   },
-  apiOnionURL ({ services }) {
+  apiOnionURL ({ services, env }) {
     const service = services['BitcartCC Merchants API']
-    return service ? service.hostname : ''
+    return env.ONION_URL ? env.ONION_URL : (service ? service.hostname : '')
   },
-  apiURL ({ onion }, { apiOnionURL }) {
-    return (onion && apiOnionURL) ? apiOnionURL : this.$env.URL
+  apiURL ({ onion, env }, { apiOnionURL }) {
+    return (onion && apiOnionURL) ? apiOnionURL : env.URL
   }
 }

@@ -26,7 +26,8 @@
     "@nuxtjs/pwa": "^3.0.0-0",
     "lodash.debounce": "^4.0.8",
     "nuxt": "^2.0.0",
-    "nuxt-env": "^0.1.0",
+    "socks-proxy-agent": "^5.0.0",
+    "vuetify": "~2.2",
     "vuetify-datetime-picker": "^2.1.1",
     "vuetify-image-input": "^19.1.0"
   },

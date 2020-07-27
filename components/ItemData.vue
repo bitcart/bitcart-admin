@@ -377,7 +377,7 @@ export default {
       this.showTabDialog = true
     },
     imageURL (url) {
-      return this.combineURLs(this.$store.$env.URL, url)
+      return this.combineURLs(this.$store.getters.apiURL, url)
     },
     showImage (item) {
       this.showImageItem = item
