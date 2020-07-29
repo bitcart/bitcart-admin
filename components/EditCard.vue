@@ -159,9 +159,9 @@
 <script>
 import debounce from 'lodash.debounce'
 let components = {}
-if (process.env.NODE_ENV === 'production') { // TODO: find a better way
-  const VAutocomplete = () => import('vuetify/lib/components/VAutocomplete').then(m => m.default)
-  const VCombobox = () => import('vuetify/lib/components/VCombobox').then(m => m.default)
+if (process.env.NODE_ENV === 'production') {
+  const VAutocomplete = require('vuetify/lib/components/VAutocomplete').default
+  const VCombobox = require('vuetify/lib/components/VCombobox').default
   components = Object.assign({}, components, { VAutocomplete, VCombobox })
 }
 export default {
