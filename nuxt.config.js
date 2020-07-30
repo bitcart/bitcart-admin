@@ -44,19 +44,26 @@ export default {
     '@nuxtjs/vuetify'
   ],
   /*
+  ** Runtime config
+  */
+  publicRuntimeConfig: {
+    URL: process.env.BITCART_ADMIN_URL || 'http://localhost:8000',
+    ONION_URL: process.env.BITCART_ADMIN_ONION_URL,
+    SOCKS_PROXY: process.env.BITCART_ADMIN_SOCKS_PROXY
+  },
+  /*
   ** Nuxt.js modules
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    ['nuxt-env', {
-      keys: [
-        { key: 'BITCART_ADMIN_URL', name: 'URL', default: 'http://localhost:8000' }
-      ]
-    }],
     '@nuxtjs/pwa',
     '@nuxtjs/axios',
     '@nuxtjs/auth'
   ],
+  /*
+  ** @nuxt/telemetry settings
+  */
+  telemetry: false,
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
@@ -65,7 +72,7 @@ export default {
     baseURL: 'http://localhost:8000'
   },
   router: {
-    middleware: ['auth']
+    middleware: ['onion', 'auth']
   },
   auth: {
     localStorage: false,

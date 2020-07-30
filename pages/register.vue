@@ -62,11 +62,16 @@
           </v-card-actions>
         </v-card>
       </v-form>
+      <onion-text-field />
     </v-col>
   </v-row>
 </template>
 <script>
+import OnionTextField from '@/components/OnionTextField'
 export default {
+  components: {
+    OnionTextField
+  },
   data () {
     return {
       email: '',
@@ -100,6 +105,8 @@ export default {
               permissions: ['full_control'],
               strict: false
             }
+          }).then((resp) => {
+            this.$store.dispatch('fetchServices')
           })
         }).catch((err) => {
           if (err.response) {

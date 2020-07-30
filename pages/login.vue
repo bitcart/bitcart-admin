@@ -54,13 +54,18 @@
           </v-card-actions>
         </v-card>
       </v-form>
+      <onion-text-field />
     </v-col>
   </v-row>
 </template>
 
 <script>
+import OnionTextField from '@/components/OnionTextField'
 export default {
   auth: 'guest',
+  components: {
+    OnionTextField
+  },
   data () {
     return {
       rememberme: false,
@@ -88,6 +93,8 @@ export default {
             permissions: ['full_control'],
             strict: false
           }
+        }).then((r) => {
+          this.$store.dispatch('fetchServices')
         }).catch((err) => {
           if (err.response) {
             this.usernameErrors = []

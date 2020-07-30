@@ -1,22 +1,19 @@
 <template>
-  <Default>
-    <Toolbar />
+  <Basicadmin>
     <v-row>
       <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
         <InfoCard :texts="card.texts" :link="card.link" />
       </v-col>
     </v-row>
     <slot />
-  </Default>
+  </Basicadmin>
 </template>
 <script>
-import Default from '@/layouts/default'
-import Toolbar from '@/components/Toolbar'
+import Basicadmin from '@/layouts/basicadmin'
 import InfoCard from '@/components/InfoCard'
 export default {
   components: {
-    Default,
-    Toolbar,
+    Basicadmin,
     InfoCard
   },
   data () {

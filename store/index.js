@@ -9,22 +9,50 @@ export const state = () => ({
     invoices: 0,
     balance: 0.0
   },
-  policies: {}
+  policies: {},
+  services: {},
+  path: '/',
+  onion: false,
+  env: {}
 })
 
 export const mutations = {
   policies (state, value) {
     state.policies = value
   },
+  services (state, value) {
+    state.services = value
+  },
   setStats (state, value) {
     state.stats = value
+  },
+  onion (state, value) {
+    state.onion = value
+  },
+  path (state, value) {
+    state.path = value
+  },
+  env (state, value) {
+    state.env = value
   }
 }
 export const actions = {
-  async nuxtServerInit ({ commit }) {
-    this.$axios.defaults.baseURL = this.$env.URL
-    const { data } = await this.$axios.get('/manage/policies')
+  async nuxtServerInit ({ commit, dispatch }, { req, $axios }) {
+    await dispatch('loadEnv', { env: this.$config, req })
+    const { data } = await $axios.get('/manage/policies')
+    const { data: services } = await $axios.get('/services')
     commit('policies', data)
+    commit('services', services)
+  },
+  loadEnv ({ commit }, { env, req }) {
+    commit('env', {
+      URL: env.URL,
+      ONION_URL: env.ONION_URL,
+      SOCKS_PROXY: env.SOCKS_PROXY
+    })
+    if (req) {
+      commit('onion', req.headers.host.toLowerCase().endsWith('.onion'))
+    }
   },
   syncStats ({ commit, dispatch }, alwaysRun = true) {
     this.$axios.get('/manage/policies').then(resp => commit('policies', resp.data))
@@ -36,6 +64,9 @@ export const actions = {
         dispatch('syncStats')
       }, 60000)
     }
+  },
+  fetchServices ({ commit }) {
+    return this.$axios.get('/services').then(r => commit('services', r.data))
   },
   redirectA (_, { where, token, permissions, userId }) {
     return new Promise((resolve, reject) => {
@@ -51,5 +82,19 @@ export const actions = {
         resolve([false, url.href])
       } else { resolve([true, '/']) }
     })
+  }
+}
+
+export const getters = {
+  onionURL ({ services, path }) {
+    const service = services['BitcartCC Admin Panel']
+    return service ? service.hostname + path : ''
+  },
+  apiOnionURL ({ services, env }) {
+    const service = services['BitcartCC Merchants API']
+    return env.ONION_URL ? env.ONION_URL : (service ? service.hostname : '')
+  },
+  apiURL ({ onion, env }, { apiOnionURL }) {
+    return (onion && apiOnionURL) ? apiOnionURL : env.URL
   }
 }

@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     startWebsocket () {
-      let url = this.combineURLs(`${this.$store.$env.URL}`, `/ws/invoices/${this.$route.params.id}?token=${this.$auth.getToken('local').replace('Bearer ', '')}`)
+      let url = this.combineURLs(`${this.$store.getters.apiURL}`, `/ws/invoices/${this.$route.params.id}?token=${this.$auth.getToken('local').replace('Bearer ', '')}`)
       url = url.replace('http://', 'ws://').replace('https://', 'wss://')
       const websocket = new WebSocket(url)
       websocket.onmessage = (event) => {
