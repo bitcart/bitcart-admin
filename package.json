@@ -23,7 +23,8 @@
     "@nuxtjs/auth": "^4.9.0",
     "@nuxtjs/axios": "^5.3.6",
     "@chenfengyuan/vue-qrcode": "^1.0.1",
-    "nuxt-start": "^2.0.0"
+    "nuxt-start": "^2.0.0",
+    "socks-proxy-agent": "^5.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
@@ -37,7 +38,6 @@
     "lint-staged": "^8.2.1",
     "lodash.debounce": "^4.0.8",
     "nuxt": "^2.0.0",
-    "socks-proxy-agent": "^5.0.0",
     "vuetify": "~2.2",
     "vuetify-datetime-picker": "^2.1.1",
     "vuetify-image-input": "^19.1.0"
