@@ -42,9 +42,7 @@ export default {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
-    '@nuxtjs/pwa',
-    '@nuxtjs/axios',
-    '@nuxtjs/auth'
+    '@nuxtjs/pwa'
   ],
   /*
   ** Runtime config
@@ -59,6 +57,8 @@ export default {
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
+    '@nuxtjs/axios',
+    '@nuxtjs/auth'
   ],
   /*
   ** @nuxt/telemetry settings
