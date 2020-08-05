@@ -1,22 +1,18 @@
-# bitcart-admin
+# BitcartCC Admin Panel
 
-> Bitcart admin panel
+[![CircleCI](https://circleci.com/gh/MrNaif2018/bitcart-admin.svg?style=svg)](https://circleci.com/gh/MrNaif2018/bitcart-admin)
 
-## Build Setup
+This is the BitcartCC Admin Panel.
 
-``` bash
-# install dependencies
-$ yarn install
+It is created to simplify usage of BitcartCC Merchants API, 
+making adding or editing data easy, plus containing a checkout page which can be used by various integrations.
 
-# serve with hot reload at localhost:3000
-$ yarn dev
+The admin panel always covers 100% of the Merchants API.
 
-# build for production and launch server
-$ yarn build
-$ yarn start
+[Live demo](https://admin.bitcartcc.com)
 
-# generate static project
-$ yarn generate
-```
+![](screenshot.png)
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
