@@ -10,7 +10,7 @@
         v-for="(itemv, key) in tabitem"
         :key="key"
       >
-        <v-card class="accent--border" raised="raised">
+        <v-card>
           <v-card-title class="justify-center">
             {{ checkoutPage && !isEmpty(product) ? product.name : 'QR code' }}
           </v-card-title>

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="pa-0">
     <v-snackbar
       v-model="showSnackbar"
       :timeout="2500"
@@ -9,7 +9,7 @@
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied to clipboard!
     </v-snackbar>
-    <v-card :loading="loading && !errorText" width="500px" class="accent--border mx-auto my-12" raised margin>
+    <v-card :loading="loading && !errorText" width="500px" class="accent--border mx-auto my-md-12" raised margin>
       <div v-if="loading">
         <v-card-text v-if="errorText" class="d-flex justify-center">
           {{ errorText }}
@@ -39,6 +39,7 @@
 import TabbedCheckout from '@/components/TabbedCheckout'
 export default {
   auth: false,
+  layout: 'base',
   components: {
     TabbedCheckout
   },
