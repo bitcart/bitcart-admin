@@ -22,7 +22,7 @@ export default {
         { text: 'Order', value: 'order_id' },
         { text: 'Discount', value: 'discount', mode: 'edit' },
         { text: 'Status', value: 'status', mode: 'edit' },
-        { text: 'Date', value: 'date', mode: 'display' },
+        { text: 'Created date', value: 'created', mode: 'display' },
         { text: 'Payment methods', value: 'payments', input: 'tabbed', mode: 'display', sortable: false },
         { text: 'Actions', value: 'action', sortable: false }
       ],

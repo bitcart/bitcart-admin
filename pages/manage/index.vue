@@ -19,6 +19,7 @@ export default {
         { text: 'Email', value: 'email', rules: ['required', 'email'] },
         { text: 'Password', value: 'password', mode: 'nodisplay', input: 'password', rules: ['required', 'min'], hint: 'At least 8 characters' },
         { text: 'Superuser', value: 'is_superuser', input: 'switch', default: false },
+        { text: 'Created date', value: 'created', mode: 'display' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'users',

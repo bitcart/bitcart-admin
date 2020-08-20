@@ -54,6 +54,11 @@
               <slot name="dialog" />
             </template>
           </edit-card>
+          <v-btn icon @click="triggerReload(false)">
+            <v-icon>
+              mdi-reload
+            </v-icon>
+          </v-btn>
         </v-toolbar>
       </template>
       <template v-slot:expanded-item="{ item }">
@@ -64,8 +69,8 @@
           </p>
         </div>
       </template>
-      <template v-slot:item.date="{ item }">
-        {{ new Date(item.date).toLocaleString() }}
+      <template v-slot:item.created="{ item }">
+        {{ new Date(item.created).toLocaleString() }}
       </template>
       <template v-slot:item.end_date="{ item }">
         {{ new Date(item.end_date).toLocaleString() }}
@@ -257,15 +262,12 @@ export default {
     options:
     {
       handler () {
-        const { sortBy, sortDesc, page, itemsPerPage } = this.options
-        this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+        this.triggerReload()
       },
       deep: true
     },
     search () {
-      const { sortBy, sortDesc, itemsPerPage } = this.options
-      const page = this.options.page = 1
-      this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+      this.triggerReload(true)
     },
     dialog (val) {
       this.$emit('update:dialogWatch', val)
@@ -278,6 +280,14 @@ export default {
     this.getItems = debounce(this.getItemsNolimit, 250)
   },
   methods: {
+    triggerReload (search = false) {
+      const { sortBy, sortDesc, itemsPerPage } = this.options
+      let page = this.options.page
+      if (search) {
+        page = this.options.page = 1
+      }
+      this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+    },
     editItemObj (item, index) {
       if (index === null) {
         if (!this.editing) { // fired too frequently
@@ -315,10 +325,8 @@ export default {
       })
     },
     addItem (item) {
+      this.triggerReload()
       this.postsave(item)
-      this.numItems++
-      this.items.push(item)
-      if (this.items.length > this.options.itemsPerPage * this.options.page) { this.options.page++ }
       this.$store.dispatch('syncStats', false)
     },
     combineURLs (baseURL, relativeURL) {
@@ -360,11 +368,10 @@ export default {
       this.dialog = true
     },
     deleteItem (item) {
-      const index = this.items.indexOf(item)
       this.$axios.delete(`/${this.url}/${item.id}`).then((resp) => {
-        this.items.splice(index, 1)
-        this.numItems--
-        if (this.items.length === 0 && this.options.page > 1) { this.options.page-- }
+        if (this.items.length - 1 === 0 && this.options.page > 1) {
+          this.options.page--
+        } else { this.triggerReload() }
         this.$store.dispatch('syncStats', false)
       })
     },

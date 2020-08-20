@@ -49,6 +49,7 @@ export default {
         { text: 'Default currency', value: 'default_currency', default: 'USD', input: 'autocomplete', url: 'fiatlist', body: true },
         { text: 'Wallets', value: 'wallets', rules: ['required'], input: 'autocomplete', url: 'wallets', multiple: true, sortable: false },
         { text: 'Notifications', value: 'notifications', input: 'autocomplete', url: 'notifications', multiple: true, sortable: false },
+        { text: 'Created date', value: 'created', mode: 'display' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       actions: [

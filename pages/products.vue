@@ -24,7 +24,7 @@ export default {
         { text: 'Status', value: 'status', mode: 'edit' },
         { text: 'Download URL', value: 'download_url' },
         { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },
-        { text: 'Date', value: 'date', mode: 'display' },
+        { text: 'Created date', value: 'created', mode: 'display' },
         { text: 'Description', value: 'description', expand: true },
         { text: 'Image', value: 'image', input: 'image' },
         { text: 'Actions', value: 'action', sortable: false }

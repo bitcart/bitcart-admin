@@ -53,6 +53,7 @@ export default {
         { text: 'App Domain', value: 'redirect_url' },
         { text: 'Permissions', value: 'permissions', mode: 'display' },
         { text: 'Current Key', value: 'current', input: 'switch', default: false, mode: 'display', sortable: false },
+        { text: 'Created date', value: 'created', mode: 'display' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'token',

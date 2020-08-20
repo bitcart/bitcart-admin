@@ -17,6 +17,7 @@ export default {
         { text: 'Promocode', value: 'promocode' },
         { text: 'Currencies', value: 'currencies' },
         { text: 'End date', value: 'end_date', input: 'datetime', rules: ['required'] },
+        { text: 'Created date', value: 'created', mode: 'display' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'discounts',

@@ -15,6 +15,7 @@ export default {
         { text: 'Balance', value: 'balance', mode: 'display' },
         { text: 'Currency', value: 'currency', default: 'btc' },
         { text: 'Xpub', value: 'xpub', expand: true, rules: ['required'], errors: { 'Wallet key invalid': 'Invalid xpub' } },
+        { text: 'Created date', value: 'created', mode: 'display' },
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'wallets',
