@@ -29,6 +29,13 @@ export default {
       url: 'invoices',
       title: 'Invoice'
     }
+  },
+  head () {
+    return {
+      script: [
+        { src: '/modal/bitcart.js' }
+      ]
+    }
   }
 }
 </script>
