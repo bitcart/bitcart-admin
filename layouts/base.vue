@@ -1,11 +1,8 @@
 <template>
-  <v-app dark>
+  <v-app dark :style="customStyle">
     <slot name="header" />
     <v-content>
-      <v-container>
-        <slot />
-        <nuxt />
-      </v-container>
+      <slot />
     </v-content>
     <slot name="footer" />
   </v-app>
@@ -13,10 +10,10 @@
 
 <script>
 export default {
-  beforeCreate () {
-    const hours = new Date().getHours()
-    const isDayTime = hours > 6 && hours < 20
-    if (!isDayTime) { this.$vuetify.theme.dark = true }
+  computed: {
+    customStyle () {
+      return this.$route.query.modal ? { background: 'rgba(55, 58, 60, 0.4)' } : {}
+    }
   },
   head () {
     return this.$store.state.policies.discourage_index ? {

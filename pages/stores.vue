@@ -13,6 +13,16 @@
       title="store email settings"
       @reset-custom-props="resetCustomProps"
     />
+    <edit-card
+      :url="url"
+      :on.sync="showSettingsDialog"
+      :headers="settingsHeaders"
+      :item.sync="item"
+      :item-index="itemIndex"
+      :show-new="false"
+      :edit-mode="true"
+      title="store checkout settings"
+    />
     <template-edit name="store" :item.sync="item" :item-index="itemIndex" :show.sync="showTemplates" />
   </div>
 </template>
@@ -47,6 +57,10 @@ export default {
           process: this.showEmail
         },
         {
+          icon: 'mdi-cog-outline',
+          process: this.showSettings
+        },
+        {
           icon: 'mdi-text-box',
           process: this.showTemplate
         }
@@ -61,7 +75,11 @@ export default {
         { text: 'Test ping', input: 'button', click: this.testping },
         { input: 'progress', text: 'emailCheck', loading: 'loadingEmail', status: 'emailStatus' }
       ],
+      settingsHeaders: [
+        { text: 'Invoice expiration', value: 'expiration', rules: ['int'], hint: 'In minutes' }
+      ],
       showDialog: false,
+      showSettingsDialog: false,
       showTemplates: false,
       url: 'stores',
       title: 'Store'
@@ -77,6 +95,10 @@ export default {
     },
     showEmail (item, itemIndex) {
       this.showDialog = true
+      this.setup(item, itemIndex)
+    },
+    showSettings (item, itemIndex) {
+      this.showSettingsDialog = true
       this.setup(item, itemIndex)
     },
     showTemplate (item, itemIndex) {

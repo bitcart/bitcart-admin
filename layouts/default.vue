@@ -71,7 +71,10 @@
       </v-app-bar>
     </template>
     <template v-slot:default>
-      <slot />
+      <v-container>
+        <slot />
+        <nuxt />
+      </v-container>
     </template>
     <template v-slot:footer>
       <v-footer
@@ -163,6 +166,11 @@ export default {
     availableItems () {
       return this.$auth.loggedIn ? this.profileItems.filter(x => !x.superuser || (x.superuser && this.$auth.user.is_superuser)) : this.guestItems
     }
+  },
+  beforeCreate () {
+    const hours = new Date().getHours()
+    const isDayTime = hours > 6 && hours < 20
+    if (!isDayTime) { this.$vuetify.theme.dark = true }
   },
   methods: {
     changeTheme () {

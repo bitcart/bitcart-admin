@@ -9,43 +9,64 @@
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied to clipboard!
     </v-snackbar>
-    <v-card :loading="loading && !errorText" width="500px" class="accent--border mx-auto my-md-12" raised margin>
-      <div v-if="loading">
-        <v-card-text v-if="errorText" class="d-flex justify-center">
-          {{ errorText }}
-        </v-card-text>
-        <v-card-text v-else class="d-flex justify-center">
-          Loading...
-        </v-card-text>
-      </div>
-      <div v-else>
-        <TabbedCheckout v-if="status === 'Pending' || status === 'active'" :checkout-page="true" :tabitem="invoice.payments" :invoice="invoice" :product="product" />
-        <div v-else>
-          <div :class="colorClass(texts[status].icon)" class="d-flex justify-center success-circle success-icon">
-            <v-icon :color="texts[status].icon === 'mdi-check' ? 'green' : 'red'" class="d-flex justify-center">
-              {{ texts[status].icon }}
-            </v-icon>
-          </div>
-          <div class="d-flex justify-center">
-            {{ texts[status].text }}
+    <v-dialog
+      hide-overlay
+      persistent
+      no-click-animation
+      :value="showDialog"
+      max-width="500px"
+      class="my-md-12 mx-auto"
+      transition="none"
+      :fullscreen="$vuetify.breakpoint.smAndDown"
+    >
+      <v-card :loading="loading && !errorText" class="elevation-24">
+        <div v-if="loading" :class="$route.query.modal ? 'pb-6' : 'py-6'">
+          <close-button @closedialog="closeDialog" />
+          <div v-if="errorText" class="text-center">
+            {{ errorText ? errorText : 'Loading...' }}
           </div>
         </div>
-      </div>
-    </v-card>
+        <div v-else>
+          <TabbedCheckout
+            v-if="status === 'Pending' || status === 'active'"
+            :checkout-page="true"
+            :tabitem="invoice.payments"
+            :invoice="invoice"
+            :product="product"
+            class="px-0 pb-0"
+            @closedialog="closeDialog"
+          />
+          <div v-else>
+            <close-button @closedialog="closeDialog" />
+            <div :class="colorClass(texts[status].icon)" class="d-flex justify-center success-circle success-icon">
+              <v-icon :color="texts[status].icon === 'mdi-check' ? 'green' : 'red'" class="d-flex justify-center">
+                {{ texts[status].icon }}
+              </v-icon>
+            </div>
+            <div class="d-flex justify-center">
+              {{ texts[status].text }}
+            </div>
+          </div>
+        </div>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import TabbedCheckout from '@/components/TabbedCheckout'
+import CloseButton from '@/components/CloseButton'
 export default {
   auth: false,
-  layout: 'base',
+  layout: 'checkout',
   components: {
-    TabbedCheckout
+    TabbedCheckout,
+    CloseButton
   },
   data () {
     return {
       showSnackbar: false,
+      showDialog: true,
       status: 'Pending',
       invoice: {},
       product: {},
@@ -77,11 +98,15 @@ export default {
       }
     }
   },
+  beforeCreate () {
+    this.$vuetify.theme.dark = false // dark theme unsupported here
+  },
   mounted () {
     this.$axios.get(`/invoices/${this.$route.params.id}`).then((resp) => {
       this.invoice = resp.data
       this.status = resp.data.status
       this.loading = false
+      window.parent.postMessage('loaded', '*')
       if (resp.data.products.length > 0) {
         this.$axios.get(`/products/${resp.data.products[0]}`).then((resp1) => {
           this.product = resp1.data
@@ -89,9 +114,20 @@ export default {
           this.startWebsocket()
         }).catch(err => (this.errorText = err))
       } else { this.startWebsocket() }
-    }).catch(err => (this.errorText = err))
+    }).catch(err => (this.setError(err)))
   },
   methods: {
+    setError (err) {
+      if (err.response && err.response.status === 404) {
+        this.errorText = 'Invoice not found'
+      } else {
+        this.errorText = err
+      }
+    },
+    closeDialog () {
+      this.showDialog = false
+      window.parent.postMessage('close', '*') // for iframes
+    },
     startWebsocket () {
       let url = this.combineURLs(`${this.$store.getters.apiURL}`, `/ws/invoices/${this.$route.params.id}?token=${this.$auth.getToken('local').replace('Bearer ', '')}`)
       url = url.replace('http://', 'ws://').replace('https://', 'wss://')

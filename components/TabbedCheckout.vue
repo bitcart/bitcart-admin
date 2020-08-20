@@ -1,5 +1,20 @@
 <template>
   <v-container>
+    <div v-if="checkoutPage">
+      <v-img contain max-height="40" src="/checkout-logo.png" class="mb-2">
+        <close-button @closedialog="$emit('closedialog')" />
+      </v-img>
+      <v-progress-linear :value="expirationPercentage" height="25" :color="mainProgressColor" :background-color="backgroundProgressColor" class="mx-0">
+        <v-progress-circular indeterminate size="18" color="white" width="3" class="ml-2" />
+        <p class="my-auto px-3 white--text subtitle-2">
+          {{ expiringSoon ? 'Invoice expiring soon...' : 'Awaiting payment...' }}
+        </p>
+        <v-spacer />
+        <p class="white--text my-auto subtitle-2 px-3">
+          {{ timerText }}
+        </p>
+      </v-progress-linear>
+    </div>
     <v-tabs v-if="showProp && !noTabs" v-model="selectedTab" show-arrows>
       <v-tab v-for="(item, key) in tabitem" :key="key">
         {{ key }}
@@ -39,7 +54,7 @@
             <v-btn v-if="!checkoutPage" class="justify-center" color="primary" @click="checkout(invoice.id)">
               <v-icon left="left">
                 mdi-open-in-new
-              </v-icon><span>Open checkout</span>
+              </v-icon><span>Open checkout <v-btn text color="white" @click.stop="showPopup">^</v-btn></span>
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -66,7 +81,11 @@
 </template>
 
 <script>
+import CloseButton from '@/components/CloseButton'
 export default {
+  components: {
+    CloseButton
+  },
   props: {
     showProp: {
       type: Boolean,
@@ -93,20 +112,62 @@ export default {
     return {
       selectedTab: null,
       whatToCopy: 'ID',
-      showSnackbar: false
+      showSnackbar: false,
+      endDate: new Date(),
+      expirationPercentage: 0,
+      timerText: ''
     }
   },
   computed: {
     noTabs () {
       return this.isEmpty(this.tabitem)
+    },
+    expiringSoon () {
+      return this.expirationPercentage >= 75
+    },
+    mainProgressColor () {
+      return this.expiringSoon ? 'red darken-2' : 'green darken-2'
+    },
+    backgroundProgressColor () {
+      return this.expiringSoon ? 'red' : 'green'
     }
+
   },
   watch: {
     showProp (val) {
       if (!val) { this.selectedTab = null }
     }
   },
+  mounted () {
+    const date = new Date()
+    date.setSeconds(date.getSeconds() + this.invoice.time_left)
+    this.endDate = date
+    this.startProgressTimer()
+  },
   methods: {
+    startProgressTimer () {
+      const timeLeftS = this.endDate ? (this.endDate.getTime() - new Date().getTime()) / 1000 : this.invoice.time_left
+      this.expirationPercentage = 100 - ((timeLeftS / this.invoice.expiration_seconds) * 100)
+      this.timerText = this.updateTimerText(timeLeftS)
+      if (this.expirationPercentage < 100) {
+        setTimeout(this.startProgressTimer, 500)
+      }
+    },
+    updateTimerText (timer) {
+      if (timer >= 0) {
+        let minutes = parseInt(timer / 60, 10)
+        minutes = minutes < 10 ? '0' + minutes : minutes
+        let seconds = parseInt(timer % 60, 10)
+        seconds = seconds < 10 ? '0' + seconds : seconds
+        return minutes + ':' + seconds
+      } else {
+        return '00:00'
+      }
+    },
+    showPopup () {
+      this.$emit('closedialog')
+      window.bitcart.showInvoice(this.invoice.id)
+    },
     isEmpty (obj) {
       return Object.entries(obj).length === 0 && obj.constructor === Object
     },

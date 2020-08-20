@@ -29,7 +29,7 @@
           />
           <v-spacer />
           <v-dialog v-model="showTabDialog" :fullscreen="$vuetify.breakpoint.smAndDown" max-width="500px">
-            <TabbedCheckout :show-prop="showTabDialog" :tabitem="tabbedDialogItem[tabbedName]" :invoice="tabbedDialogItem" class="pa-0" />
+            <TabbedCheckout :show-prop="showTabDialog" :tabitem="tabbedDialogItem[tabbedName]" :invoice="tabbedDialogItem" class="pa-0" @closedialog="showTabDialog = false" />
           </v-dialog>
           <v-dialog v-model="showImageDialog" max-width="500px">
             <v-card>

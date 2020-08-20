@@ -21,6 +21,8 @@
                     :rules="header.rules"
                     :error-messages="errors[header.text]"
                     :label="header.text"
+                    :hint="header.hint"
+                    persistent-hint
                     :value="item[header.value]"
                     @input="update(header.value, $event)"
                   />
