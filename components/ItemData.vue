@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-data-table
+      v-model="selected"
       :headers="defaultHeaders"
       :items="items"
       :items-per-page="5"
@@ -8,6 +9,7 @@
       :options.sync="options"
       :loading="loading"
       :show-expand="shouldExpand"
+      show-select
       loading-text="Loading..."
       class="elevation-1"
     >
@@ -40,6 +42,8 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+          <menu-dropdown :items="batchActions.concat(customBatchActions)" :process="processBatchCommand" title="Actions" />
+          <slot name="before-toolbar" />
           <edit-card
             :url="url"
             :headers="headers"
@@ -54,6 +58,7 @@
               <slot name="dialog" />
             </template>
           </edit-card>
+          <slot name="after-toolbar" />
           <v-btn icon @click="triggerReload(false)">
             <v-icon>
               mdi-reload
@@ -160,10 +165,12 @@
 import debounce from 'lodash.debounce'
 import EditCard from '@/components/EditCard'
 import TabbedCheckout from '@/components/TabbedCheckout'
+import MenuDropdown from '@/components/MenuDropdown'
 export default {
   components: {
     EditCard,
-    TabbedCheckout
+    TabbedCheckout,
+    MenuDropdown
   },
   props: {
     headers: {
@@ -189,6 +196,10 @@ export default {
     dialogWatch: {
       type: Boolean,
       default: false
+    },
+    customBatchActions: {
+      type: Array,
+      default () { return [] }
     },
     postprocess: {
       type: Function,
@@ -218,7 +229,12 @@ export default {
       loading: true,
       editedIndex: -1,
       editedItem: Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))),
-      items: []
+      items: [],
+      selected: [],
+      batchActions: [{
+        title: 'Delete',
+        command: 'delete'
+      }]
     }
   },
   computed: {
@@ -287,6 +303,12 @@ export default {
         page = this.options.page = 1
       }
       this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+    },
+    processBatchCommand (command) {
+      this.$axios.post(`/${this.url}/batch`, { ids: this.selected.map(x => x.id), command }).then((r) => {
+        this.triggerReload()
+      })
+      this.selected = []
     },
     editItemObj (item, index) {
       if (index === null) {

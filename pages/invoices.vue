@@ -1,12 +1,18 @@
 <template>
-  <item-data :headers="headers" :url="url" :title="title" />
+  <item-data :headers="headers" :url="url" :title="title" :custom-batch-actions="batchActions">
+    <template v-slot:before-toolbar>
+      <menu-dropdown :items="exportItems" :process="exportInvoices" title="Export" />
+    </template>
+  </item-data>
 </template>
 <script>
 import ItemData from '@/components/ItemData.vue'
+import MenuDropdown from '@/components/MenuDropdown'
 export default {
   layout: 'dashboard',
   components: {
-    ItemData
+    ItemData,
+    MenuDropdown
   },
   data () {
     return {
@@ -27,7 +33,37 @@ export default {
         { text: 'Actions', value: 'action', sortable: false }
       ],
       url: 'invoices',
-      title: 'Invoice'
+      title: 'Invoice',
+      exportItems: [{
+        title: 'JSON',
+        command: 'json'
+      },
+      {
+        title: 'CSV',
+        command: 'csv'
+      }],
+      batchActions: [{
+        title: 'Mark as invalid',
+        command: 'mark_invalid'
+      }]
+    }
+  },
+  methods: {
+    exportInvoices (format) {
+      this.$axios.get(`/invoices/export?export_format=${format}`, { responseType: 'blob' }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        const contentDisposition = response.headers['content-disposition']
+        let filename = 'unknown'
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename=(.+)/)
+          if (fileNameMatch.length === 2) { filename = fileNameMatch[1] }
+        }
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+      })
     }
   },
   head () {
