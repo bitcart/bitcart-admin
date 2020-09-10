@@ -1,6 +1,6 @@
 # BitcartCC Admin Panel
 
-[![CircleCI](https://circleci.com/gh/MrNaif2018/bitcart-admin.svg?style=svg)](https://circleci.com/gh/MrNaif2018/bitcart-admin)
+[![CircleCI](https://circleci.com/gh/bitcartcc/bitcart-admin.svg?style=svg)](https://circleci.com/gh/bitcartcc/bitcart-admin)
 
 This is the BitcartCC Admin Panel.
 
