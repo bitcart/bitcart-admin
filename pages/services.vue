@@ -35,19 +35,19 @@
                     Virtual port
                   </p>
                   <p class="subtitle">
-                    {{ service.port_definition[0] }}
+                    {{ service.port_definition.virtual_port }}
                   </p>
                   <p class="title">
                     IP Address
                   </p>
                   <p class="subtitle">
-                    {{ service.port_definition[1] }}
+                    {{ service.port_definition.ip }}
                   </p>
                   <p class="title">
                     Port
                   </p>
                   <p class="subtitle">
-                    {{ service.port_definition[2] }}
+                    {{ service.port_definition.port }}
                   </p>
                 </div>
               </div>
