@@ -129,7 +129,7 @@ export default {
       window.parent.postMessage('close', '*') // for iframes
     },
     startWebsocket () {
-      let url = this.combineURLs(`${this.$store.getters.apiURL}`, `/ws/invoices/${this.$route.params.id}?token=${this.$auth.getToken('local').replace('Bearer ', '')}`)
+      let url = this.combineURLs(`${this.$store.getters.apiURL}`, `/ws/invoices/${this.$route.params.id}`)
       url = url.replace('http://', 'ws://').replace('https://', 'wss://')
       const websocket = new WebSocket(url)
       websocket.onmessage = (event) => {
