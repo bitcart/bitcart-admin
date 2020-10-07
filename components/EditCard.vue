@@ -38,8 +38,8 @@
                   <template v-else-if="header.input === 'dynamic'">
                     <v-container>
                       <v-row>
-                        <v-col v-for="field in fields[header.value][item[header.choice]]" :key="field" :cols="6">
-                          <v-text-field v-model="item[header.value][field]" :label="field" :rules="[rules.required]" />
+                        <v-col v-for="field in getFields(header, item)" :key="field" :cols="6">
+                          <v-text-field v-model="item[header.value][field]" :label="field" :rules="isRequiredField(header, item, field) ? [rules.required] : []" />
                         </v-col>
                       </v-row>
                     </v-container>
@@ -325,6 +325,20 @@ export default {
     }
   },
   methods: {
+    getProperties (header, item) {
+      return this.fields[header.value][item[header.choice]]
+    },
+    getFields (header, item) {
+      const properties = this.getProperties(header, item)
+      const result = [...properties ? properties[header.propertiesKey] : []]
+      result.sort((a, b) => a.localeCompare(b))
+      result.sort((a, b) => (this.isRequiredField(header, item, a, properties) ? -1 : 1))
+      return result
+    },
+    isRequiredField (header, item, field, propertiesPassed) {
+      const properties = propertiesPassed || this.getProperties(header, item)
+      return properties[header.requiredKey].includes(field)
+    },
     fetchField (field) {
       this.$axios.get(field.url).then((resp) => {
         this.fields[field.value] = resp.data
