@@ -1,20 +1,9 @@
 <template>
-  <v-row
-    align="center"
-    justify="center"
-  >
-    <v-col
-      cols="12"
-      sm="8"
-      md="4"
-    >
+  <v-row align="center" justify="center">
+    <v-col cols="12" sm="8" md="4">
       <v-form ref="form" @submit.prevent="register">
         <v-card class="elevation-12">
-          <v-toolbar
-            color="primary"
-            dark
-            flat
-          >
+          <v-toolbar color="primary" dark flat>
             <v-spacer />
             <v-toolbar-title>Sign up</v-toolbar-title>
             <div class="flex-grow-1" />
@@ -42,23 +31,20 @@
             <v-text-field
               id="password2"
               v-model="repeat_password"
-              :rules="[rules.required,rules.min,rules.match]"
+              :rules="[rules.required, rules.min, rules.match]"
               label="Repeat Password"
               name="password2"
               prepend-icon="lock"
               type="password"
             />
             <div>
-              Already have an account ? <NuxtLink to="/login">
-                Sign in
-              </NuxtLink> instead
+              Already have an account ?
+              <NuxtLink to="/login"> Sign in </NuxtLink> instead
             </div>
           </v-card-text>
           <v-card-actions>
             <div class="flex-grow-1" />
-            <v-btn type="submit" color="primary">
-              Create account
-            </v-btn>
+            <v-btn type="submit" color="primary"> Create account </v-btn>
           </v-card-actions>
         </v-card>
       </v-form>
@@ -67,56 +53,70 @@
   </v-row>
 </template>
 <script>
-import OnionTextField from '@/components/OnionTextField'
+import OnionTextField from "@/components/OnionTextField"
 export default {
   components: {
-    OnionTextField
+    OnionTextField,
   },
-  data () {
+  data() {
     return {
-      email: '',
-      password: '',
-      repeat_password: '',
+      email: "",
+      password: "",
+      repeat_password: "",
       errors: [],
       rules: {
-        required: value => (typeof value !== 'undefined' && !!value) || 'Required.',
-        min: v => (typeof v !== 'undefined' && v.length >= 8) || 'Min 8 characters',
+        required: (value) =>
+          (typeof value !== "undefined" && !!value) || "Required.",
+        min: (v) =>
+          (typeof v !== "undefined" && v.length >= 8) || "Min 8 characters",
         email: (value) => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return (typeof value === 'undefined' || value === '' || value == null || pattern.test(value)) || 'Invalid e-mail.'
+          return (
+            typeof value === "undefined" ||
+            value === "" ||
+            value == null ||
+            pattern.test(value) ||
+            "Invalid e-mail."
+          )
         },
-        match: v => this.password === this.repeat_password || 'Passwords must match'
-      }
+        match: (v) =>
+          this.password === this.repeat_password || "Passwords must match",
+      },
     }
   },
-  auth: 'guest',
-  middleware: 'registeroff',
+  auth: "guest",
+  middleware: "registeroff",
   methods: {
-    register () {
+    register() {
       if (this.$refs.form.validate()) {
-        this.$axios.post('users', {
-          email: this.email,
-          password: this.password
-        }).then((r) => {
-          this.$auth.loginWith('local', {
-            data: {
-              email: this.email,
-              password: this.password,
-              permissions: ['full_control'],
-              strict: false
-            }
-          }).then((resp) => {
-            this.$store.dispatch('fetchServices')
+        this.$axios
+          .post("users", {
+            email: this.email,
+            password: this.password,
           })
-        }).catch((err) => {
-          if (err.response) {
-            if (err.response.data.detail.includes('users_email')) {
-              this.errors = ['That username is already taken']
+          .then((r) => {
+            this.$auth
+              .loginWith("local", {
+                data: {
+                  email: this.email,
+                  password: this.password,
+                  permissions: ["full_control"],
+                  strict: false,
+                },
+              })
+              .then((resp) => {
+                this.$store.dispatch("fetchServices")
+              })
+          })
+          .catch((err) => {
+            if (err.response) {
+              if (err.response.data.detail.includes("users_email")) {
+                this.errors = ["That username is already taken"]
+              }
             }
-          }
-        })
+          })
       }
-    }
-  }
+    },
+  },
 }
 </script>

@@ -10,22 +10,22 @@
   </Dashboard>
 </template>
 <script>
-import Dashboard from '@/layouts/dashboard'
+import Dashboard from "@/layouts/dashboard"
 export default {
   components: {
-    Dashboard
+    Dashboard,
   },
-  data () {
+  data() {
     return {
       drawer: true,
       items: [
-        { text: 'User management', to: '/manage' },
-        { text: 'Maintenance commands', to: '/manage/maintenance' },
-        { text: 'Policies', to: '/manage/policies' },
-        { text: 'Store Policies', to: '/manage/stores' },
-        { text: 'Daemons management', to: '/manage/daemons' }
-      ]
+        { text: "User management", to: "/manage" },
+        { text: "Maintenance commands", to: "/manage/maintenance" },
+        { text: "Policies", to: "/manage/policies" },
+        { text: "Store Policies", to: "/manage/stores" },
+        { text: "Daemons management", to: "/manage/daemons" },
+      ],
     }
-  }
+  },
 }
 </script>

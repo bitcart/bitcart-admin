@@ -1,8 +1,6 @@
 <template>
   <div>
-    <template v-for="(value, key) in data">
-      {{ key }}: {{ value }}
-    </template>
+    <template v-for="(value, key) in data"> {{ key }}: {{ value }} </template>
   </div>
 </template>
 
@@ -11,8 +9,8 @@ export default {
   props: {
     data: {
       type: Object,
-      required: true
-    }
-  }
+      required: true,
+    },
+  },
 }
 </script>

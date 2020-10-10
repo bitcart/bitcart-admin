@@ -3,7 +3,11 @@
     <p class="title">
       {{ title }}
     </p>
-    <v-checkbox v-if="type === 'checkbox'" v-model="data" @change="updatePolicy" />
+    <v-checkbox
+      v-if="type === 'checkbox'"
+      v-model="data"
+      @change="updatePolicy"
+    />
     <v-text-field
       v-else
       v-model="data"
@@ -19,34 +23,34 @@ export default {
   props: {
     title: {
       type: String,
-      default: ''
+      default: "",
     },
     what: {
       type: String,
-      default: ''
+      default: "",
     },
     initialValue: {
       type: null,
-      default: ''
+      default: "",
     },
     type: {
       type: String,
-      default: 'checkbox'
+      default: "checkbox",
     },
     policyUrl: {
       type: String,
-      default: '/manage/policies'
-    }
+      default: "/manage/policies",
+    },
   },
-  data () {
+  data() {
     return {
-      data: this.initialValue
+      data: this.initialValue,
     }
   },
   methods: {
-    updatePolicy (value) {
+    updatePolicy(value) {
       this.$axios.post(this.policyUrl, { [this.what]: value })
-    }
-  }
+    },
+  },
 }
 </script>

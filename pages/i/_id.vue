@@ -1,11 +1,6 @@
 <template>
   <v-container class="pa-0">
-    <v-snackbar
-      v-model="showSnackbar"
-      :timeout="2500"
-      color="success"
-      bottom
-    >
+    <v-snackbar v-model="showSnackbar" :timeout="2500" color="success" bottom>
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied to clipboard!
     </v-snackbar>
@@ -23,7 +18,7 @@
         <div v-if="loading" :class="$route.query.modal ? 'pb-6' : 'py-6'">
           <close-button @closedialog="closeDialog" />
           <div v-if="errorText" class="text-center">
-            {{ errorText ? errorText : 'Loading...' }}
+            {{ errorText ? errorText : "Loading..." }}
           </div>
         </div>
         <div v-else>
@@ -38,8 +33,14 @@
           />
           <div v-else>
             <close-button @closedialog="closeDialog" />
-            <div :class="colorClass(texts[status].icon)" class="d-flex justify-center success-circle success-icon">
-              <v-icon :color="texts[status].icon === 'mdi-check' ? 'green' : 'red'" class="d-flex justify-center">
+            <div
+              :class="colorClass(texts[status].icon)"
+              class="d-flex justify-center success-circle success-icon"
+            >
+              <v-icon
+                :color="texts[status].icon === 'mdi-check' ? 'green' : 'red'"
+                class="d-flex justify-center"
+              >
                 {{ texts[status].icon }}
               </v-icon>
             </div>
@@ -54,116 +55,135 @@
 </template>
 
 <script>
-import TabbedCheckout from '@/components/TabbedCheckout'
-import CloseButton from '@/components/CloseButton'
+import TabbedCheckout from "@/components/TabbedCheckout"
+import CloseButton from "@/components/CloseButton"
 export default {
   auth: false,
-  layout: 'checkout',
+  layout: "checkout",
   components: {
     TabbedCheckout,
-    CloseButton
+    CloseButton,
   },
-  data () {
+  data() {
     return {
       showSnackbar: false,
       showDialog: true,
-      status: 'Pending',
+      status: "Pending",
       invoice: {},
       product: {},
       loading: true,
-      errorText: '',
+      errorText: "",
       texts: {
         expired: {
-          icon: 'mdi-close',
-          text: 'This invoice has expired'
+          icon: "mdi-close",
+          text: "This invoice has expired",
         },
         complete: {
-          icon: 'mdi-check',
-          text: 'This invoice has been paid'
+          icon: "mdi-check",
+          text: "This invoice has been paid",
         },
-        Failed:
-        {
-          icon: 'mdi-close',
-          text: 'This invoice has failed'
+        Failed: {
+          icon: "mdi-close",
+          text: "This invoice has failed",
         },
-        Invalid:
-        {
-          icon: 'mdi-close',
-          text: 'This invoice is invalid'
+        Invalid: {
+          icon: "mdi-close",
+          text: "This invoice is invalid",
         },
-        '': {
-          icon: 'mdi-close',
-          text: 'This invoice is invalid'
-        }
-      }
+        "": {
+          icon: "mdi-close",
+          text: "This invoice is invalid",
+        },
+      },
     }
   },
-  beforeCreate () {
+  beforeCreate() {
     this.$vuetify.theme.dark = false // dark theme unsupported here
   },
-  mounted () {
-    this.$axios.get(`/invoices/${this.$route.params.id}`).then((resp) => {
-      this.invoice = resp.data
-      this.status = resp.data.status
-      this.loading = false
-      window.parent.postMessage('loaded', '*')
-      if (resp.data.products.length > 0) {
-        this.$axios.get(`/products/${resp.data.products[0]}`).then((resp1) => {
-          this.product = resp1.data
-          this.loading = false
+  mounted() {
+    this.$axios
+      .get(`/invoices/${this.$route.params.id}`)
+      .then((resp) => {
+        this.invoice = resp.data
+        this.status = resp.data.status
+        this.loading = false
+        window.parent.postMessage("loaded", "*")
+        if (resp.data.products.length > 0) {
+          this.$axios
+            .get(`/products/${resp.data.products[0]}`)
+            .then((resp1) => {
+              this.product = resp1.data
+              this.loading = false
+              this.startWebsocket()
+            })
+            .catch((err) => (this.errorText = err))
+        } else {
           this.startWebsocket()
-        }).catch(err => (this.errorText = err))
-      } else { this.startWebsocket() }
-    }).catch(err => (this.setError(err)))
+        }
+      })
+      .catch((err) => this.setError(err))
   },
   methods: {
-    setError (err) {
+    setError(err) {
       if (err.response && err.response.status === 404) {
-        this.errorText = 'Invoice not found'
+        this.errorText = "Invoice not found"
       } else {
         this.errorText = err
       }
     },
-    closeDialog () {
+    closeDialog() {
       this.showDialog = false
-      window.parent.postMessage('close', '*') // for iframes
+      window.parent.postMessage("close", "*") // for iframes
     },
-    startWebsocket () {
-      let url = this.combineURLs(`${this.$store.getters.apiURL}`, `/ws/invoices/${this.$route.params.id}`)
-      url = url.replace('http://', 'ws://').replace('https://', 'wss://')
+    startWebsocket() {
+      let url = this.combineURLs(
+        `${this.$store.getters.apiURL}`,
+        `/ws/invoices/${this.$route.params.id}`
+      )
+      url = url.replace("http://", "ws://").replace("https://", "wss://")
       const websocket = new WebSocket(url)
       websocket.onmessage = (event) => {
         const status = JSON.parse(event.data).status
-        if (this.invoice.status !== status) { window.parent.postMessage({ invoice_id: this.invoice.id, status }, '*') }
-        if (status === 'complete' && this.invoice.redirect_url) { window.location = this.invoice.redirect_url }
+        if (this.invoice.status !== status) {
+          window.parent.postMessage(
+            { invoice_id: this.invoice.id, status },
+            "*"
+          )
+        }
+        if (status === "complete" && this.invoice.redirect_url) {
+          window.location = this.invoice.redirect_url
+        }
         this.status = status
       }
     },
-    colorClass (icon) {
-      return { 'green-color': icon === 'mdi-check', 'red-color': icon !== 'mdi-check' }
+    colorClass(icon) {
+      return {
+        "green-color": icon === "mdi-check",
+        "red-color": icon !== "mdi-check",
+      }
     },
-    copyToClipboard (text) {
-      const el = document.createElement('textarea')
+    copyToClipboard(text) {
+      const el = document.createElement("textarea")
       el.value = text
-      el.setAttribute('readonly', '')
-      el.style.position = 'absolute'
-      el.style.left = '-9999px'
+      el.setAttribute("readonly", "")
+      el.style.position = "absolute"
+      el.style.left = "-9999px"
       document.body.appendChild(el)
       el.select()
-      document.execCommand('copy')
+      document.execCommand("copy")
       document.body.removeChild(el)
     },
-    copyText (text) {
+    copyText(text) {
       this.copyToClipboard(text)
-      this.whatToCopy = 'ID'
+      this.whatToCopy = "ID"
       this.showSnackbar = true
     },
-    combineURLs (baseURL, relativeURL) {
+    combineURLs(baseURL, relativeURL) {
       return relativeURL
-        ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+        ? baseURL.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "")
         : baseURL
-    }
-  }
+    },
+  },
 }
 </script>
 

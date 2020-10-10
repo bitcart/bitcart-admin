@@ -7,7 +7,7 @@
       filled
       dense
       class="pt-6"
-      style="font-size: 0.8em;"
+      style="font-size: 0.8em"
     >
       <template v-slot:prepend-inner>
         <onion-button :url="onionURL" />
@@ -17,20 +17,20 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import OnionButton from '@/components/OnionButton'
+import { mapGetters } from "vuex"
+import OnionButton from "@/components/OnionButton"
 export default {
   components: {
-    OnionButton
+    OnionButton,
   },
   props: {
     url: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   computed: {
-    ...mapGetters(['onionURL'])
-  }
+    ...mapGetters(["onionURL"]),
+  },
 }
 </script>
