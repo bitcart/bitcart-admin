@@ -49,7 +49,7 @@ export default {
     return {
       headers: [
         { text: 'Key', value: 'id', mode: 'display' },
-        { text: 'App ID', value: 'app_id', mode: 'create' },
+        { text: 'App ID', value: 'app_id', readonly: true },
         { text: 'App Domain', value: 'redirect_url' },
         { text: 'Permissions', value: 'permissions', mode: 'display' },
         { text: 'Current Key', value: 'current', input: 'switch', default: false, mode: 'display', sortable: false },
