@@ -24,6 +24,7 @@
                     :hint="header.hint"
                     persistent-hint
                     :value="item[header.value]"
+                    :readonly="header.readonly"
                     @input="update(header.value, $event)"
                   />
                   <v-textarea
