@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="done">
-      <p :class="{'red--text':error,'green--text':!error}">
+      <p :class="{ 'red--text': error, 'green--text': !error }">
         {{ detail }}
       </p>
     </div>
@@ -20,40 +20,43 @@ export default {
   props: {
     title: {
       type: String,
-      default: ''
+      default: "",
     },
     details: {
       type: String,
-      default: ''
+      default: "",
     },
     btnText: {
       type: String,
-      default: ''
+      default: "",
     },
     what: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
-  data () {
+  data() {
     return {
       done: false,
       error: false,
-      detail: false
+      detail: false,
     }
   },
   methods: {
-    manage (what) {
-      this.$axios.post(`/manage/${what}`).then((resp) => {
-        this.done = true
-        this.error = resp.data.status === 'error'
-        this.detail = resp.data.message
-      }).catch((err) => {
-        this.done = true
-        this.error = true
-        this.detail = err.response.data.detail
-      })
-    }
-  }
+    manage(what) {
+      this.$axios
+        .post(`/manage/${what}`)
+        .then((resp) => {
+          this.done = true
+          this.error = resp.data.status === "error"
+          this.detail = resp.data.message
+        })
+        .catch((err) => {
+          this.done = true
+          this.error = true
+          this.detail = err.response.data.detail
+        })
+    },
+  },
 }
 </script>

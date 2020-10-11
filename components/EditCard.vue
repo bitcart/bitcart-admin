@@ -1,10 +1,8 @@
 <template>
   <div>
     <v-dialog v-model="dialog" max-width="650px">
-      <template v-if="showNew" v-slot:activator="{ on:show }">
-        <v-btn color="primary" dark v-on="show">
-          New {{ title }}
-        </v-btn>
+      <template v-if="showNew" v-slot:activator="{ on: show }">
+        <v-btn color="primary" dark v-on="show"> New {{ title }} </v-btn>
       </template>
       <v-card>
         <v-card-title>
@@ -15,9 +13,17 @@
           <v-form ref="form" v-model="formValid">
             <v-container>
               <v-row>
-                <component :is="header.input !== 'dynamic' ? 'v-col' : 'div'" v-for="header in dialogData" :key="header.value" :cols="['image','textarea'].includes(header.input) ? 12: 6">
+                <component
+                  :is="header.input !== 'dynamic' ? 'v-col' : 'div'"
+                  v-for="header in dialogData"
+                  :key="header.value"
+                  :cols="['image', 'textarea'].includes(header.input) ? 12 : 6"
+                >
                   <v-text-field
-                    v-if="header.input === 'text' || typeof header.input === 'undefined'"
+                    v-if="
+                      header.input === 'text' ||
+                      typeof header.input === 'undefined'
+                    "
                     :rules="header.rules"
                     :error-messages="errors[header.text]"
                     :label="header.text"
@@ -39,13 +45,31 @@
                   <template v-else-if="header.input === 'dynamic'">
                     <v-container>
                       <v-row>
-                        <v-col v-for="field in getFields(header, item)" :key="field" :cols="6">
-                          <v-text-field v-model="item[header.value][field]" :label="field" :rules="isRequiredField(header, item, field) ? [rules.required] : []" />
+                        <v-col
+                          v-for="field in getFields(header, item)"
+                          :key="field"
+                          :cols="6"
+                        >
+                          <v-text-field
+                            v-model="item[header.value][field]"
+                            :label="field"
+                            :rules="
+                              isRequiredField(header, item, field)
+                                ? [rules.required]
+                                : []
+                            "
+                          />
                         </v-col>
                       </v-row>
                     </v-container>
                   </template>
-                  <v-switch v-else-if="header.input === 'switch'" v-model="item[header.value]" :rules="header.rules" :error-messages="errors[header.text]" :label="header.text" />
+                  <v-switch
+                    v-else-if="header.input === 'switch'"
+                    v-model="item[header.value]"
+                    :rules="header.rules"
+                    :error-messages="errors[header.text]"
+                    :label="header.text"
+                  />
                   <component
                     :is="header.component || 'v-autocomplete'"
                     v-else-if="header.input === 'autocomplete'"
@@ -70,7 +94,9 @@
                         :input-value="data.selected"
                         close
                         @click="data.select"
-                        @click:close="removeMultiple(item[header.value], data.item)"
+                        @click:close="
+                          removeMultiple(item[header.value], data.item)
+                        "
                       >
                         {{ data.item.name }}
                       </v-chip>
@@ -103,14 +129,23 @@
                     v-else-if="header.input === 'datetime'"
                     ref="dateInput"
                     v-model="item[header.value]"
-                    :text-field-props="{rules: header.rules}"
+                    :text-field-props="{ rules: header.rules }"
                     :label="header.text"
                     date-format="dd.MM.yyyy"
                   />
-                  <v-btn v-else-if="header.input === 'button'" color="primary" @click="header.click(item)">
+                  <v-btn
+                    v-else-if="header.input === 'button'"
+                    color="primary"
+                    @click="header.click(item)"
+                  >
                     {{ header.text }}
                   </v-btn>
-                  <div v-else-if="header.input === 'progress'" v-show="(customProps[header.loading] || customProps[header.status])">
+                  <div
+                    v-else-if="header.input === 'progress'"
+                    v-show="
+                      customProps[header.loading] || customProps[header.status]
+                    "
+                  >
                     <v-progress-circular
                       v-if="customProps[header.loading]"
                       indeterminate
@@ -150,9 +185,7 @@
           <v-btn color="blue darken-1" text @click="dialog = false">
             Cancel
           </v-btn>
-          <v-btn color="blue darken-1" text @click="save">
-            Save
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -160,11 +193,11 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce'
+import debounce from "lodash.debounce"
 let components = {}
-if (process.env.NODE_ENV === 'production') {
-  const VAutocomplete = require('vuetify/lib/components/VAutocomplete').default
-  const VCombobox = require('vuetify/lib/components/VCombobox').default
+if (process.env.NODE_ENV === "production") {
+  const VAutocomplete = require("vuetify/lib/components/VAutocomplete").default
+  const VCombobox = require("vuetify/lib/components/VCombobox").default
   components = Object.assign({}, components, { VAutocomplete, VCombobox })
 }
 export default {
@@ -172,61 +205,78 @@ export default {
   props: {
     on: {
       type: Boolean,
-      default: false
+      default: false,
     },
     headers: {
       type: Array,
-      default () { return [] }
+      default() {
+        return []
+      },
     },
     item: {
       type: Object,
-      default () { return {} }
+      default() {
+        return {}
+      },
     },
     itemIndex: {
       type: Number,
-      default: null
+      default: null,
     },
     url: {
       type: String,
-      default: ''
+      default: "",
     },
     title: {
       type: String,
-      default: ''
+      default: "",
     },
     showNew: {
       type: Boolean,
-      default: true
+      default: true,
     },
     editMode: {
       type: Boolean,
-      default: false
+      default: false,
     },
     dialogWatch: {
       type: Boolean,
-      default: false
+      default: false,
     },
     body: {
       type: Boolean,
-      default: false
+      default: false,
     },
     postprocess: {
       type: Function,
-      default: (data) => { return data }
+      default: (data) => {
+        return data
+      },
     },
     postclose: {
       type: Function,
-      default: () => {}
+      default: () => {},
     },
     customProps: {
       type: Object,
-      default () { return {} }
-    }
+      default() {
+        return {}
+      },
+    },
   },
-  data () {
-    const autosearchA = Array.from(this.headers.filter(x => x.input === 'autocomplete'), x => x.value).map((k, i) => ({ [k]: null }))
-    const lsearchA = Array.from(this.headers.filter(x => x.input === 'autocomplete'), x => x.value).map((k, i) => ({ [k]: false }))
-    const dsearchA = Array.from(this.headers.filter(x => x.input === 'dynamic'), x => x.value).map((k, i) => ({ [k]: {} }))
+  data() {
+    const autosearchA = Array.from(
+      this.headers.filter((x) => x.input === "autocomplete"),
+      (x) => x.value
+    ).map((k, i) => ({ [k]: null }))
+    const lsearchA = Array.from(
+      this.headers.filter((x) => x.input === "autocomplete"),
+      (x) => x.value
+    ).map((k, i) => ({ [k]: false }))
+    const dsearchA = Array.from(
+      this.headers.filter((x) => x.input === "dynamic"),
+      (x) => x.value
+    ).map((k, i) => ({ [k]: {} }))
     const dt = {
       formValid: false,
       loadingSearches: lsearchA.length > 0 ? Object.assign(...lsearchA) : {},
@@ -234,126 +284,212 @@ export default {
       autosearches: autosearchA.length > 0 ? Object.assign(...autosearchA) : {},
       errors: {},
       fields: dsearchA.length > 0 ? Object.assign(...dsearchA) : {},
-      defaultItem: this.headers.length > 0 ? Object.assign(...Array.from(this.headers, x => [x.value, x.default]).map((k, i) => ({ [k[0]]: typeof k[1] === 'undefined' ? '' : k[1] }))) : {},
+      defaultItem:
+        this.headers.length > 0
+          ? Object.assign(
+              ...Array.from(this.headers, (x) => [x.value, x.default]).map(
+                (k, i) => ({
+                  [k[0]]: typeof k[1] === "undefined" ? "" : k[1],
+                })
+              )
+            )
+          : {},
       showPassword: false,
       rules: {
-        required: value => (typeof value !== 'undefined' && !!value) || 'Required.',
-        min: v => (typeof v !== 'undefined' && v.length >= 8) || 'Min 8 characters',
+        required: (value) =>
+          (typeof value !== "undefined" && !!value) || "Required.",
+        min: (v) =>
+          (typeof v !== "undefined" && v.length >= 8) || "Min 8 characters",
         email: (value) => {
           const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return (typeof value === 'undefined' || value === '' || value == null || pattern.test(value)) || 'Invalid e-mail.'
+          return (
+            typeof value === "undefined" ||
+            value === "" ||
+            value == null ||
+            pattern.test(value) ||
+            "Invalid e-mail."
+          )
         },
-        int: v => isFinite(v) || 'Integer required',
+        int: (v) => isFinite(v) || "Integer required",
         url: (value) => {
-          if (typeof value === 'undefined' || value === '' || value == null) { return true }
+          if (typeof value === "undefined" || value === "" || value == null) {
+            return true
+          }
           try {
             new URL(value) // eslint-disable-line no-new
             return true
           } catch (_) {
-            return 'Invalid URL'
+            return "Invalid URL"
           }
-        }
-      }
+        },
+      },
     }
     dt.oldAutosearches = Object.assign({}, dt.autosearches)
     return dt
   },
   computed: {
     dialog: {
-      get () {
+      get() {
         return this.on
       },
-      set (value) {
-        this.$emit('update:on', value)
-      }
+      set(value) {
+        this.$emit("update:on", value)
+      },
     },
-    editedHeaders () {
+    editedHeaders() {
       return this.headers.map((x) => {
-        if (x.rules && !x.rules.some(y => typeof y === 'undefined')) {
+        if (x.rules && !x.rules.some((y) => typeof y === "undefined")) {
           return {
             ...x,
             rules: x.rules.map((y) => {
               return this.rules[y]
-            })
+            }),
           }
         } else {
           return { ...x, rules: [] }
         }
       })
     },
-    formTitle () {
+    formTitle() {
       return this.editMode ? `Edit ${this.title}` : `New ${this.title}`
     },
-    toEdit () {
-      return this.editedHeaders.filter(item => (item.value !== 'action' && (item.mode === 'edit' || item.mode === 'all' || item.mode === 'nodisplay' || typeof item.mode === 'undefined')))
+    toEdit() {
+      return this.editedHeaders.filter(
+        (item) =>
+          item.value !== "action" &&
+          (item.mode === "edit" ||
+            item.mode === "all" ||
+            item.mode === "nodisplay" ||
+            typeof item.mode === "undefined")
+      )
     },
-    toCreate () {
-      return this.editedHeaders.filter(item => (item.value !== 'action' && (item.mode === 'create' || item.mode === 'nodisplay' || typeof item.mode === 'undefined')))
+    toCreate() {
+      return this.editedHeaders.filter(
+        (item) =>
+          item.value !== "action" &&
+          (item.mode === "create" ||
+            item.mode === "nodisplay" ||
+            typeof item.mode === "undefined")
+      )
     },
-    dialogData () {
+    dialogData() {
       return this.editMode ? this.toEdit : this.toCreate
-    }
+    },
   },
   watch: {
-    dialog (val) {
-      this.$emit('update:dialogWatch', val)
-      if (!val) { this.close() }
+    dialog(val) {
+      this.$emit("update:dialogWatch", val)
+      if (!val) {
+        this.close()
+      }
     },
     autosearches: {
-      handler (val) {
+      handler(val) {
         const vm = this
         const key = Object.keys(val).filter(function (p) {
           return val[p] !== vm.oldAutosearches[p]
         })[0]
         val = val[key]
         this.oldAutosearches[key] = val
-        if (val === null || typeof val === 'undefined') { val = '' }
+        if (val === null || typeof val === "undefined") {
+          val = ""
+        }
         let limit = -1
-        if (!val) { limit = 5 }
-        const header = this.headers.find(x => x.value === key)
-        this.getItems(header.value, header.value, header.url, [], [], 1, limit, val, header.multiple || false, true, header.body)
+        if (!val) {
+          limit = 5
+        }
+        const header = this.headers.find((x) => x.value === key)
+        this.getItems(
+          header.value,
+          header.value,
+          header.url,
+          [],
+          [],
+          1,
+          limit,
+          val,
+          header.multiple || false,
+          true,
+          header.body
+        )
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
-  beforeMount () {
+  beforeMount() {
     this.getItems = debounce(this.getItemsNolimit, 250)
-    for (const urlObj of this.headers.filter(x => x.input === 'autocomplete')) {
-      this.getItemsNolimit(urlObj.value, urlObj.value, urlObj.url, [], [], 1, 5, '', false, true, urlObj.body)
+    for (const urlObj of this.headers.filter(
+      (x) => x.input === "autocomplete"
+    )) {
+      this.getItemsNolimit(
+        urlObj.value,
+        urlObj.value,
+        urlObj.url,
+        [],
+        [],
+        1,
+        5,
+        "",
+        false,
+        true,
+        urlObj.body
+      )
     }
-    for (const field of this.headers.filter(x => x.input === 'dynamic')) {
+    for (const field of this.headers.filter((x) => x.input === "dynamic")) {
       this.fetchField(field)
     }
   },
   methods: {
-    getProperties (header, item) {
+    getProperties(header, item) {
       return this.fields[header.value][item[header.choice]]
     },
-    getFields (header, item) {
+    getFields(header, item) {
       const properties = this.getProperties(header, item)
-      const result = [...properties ? properties[header.propertiesKey] : []]
+      const result = [...(properties ? properties[header.propertiesKey] : [])]
       result.sort((a, b) => a.localeCompare(b))
-      result.sort((a, b) => (this.isRequiredField(header, item, a, properties) ? -1 : 1))
+      result.sort((a, b) =>
+        this.isRequiredField(header, item, a, properties) ? -1 : 1
+      )
       return result
     },
-    isRequiredField (header, item, field, propertiesPassed) {
+    isRequiredField(header, item, field, propertiesPassed) {
       const properties = propertiesPassed || this.getProperties(header, item)
       return properties[header.requiredKey].includes(field)
     },
-    fetchField (field) {
+    fetchField(field) {
       this.$axios.get(field.url).then((resp) => {
         this.fields[field.value] = resp.data
       })
     },
-    update (key, value) {
+    update(key, value) {
       this.item[key] = value
     },
-    getItemsNolimit (toSave, loadingVal, baseUrl, sortBy, sortDesc, page, itemsPerPage, search, multiple, autosearch, getBody) {
+    getItemsNolimit(
+      toSave,
+      loadingVal,
+      baseUrl,
+      sortBy,
+      sortDesc,
+      page,
+      itemsPerPage,
+      search,
+      multiple,
+      autosearch,
+      getBody
+    ) {
       multiple = multiple || false
-      if (autosearch) { this.loadingSearches[loadingVal] = true } else { this[loadingVal] = true }
-      const paramString = baseUrl.includes('?') ? '&' : '?'
-      let url = `/${baseUrl}${paramString}offset=${(page - 1) * itemsPerPage}&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
-      if (sortBy.length === 1 && sortDesc.length === 1) { url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}` }
+      if (autosearch) {
+        this.loadingSearches[loadingVal] = true
+      } else {
+        this[loadingVal] = true
+      }
+      const paramString = baseUrl.includes("?") ? "&" : "?"
+      let url = `/${baseUrl}${paramString}offset=${
+        (page - 1) * itemsPerPage
+      }&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
+      if (sortBy.length === 1 && sortDesc.length === 1) {
+        url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}`
+      }
       this.$axios.get(url).then((resp) => {
         let items
         if (getBody) {
@@ -370,29 +506,33 @@ export default {
         }
       })
     },
-    close () {
-      const imageH = this.headers.find(x => x.input === 'image')
-      const dateH = this.headers.find(x => x.input === 'datetime')
+    close() {
+      const imageH = this.headers.find((x) => x.input === "image")
+      const dateH = this.headers.find((x) => x.input === "datetime")
       if (imageH) {
-        for (const imageInput of this.$refs.imageInput) { imageInput.clear() }
+        for (const imageInput of this.$refs.imageInput) {
+          imageInput.clear()
+        }
       }
       if (dateH) {
-        for (const dateInput of this.$refs.dateInput) { dateInput.clearHandler() }
+        for (const dateInput of this.$refs.dateInput) {
+          dateInput.clearHandler()
+        }
       }
       for (const key in this.autosearches) {
         this.autosearches[key] = null
       }
-      this.$emit('update:item', Object.assign({}, this.defaultItem))
+      this.$emit("update:item", Object.assign({}, this.defaultItem))
       this.errors = {}
       this.showPassword = false
       this.$refs.form.resetValidation()
-      const item = this.headers.find(x => x.input === 'progress')
+      const item = this.headers.find((x) => x.input === "progress")
       if (item) {
-        this.$emit('reset-custom-props')
+        this.$emit("reset-custom-props")
       }
       this.postclose()
     },
-    handleErr (err) {
+    handleErr(err) {
       if (err.response) {
         const errText = err.response.data.detail
         for (const header of this.headers) {
@@ -402,61 +542,79 @@ export default {
         }
       }
     },
-    dataURLtoBlob (dataurl) {
-      if (!dataurl) { return new Blob([]) }
-      const arr = dataurl.split(','); const mime = arr[0].match(/:(.*?);/)[1]
-      const bstr = atob(arr[1]); let n = bstr.length; const u8arr = new Uint8Array(n)
+    dataURLtoBlob(dataurl) {
+      if (!dataurl) {
+        return new Blob([])
+      }
+      const arr = dataurl.split(",")
+      const mime = arr[0].match(/:(.*?);/)[1]
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      const u8arr = new Uint8Array(n)
       while (n--) {
         u8arr[n] = bstr.charCodeAt(n)
       }
       return new Blob([u8arr], { type: mime })
     },
-    addItem (item) {
-      this.$bus.$emit('additem', item)
+    addItem(item) {
+      this.$bus.$emit("additem", item)
     },
-    save () {
+    save() {
       this.errors = {} // clean previous errors
       if (this.$refs.form.validate()) {
         let data = Object.assign({}, this.item)
         data = this.postprocess(data)
         let headers = {}
-        if (this.body || this.headers.some(x => x.input === 'image')) {
-          const header = this.headers.find(x => x.input === 'image')
+        if (this.body || this.headers.some((x) => x.input === "image")) {
+          const header = this.headers.find((x) => x.input === "image")
           const dataForm = new FormData()
           if (header) {
-            if (data[header.value]) { dataForm.append(header.value, this.dataURLtoBlob(data[header.value])) }
+            if (data[header.value]) {
+              dataForm.append(
+                header.value,
+                this.dataURLtoBlob(data[header.value])
+              )
+            }
             delete data[header.value]
           }
           delete data.action
-          dataForm.append('data', JSON.stringify(data))
+          dataForm.append("data", JSON.stringify(data))
           data = dataForm
-          headers = { 'content-type': 'application/x-www-form-urlencoded' }
+          headers = { "content-type": "application/x-www-form-urlencoded" }
         }
         if (this.editMode) {
-          this.$axios.patch(`/${this.url}/${this.item.id}`, data, headers).then((resp) => {
-            if (resp.status === 200) {
-              resp.data.password = ''
-              this.$bus.$emit('updateitem', resp.data, this.itemIndex)
-              this.$emit('update:item', Object.assign({}, this.defaultItem))
-              this.$store.dispatch('syncStats', false)
-              this.dialog = false
-            }
-          }).catch(err => this.handleErr(err))
+          this.$axios
+            .patch(`/${this.url}/${this.item.id}`, data, headers)
+            .then((resp) => {
+              if (resp.status === 200) {
+                resp.data.password = ""
+                this.$bus.$emit("updateitem", resp.data, this.itemIndex)
+                this.$emit("update:item", Object.assign({}, this.defaultItem))
+                this.$store.dispatch("syncStats", false)
+                this.dialog = false
+              }
+            })
+            .catch((err) => this.handleErr(err))
         } else {
-          this.$axios.post(`/${this.url}`, data, headers).then((resp) => {
-            if (resp.status === 200) {
-              this.addItem(resp.data)
-              this.$emit('update:item', Object.assign({}, this.defaultItem))
-              this.dialog = false
-            }
-          }).catch(err => this.handleErr(err))
+          this.$axios
+            .post(`/${this.url}`, data, headers)
+            .then((resp) => {
+              if (resp.status === 200) {
+                this.addItem(resp.data)
+                this.$emit("update:item", Object.assign({}, this.defaultItem))
+                this.dialog = false
+              }
+            })
+            .catch((err) => this.handleErr(err))
         }
       }
     },
-    removeMultiple (arr, item) {
+    removeMultiple(arr, item) {
       const index = arr.indexOf(item.id)
-      if (index >= 0) { arr.splice(index, 1) }
-    }
-  }
+      if (index >= 0) {
+        arr.splice(index, 1)
+      }
+    },
+  },
 }
 </script>

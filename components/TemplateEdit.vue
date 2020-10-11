@@ -11,77 +11,87 @@
     :dialog-watch.sync="dialogWatch"
     :title="title"
   >
-    <template v-if="dialogWatch" v-slot:dialog="{item:itemd}">
+    <template v-if="dialogWatch" v-slot:dialog="{ item: itemd }">
       <v-col v-for="template in defaultTemplates" :key="template">
-        <auto-complete v-model="itemd.templates[template]" :label="template" :initial-items="initialTemplates" url="templates" clearable />
+        <auto-complete
+          v-model="itemd.templates[template]"
+          :label="template"
+          :initial-items="initialTemplates"
+          url="templates"
+          clearable
+        />
       </v-col>
     </template>
   </edit-card>
 </template>
 <script>
-import EditCard from '@/components/EditCard.vue'
-import AutoComplete from '@/components/AutoComplete.vue'
+import EditCard from "@/components/EditCard.vue"
+import AutoComplete from "@/components/AutoComplete.vue"
 export default {
   components: {
     EditCard,
-    AutoComplete
+    AutoComplete,
   },
   props: {
     name: {
       type: String,
-      required: true
+      required: true,
     },
     item: {
       type: Object,
-      required: true
+      required: true,
     },
     itemIndex: {
       type: Number,
-      required: true
+      required: true,
     },
     show: {
       type: Boolean,
-      required: true
+      required: true,
     },
     body: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  data () {
+  data() {
     return {
       dialogWatch: false,
       initialTemplates: [],
-      defaultTemplates: []
+      defaultTemplates: [],
     }
   },
   computed: {
-    url () {
-      return this.name + 's'
+    url() {
+      return this.name + "s"
     },
-    title () {
+    title() {
       return `${this.name} default templates`
     },
     showCopy: {
-      get () {
+      get() {
         return this.show
       },
-      set (v) {
-        this.$emit('update:show', v)
-      }
+      set(v) {
+        this.$emit("update:show", v)
+      },
     },
     itemCopy: {
-      get () {
+      get() {
         return this.item
       },
-      set (v) {
-        this.$emit('update:item', v)
-      }
-    }
+      set(v) {
+        this.$emit("update:item", v)
+      },
+    },
   },
-  beforeMount () {
-    this.$axios.get(`/templates/list?applicable_to=${this.name}`).then((r) => { this.defaultTemplates = r.data.result })
-    this.$axios.get('/templates').then((r) => { this.initialTemplates = r.data.result })
-  }
+  beforeMount() {
+    this.$axios.get(`/templates/list?applicable_to=${this.name}`).then((r) => {
+      this.defaultTemplates = r.data.result
+    })
+    this.$axios.get("/templates").then((r) => {
+      this.initialTemplates = r.data.result
+    })
+  },
 }
 </script>

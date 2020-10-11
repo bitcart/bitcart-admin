@@ -11,41 +11,27 @@
           <v-list-item-content>
             <v-list-item-title class="display-1 pb-4" v-text="name" />
             <v-list-item-subtitle class="text--primary">
-              <p class="display-1">
-                General information
-              </p>
-              <p class="title">
-                Hostname
-              </p>
+              <p class="display-1">General information</p>
+              <p class="title">Hostname</p>
               <p class="subtitle">
                 {{ service.hostname }}
               </p>
               <div v-if="$auth.user.is_superuser">
-                <p class="title">
-                  Directory
-                </p>
+                <p class="title">Directory</p>
                 <p class="subtitle">
                   {{ service.directory }}
                 </p>
                 <div v-if="service.port_definition">
-                  <p class="display-1">
-                    Port definition
-                  </p>
-                  <p class="title">
-                    Virtual port
-                  </p>
+                  <p class="display-1">Port definition</p>
+                  <p class="title">Virtual port</p>
                   <p class="subtitle">
                     {{ service.port_definition.virtual_port }}
                   </p>
-                  <p class="title">
-                    IP Address
-                  </p>
+                  <p class="title">IP Address</p>
                   <p class="subtitle">
                     {{ service.port_definition.ip }}
                   </p>
-                  <p class="title">
-                    Port
-                  </p>
+                  <p class="title">Port</p>
                   <p class="subtitle">
                     {{ service.port_definition.port }}
                   </p>
@@ -62,11 +48,14 @@
 
 <script>
 export default {
-  layout: 'basicadmin',
+  layout: "basicadmin",
   computed: {
-    noServices () {
-      return Object.keys(this.$store.state.services).length === 0 && this.$store.state.services.constructor === Object
-    }
-  }
+    noServices() {
+      return (
+        Object.keys(this.$store.state.services).length === 0 &&
+        this.$store.state.services.constructor === Object
+      )
+    },
+  },
 }
 </script>

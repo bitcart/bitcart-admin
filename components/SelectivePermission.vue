@@ -8,7 +8,11 @@
     >
       <template v-slot:label>
         <h3>
-          {{ customTitle ? customTitle : `The app will be able to create, modify and delete all your ${title}.` }}
+          {{
+            customTitle
+              ? customTitle
+              : `The app will be able to create, modify and delete all your ${title}.`
+          }}
         </h3>
       </template>
     </v-checkbox>
@@ -31,37 +35,39 @@ export default {
   props: {
     value: {
       type: Boolean,
-      default: true
+      default: true,
     },
     all: {
       type: Boolean,
-      default: true
+      default: true,
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     customTitle: {
       type: String,
-      default: ''
+      default: "",
     },
     selective: {
       type: Boolean,
-      default: true
+      default: true,
     },
     rules: {
       type: Array,
-      default: () => { return [] }
+      default: () => {
+        return []
+      },
     },
     strict: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   methods: {
-    updateAll (value) {
-      this.$emit('update:all', value)
-    }
-  }
+    updateAll(value) {
+      this.$emit("update:all", value)
+    },
+  },
 }
 </script>

@@ -1,51 +1,77 @@
 <template>
   <div>
-    <item-data :headers="headers" :url="url" :title="title" :actions="actions" />
-    <template-edit name="product" :item.sync="item" :item-index="itemIndex" :body="true" :show.sync="showTemplates" />
+    <item-data
+      :headers="headers"
+      :url="url"
+      :title="title"
+      :actions="actions"
+    />
+    <template-edit
+      name="product"
+      :item.sync="item"
+      :item-index="itemIndex"
+      :body="true"
+      :show.sync="showTemplates"
+    />
   </div>
 </template>
 <script>
-import ItemData from '@/components/ItemData.vue'
-import TemplateEdit from '@/components/TemplateEdit.vue'
+import ItemData from "@/components/ItemData.vue"
+import TemplateEdit from "@/components/TemplateEdit.vue"
 export default {
-  layout: 'dashboard',
+  layout: "dashboard",
   components: {
     ItemData,
-    TemplateEdit
+    TemplateEdit,
   },
-  data () {
+  data() {
     return {
       headers: [
-        { text: 'Name', value: 'name', rules: ['required'] },
-        { text: 'Price', value: 'price', rules: ['required'] },
-        { text: 'Quantity', value: 'quantity', rules: ['required'] },
-        { text: 'Category', value: 'category' },
-        { text: 'Discounts', value: 'discounts', input: 'autocomplete', url: 'discounts', multiple: true, sortable: false },
-        { text: 'Status', value: 'status', mode: 'edit' },
-        { text: 'Download URL', value: 'download_url' },
-        { text: 'Store', value: 'store_id', rules: ['required'], input: 'autocomplete', url: 'stores' },
-        { text: 'Created date', value: 'created', mode: 'display' },
-        { text: 'Description', value: 'description', expand: true },
-        { text: 'Image', value: 'image', input: 'image' },
-        { text: 'Actions', value: 'action', sortable: false }
+        { text: "Name", value: "name", rules: ["required"] },
+        { text: "Price", value: "price", rules: ["required"] },
+        { text: "Quantity", value: "quantity", rules: ["required"] },
+        { text: "Category", value: "category" },
+        {
+          text: "Discounts",
+          value: "discounts",
+          input: "autocomplete",
+          url: "discounts",
+          multiple: true,
+          sortable: false,
+        },
+        { text: "Status", value: "status", mode: "edit" },
+        { text: "Download URL", value: "download_url" },
+        {
+          text: "Store",
+          value: "store_id",
+          rules: ["required"],
+          input: "autocomplete",
+          url: "stores",
+        },
+        { text: "Created date", value: "created", mode: "display" },
+        { text: "Description", value: "description", expand: true },
+        { text: "Image", value: "image", input: "image" },
+        { text: "Actions", value: "action", sortable: false },
       ],
-      actions: [{
-        icon: 'mdi-text-box',
-        process: this.showTemplate
-      }],
+      actions: [
+        {
+          icon: "mdi-text-box",
+          process: this.showTemplate,
+        },
+      ],
       item: {},
       itemIndex: -1,
       showTemplates: false,
-      url: 'products',
-      title: 'Product'
+      url: "products",
+      title: "Product",
     }
   },
   methods: {
-    showTemplate (item, itemIndex) {
+    showTemplate(item, itemIndex) {
       this.showTemplates = true
       this.item = JSON.parse(JSON.stringify(item))
       this.itemIndex = itemIndex
-    }
-  }
+    },
+  },
 }
 </script>

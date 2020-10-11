@@ -1,7 +1,11 @@
 <template>
   <div>
     <div v-for="permission in selectivePermissions" :key="permission">
-      <component :is="tag" v-if="freePermissions || check(permission)" rows="12">
+      <component
+        :is="tag"
+        v-if="freePermissions || check(permission)"
+        rows="12"
+      >
         <selective-permission
           :value="selectedBool[permission]"
           :all.sync="allSelected[permission]"
@@ -12,7 +16,12 @@
           :strict="strict"
           @input="addPermission(permission, $event)"
         >
-          <auto-complete v-model="selectedItems[permission]" :multiple="true" :url="permission" :display-prop="displayProp[permission] || 'name'" />
+          <auto-complete
+            v-model="selectedItems[permission]"
+            :multiple="true"
+            :url="permission"
+            :display-prop="displayProp[permission] || 'name'"
+          />
         </selective-permission>
       </component>
     </div>
@@ -20,44 +29,49 @@
 </template>
 
 <script>
-import permissions from '@/data/permissions.json'
-import SelectivePermission from '@/components/SelectivePermission'
-import AutoComplete from '@/components/AutoComplete'
+import permissions from "@/data/permissions.json"
+import SelectivePermission from "@/components/SelectivePermission"
+import AutoComplete from "@/components/AutoComplete"
 export default {
   components: {
     SelectivePermission,
-    AutoComplete
+    AutoComplete,
   },
   props: {
     tag: {
       type: String,
-      default: 'div'
+      default: "div",
     },
     freePermissions: {
       type: Boolean,
-      default: true
+      default: true,
     },
     strict: {
       type: Boolean,
-      default: false
+      default: false,
     },
     permissionProp: {
       type: Array,
-      default: () => { return [] }
+      default: () => {
+        return []
+      },
     },
     rules: {
       type: Array,
-      default: () => { return [] }
-    }
-
+      default: () => {
+        return []
+      },
+    },
   },
-  data () {
+  data() {
     const selectivePermissions = permissions
-    const defaultBool = Object.assign(...selectivePermissions.map((k, i) => ({ [k]: !this.freePermissions })))
+    const defaultBool = Object.assign(
+      ...selectivePermissions.map((k, i) => ({ [k]: !this.freePermissions }))
+    )
     return {
       selectivePermissions,
       displayProp: {
-        invoices: 'id'
+        invoices: "id",
       },
       permissions: new Set(),
       selectedItems: {},
@@ -67,16 +81,18 @@ export default {
       selectiveProp: {
         server: false,
         full_control: false,
-        token: false
+        token: false,
       },
       customTitles: {
-        server: 'The app will have full control on your server.',
-        full_control: 'Make the app access everything in your account, all current and further permissions included.',
-        token: 'The app will be able to list, modify and delete all your API keys.'
-      }
+        server: "The app will have full control on your server.",
+        full_control:
+          "Make the app access everything in your account, all current and further permissions included.",
+        token:
+          "The app will be able to list, modify and delete all your API keys.",
+      },
     }
   },
-  mounted () {
+  mounted() {
     for (const permission of this.selectivePermissions) {
       if (this.check(permission)) {
         this.permissions.add(permission)
@@ -84,20 +100,32 @@ export default {
     }
   },
   methods: {
-    addPermission (permission, value) {
+    addPermission(permission, value) {
       this.selectedBool[permission] = value
-      if (value) { this.permissions.add(permission) } else { this.permissions.delete(permission) }
+      if (value) {
+        this.permissions.add(permission)
+      } else {
+        this.permissions.delete(permission)
+      }
     },
-    editAll (permission, value) {
+    editAll(permission, value) {
       this.allSelected[permission] = value
     },
-    postprocess (data) {
+    postprocess(data) {
       const permissions = []
       for (const permission of this.permissions) {
         let permissionName
-        if (permission === 'server' || permission === 'token') { permissionName = `${permission}_management` } else if (permission === 'full_control') { permissionName = permission } else { permissionName = `${permission.slice(0, -1)}_management` }
+        if (permission === "server" || permission === "token") {
+          permissionName = `${permission}_management`
+        } else if (permission === "full_control") {
+          permissionName = permission
+        } else {
+          permissionName = `${permission.slice(0, -1)}_management`
+        }
         let allSelected = this.allSelected[permission]
-        if (typeof allSelected === 'undefined') { allSelected = true }
+        if (typeof allSelected === "undefined") {
+          allSelected = true
+        }
         if (!allSelected && this.selectedItems[permission]) {
           for (const item of this.selectedItems[permission]) {
             permissions.push(`${permissionName}:${item}`)
@@ -109,23 +137,24 @@ export default {
       data.permissions = permissions
       return data
     },
-    postclose () {
+    postclose() {
       this.selectedItems = {}
       this.allSelected = {}
       this.selectedBool = Object.assign({}, this.defaultBool)
       this.permissions = new Set()
     },
-    truthy (val) {
-      return typeof val === 'undefined' ? true : val
+    truthy(val) {
+      return typeof val === "undefined" ? true : val
     },
-    check (val) {
-      if (val !== 'server' && val !== 'token' && val !== 'full_control') {
+    check(val) {
+      if (val !== "server" && val !== "token" && val !== "full_control") {
         val = val.slice(0, -1)
       }
-      if (val !== 'full_control') { val = `${val}_management` }
+      if (val !== "full_control") {
+        val = `${val}_management`
+      }
       return this.permissionProp.includes(val)
-    }
-  }
-
+    },
+  },
 }
 </script>

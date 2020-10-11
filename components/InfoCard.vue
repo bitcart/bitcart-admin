@@ -9,14 +9,20 @@
       </v-card-text>
     </div>
     <v-card-actions>
-      <v-btn :to="link" color="primary">
-        Details
-      </v-btn>
+      <v-btn :to="link" color="primary"> Details </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 <script>
 export default {
-  props: { texts: { type: Array, default () { return [] } }, link: { type: String, required: true } }
+  props: {
+    texts: {
+      type: Array,
+      default() {
+        return []
+      },
+    },
+    link: { type: String, required: true },
+  },
 }
 </script>

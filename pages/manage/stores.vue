@@ -12,23 +12,25 @@
   </div>
 </template>
 <script>
-import PolicySetting from '@/components/PolicySetting.vue'
+import PolicySetting from "@/components/PolicySetting.vue"
 export default {
-  layout: 'admin',
-  middleware: 'superuserOnly',
+  layout: "admin",
+  middleware: "superuserOnly",
   components: {
-    PolicySetting
+    PolicySetting,
   },
-  data () {
+  data() {
     return {
       policies: {},
       titles: {
-        pos_id: 'ID of the store to enable on POS'
-      }
+        pos_id: "ID of the store to enable on POS",
+      },
     }
   },
-  beforeMount () {
-    this.$axios.get('/manage/stores').then(resp => (this.policies = resp.data))
-  }
+  beforeMount() {
+    this.$axios
+      .get("/manage/stores")
+      .then((resp) => (this.policies = resp.data))
+  },
 }
 </script>

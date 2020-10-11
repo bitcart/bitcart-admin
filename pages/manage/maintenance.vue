@@ -13,30 +13,31 @@
 </template>
 
 <script>
-import ManagementCommand from '@/components/ManagementCommand.vue'
+import ManagementCommand from "@/components/ManagementCommand.vue"
 export default {
-  layout: 'admin',
-  middleware: 'superuserOnly',
+  layout: "admin",
+  middleware: "superuserOnly",
   components: {
-    ManagementCommand
+    ManagementCommand,
   },
-  data () {
+  data() {
     return {
       commands: [
         {
-          title: 'Update the server',
-          details: "Updating your BitcartCC instance will make it unavailable for some time. When clicked, page won't automatically reload on successful update.",
-          btnText: 'Start update process',
-          what: 'update'
+          title: "Update the server",
+          details:
+            "Updating your BitcartCC instance will make it unavailable for some time. When clicked, page won't automatically reload on successful update.",
+          btnText: "Start update process",
+          what: "update",
         },
         {
-          title: 'Cleanup the server',
-          details: 'Free up server disk space by deleting unused docker images',
-          btnText: 'Start cleanup process',
-          what: 'cleanup'
-        }
-      ]
+          title: "Cleanup the server",
+          details: "Free up server disk space by deleting unused docker images",
+          btnText: "Start cleanup process",
+          what: "cleanup",
+        },
+      ],
     }
-  }
+  },
 }
 </script>

@@ -46,70 +46,82 @@ export default {
   props: {
     value: {
       type: null,
-      required: true
+      required: true,
     },
     url: {
       type: String,
-      required: true
+      required: true,
     },
     multiple: {
       type: Boolean,
-      default: false
+      default: false,
     },
     clearable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     rules: {
       type: Array,
-      default () { return [] }
+      default() {
+        return []
+      },
     },
     displayProp: {
       type: String,
-      default: 'name'
+      default: "name",
     },
     label: {
       type: String,
-      default: null
+      default: null,
     },
     initialItems: {
       type: Array,
-      default () { return [] }
-    }
+      default() {
+        return []
+      },
+    },
   },
-  data () {
+  data() {
     return {
       loading: false,
       items: this.initialItems,
-      autosearch: '',
-      errors: []
+      autosearch: "",
+      errors: [],
     }
   },
   computed: {
-    text () {
+    text() {
       return this.label || this.url.charAt(0).toUpperCase() + this.url.slice(1)
-    }
+    },
   },
   watch: {
-    autosearch (val) {
+    autosearch(val) {
       this.fetchData(val)
-    }
+    },
   },
   methods: {
-    updateValue (value) {
-      this.$emit('input', value)
+    updateValue(value) {
+      this.$emit("input", value)
     },
-    fetchData (val) {
-      if (val === null || typeof val === 'undefined') { val = '' }
+    fetchData(val) {
+      if (val === null || typeof val === "undefined") {
+        val = ""
+      }
       let limit = -1
-      if (!val) { limit = 5 }
+      if (!val) {
+        limit = 5
+      }
       const url = `/${this.url}?limit=${limit}&query=${val}&multiple=${this.multiple}`
-      this.$axios.get(url).then((resp) => { this.items = resp.data.result })
+      this.$axios.get(url).then((resp) => {
+        this.items = resp.data.result
+      })
     },
-    removeMultiple (item) {
+    removeMultiple(item) {
       const index = this.value.indexOf(item.id)
-      if (index >= 0) { this.value.splice(index, 1) }
-    }
-  }
+      if (index >= 0) {
+        this.value.splice(index, 1)
+      }
+    },
+  },
 }
 </script>

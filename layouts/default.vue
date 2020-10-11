@@ -1,10 +1,7 @@
 <template>
   <BaseLayout>
     <template v-slot:header>
-      <v-navigation-drawer
-        v-model="drawer"
-        app
-      >
+      <v-navigation-drawer v-model="drawer" app>
         <v-list>
           <v-list-item
             v-for="(item, i) in items"
@@ -22,10 +19,7 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-      <v-app-bar
-        fixed
-        app
-      >
+      <v-app-bar fixed app>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-spacer />
         <v-img max-height="60" max-width="65" contain src="/icon.png" />
@@ -40,9 +34,7 @@
         >
           <template v-slot:activator="{ on }">
             <v-btn icon large text v-on="on">
-              <v-icon size="30px">
-                account_circle
-              </v-icon>
+              <v-icon size="30px"> account_circle </v-icon>
             </v-btn>
           </template>
           <v-list class="pa-0">
@@ -65,9 +57,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-icon @click.stop="changeTheme">
-          mdi-moon-waning-crescent
-        </v-icon>
+        <v-icon @click.stop="changeTheme"> mdi-moon-waning-crescent </v-icon>
       </v-app-bar>
     </template>
     <template v-slot:default>
@@ -77,10 +67,7 @@
       </v-container>
     </template>
     <template v-slot:footer>
-      <v-footer
-        fixed
-        app
-      >
+      <v-footer fixed app>
         <span>&copy; BitcartCC 2018-2020</span>
       </v-footer>
     </template>
@@ -88,100 +75,106 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import BaseLayout from '@/layouts/base'
-import OnionButton from '@/components/OnionButton'
+import { mapGetters } from "vuex"
+import BaseLayout from "@/layouts/base"
+import OnionButton from "@/components/OnionButton"
 export default {
   components: {
     OnionButton,
-    BaseLayout
+    BaseLayout,
   },
-  data () {
+  data() {
     return {
       toolbar: false,
       dark: true,
       drawer: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
+          icon: "mdi-apps",
+          title: "Welcome",
+          to: "/",
         },
         {
-          icon: 'mdi-login',
-          title: 'Login',
-          to: '/login'
+          icon: "mdi-login",
+          title: "Login",
+          to: "/login",
         },
         {
-          icon: 'mdi-account-plus',
-          title: 'Register',
-          to: '/register'
-        }
+          icon: "mdi-account-plus",
+          title: "Register",
+          to: "/register",
+        },
       ],
       profileItems: [
         {
-          icon: 'mdi-view-dashboard-outline',
-          href: '/manage',
-          title: 'Server management',
+          icon: "mdi-view-dashboard-outline",
+          href: "/manage",
+          title: "Server management",
           superuser: true,
-          click: () => {}
+          click: () => {},
         },
         {
-          icon: 'account_circle',
-          href: '/profile',
-          title: 'Profile',
-          click: () => {}
+          icon: "account_circle",
+          href: "/profile",
+          title: "Profile",
+          click: () => {},
         },
         {
-          icon: 'settings',
-          href: '/settings',
-          title: 'Settings',
-          click: () => {}
+          icon: "settings",
+          href: "/settings",
+          title: "Settings",
+          click: () => {},
         },
         {
-          icon: 'fullscreen_exit',
-          href: '#',
-          title: 'Logout',
-          click: this.handleLogout
-        }
+          icon: "fullscreen_exit",
+          href: "#",
+          title: "Logout",
+          click: this.handleLogout,
+        },
       ],
       guestItems: [
         {
-          icon: 'mdi-login',
-          href: '/login',
-          title: 'Login',
-          click: () => {}
+          icon: "mdi-login",
+          href: "/login",
+          title: "Login",
+          click: () => {},
         },
         {
-          icon: 'mdi-account-plus',
-          href: '/register',
-          title: 'Register',
-          click: () => {}
-        }
-      ]
+          icon: "mdi-account-plus",
+          href: "/register",
+          title: "Register",
+          click: () => {},
+        },
+      ],
     }
   },
   computed: {
-    ...mapGetters(['onionURL']),
-    availableItems () {
-      return this.$auth.loggedIn ? this.profileItems.filter(x => !x.superuser || (x.superuser && this.$auth.user.is_superuser)) : this.guestItems
-    }
+    ...mapGetters(["onionURL"]),
+    availableItems() {
+      return this.$auth.loggedIn
+        ? this.profileItems.filter(
+            (x) => !x.superuser || (x.superuser && this.$auth.user.is_superuser)
+          )
+        : this.guestItems
+    },
   },
-  beforeCreate () {
+  beforeCreate() {
     const hours = new Date().getHours()
     const isDayTime = hours > 6 && hours < 20
-    if (!isDayTime) { this.$vuetify.theme.dark = true }
+    if (!isDayTime) {
+      this.$vuetify.theme.dark = true
+    }
   },
   methods: {
-    changeTheme () {
+    changeTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
     },
-    handleLogout () {
+    handleLogout() {
       this.$auth.logout()
-      this.$store.commit('services', {})
-      this.$store.dispatch('fetchServices')
-      this.$router.push('/login')
-    }
-  }
+      this.$store.commit("services", {})
+      this.$store.dispatch("fetchServices")
+      this.$router.push("/login")
+    },
+  },
 }
 </script>
