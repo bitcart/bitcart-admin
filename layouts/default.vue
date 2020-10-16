@@ -68,7 +68,19 @@
     </template>
     <template v-slot:footer>
       <v-footer fixed app>
-        <span>&copy; BitcartCC 2018-2020</span>
+        <span>&copy; BitcartCC v{{ VERSION }}</span>
+        <v-spacer />
+        <nuxt-link
+          v-if="
+            $auth.loggedIn &&
+            $auth.user.is_superuser &&
+            $store.state.updatedata.update_available
+          "
+          to="/manage/maintenance"
+          >An update is available (to v{{
+            $store.state.updatedata.tag
+          }})</nuxt-link
+        >
       </v-footer>
     </template>
   </BaseLayout>
@@ -78,6 +90,7 @@
 import { mapGetters } from "vuex"
 import BaseLayout from "@/layouts/base"
 import OnionButton from "@/components/OnionButton"
+import VERSION from "@/version"
 export default {
   components: {
     OnionButton,
@@ -85,6 +98,7 @@ export default {
   },
   data() {
     return {
+      VERSION,
       toolbar: false,
       dark: true,
       drawer: false,

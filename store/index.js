@@ -14,6 +14,7 @@ export const state = () => ({
   path: "/",
   onion: false,
   env: {},
+  updatedata: {},
 })
 
 export const mutations = {
@@ -35,14 +36,19 @@ export const mutations = {
   env(state, value) {
     state.env = value
   },
+  updatedata(state, value) {
+    state.updatedata = value
+  },
 }
 export const actions = {
   async nuxtServerInit({ commit, dispatch }, { req, $axios }) {
     await dispatch("loadEnv", { env: this.$config, req })
     const { data } = await $axios.get("/manage/policies")
     const { data: services } = await $axios.get("/services")
+    const { data: updatedata } = await $axios.get("/updatecheck")
     commit("policies", data)
     commit("services", services)
+    commit("updatedata", updatedata)
   },
   loadEnv({ commit }, { env, req }) {
     commit("env", {

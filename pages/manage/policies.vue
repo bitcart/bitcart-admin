@@ -23,6 +23,7 @@ export default {
       titles: {
         disable_registration: "Disable user registration",
         discourage_index: "Discourage search engines from indexing this site",
+        check_updates: "Check for updates once a day",
       },
     }
   },
