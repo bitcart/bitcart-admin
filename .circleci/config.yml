@@ -58,8 +58,6 @@ workflows:
       - test
       - deploy:
           context: global
-          requires:
-            - test
           filters:
             branches:
               ignore: /.*/
