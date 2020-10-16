@@ -22,7 +22,7 @@
       <v-app-bar fixed app>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
         <v-spacer />
-        <v-img max-height="60" max-width="65" contain src="/icon.png" />
+        <v-img max-height="60" max-width="60" contain src="/icon.svg" />
         <v-spacer />
         <onion-button v-if="onionURL" :url="onionURL" />
         <v-menu
