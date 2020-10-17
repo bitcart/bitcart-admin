@@ -134,12 +134,6 @@ export default {
           click: () => {},
         },
         {
-          icon: "settings",
-          href: "/settings",
-          title: "Settings",
-          click: () => {},
-        },
-        {
           icon: "fullscreen_exit",
           href: "#",
           title: "Logout",
