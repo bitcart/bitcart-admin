@@ -13,7 +13,13 @@ export default {
       headers: [
         { text: "Name", value: "name", rules: ["required"] },
         { text: "Balance", value: "balance", mode: "display" },
-        { text: "Currency", value: "currency", default: "btc" },
+        {
+          text: "Currency",
+          value: "currency",
+          input: "autocomplete",
+          url: "cryptos",
+          default: "btc",
+        },
         {
           text: "Xpub",
           value: "xpub",

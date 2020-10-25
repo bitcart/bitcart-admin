@@ -31,6 +31,7 @@ export default {
       drawer: true,
       items: [
         { text: "User management", to: "/manage" },
+        { text: "Server logs", to: "/manage/logs" },
         { text: "Maintenance commands", to: "/manage/maintenance" },
         { text: "Policies", to: "/manage/policies" },
         { text: "Store Policies", to: "/manage/stores" },

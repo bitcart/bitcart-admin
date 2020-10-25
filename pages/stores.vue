@@ -17,7 +17,17 @@
       :edit-mode="true"
       title="store email settings"
       @reset-custom-props="resetCustomProps"
-    />
+    >
+      <template v-slot:dialog>
+        <v-col :cols="6">
+          <menu-dropdown
+            :items="emailPresets"
+            :process="loadPreset"
+            title="Load preset"
+          />
+        </v-col>
+      </template>
+    </edit-card>
     <edit-card
       :url="url"
       :on.sync="showSettingsDialog"
@@ -40,12 +50,14 @@
 import ItemData from "@/components/ItemData.vue"
 import EditCard from "@/components/EditCard.vue"
 import TemplateEdit from "@/components/TemplateEdit.vue"
+import MenuDropdown from "@/components/MenuDropdown.vue"
 export default {
   layout: "dashboard",
   components: {
     ItemData,
     EditCard,
     TemplateEdit,
+    MenuDropdown,
   },
   data() {
     return {
@@ -96,6 +108,48 @@ export default {
         {
           icon: "mdi-text-box",
           process: this.showTemplate,
+        },
+      ],
+      emailPresets: [
+        {
+          title: "Gmail",
+          command: {
+            email_host: "smtp.gmail.com",
+            email_port: 587,
+            email_use_ssl: true,
+          },
+        },
+        {
+          title: "Yahoo",
+          command: {
+            email_host: "mail.yahoo.com",
+            email_port: 587,
+            email_use_ssl: true,
+          },
+        },
+        {
+          title: "Mailgun",
+          command: {
+            email_host: "smtp.mailgun.org",
+            email_port: 587,
+            email_use_ssl: true,
+          },
+        },
+        {
+          title: "Office365",
+          command: {
+            email_host: "smtp.office365.com",
+            email_port: 587,
+            email_use_ssl: true,
+          },
+        },
+        {
+          title: "SendGrid",
+          command: {
+            email_host: "smtp.sendgrid.net",
+            email_port: 587,
+            email_use_ssl: true,
+          },
         },
       ],
       emailHeaders: [
@@ -163,6 +217,11 @@ export default {
           this.emailStatus = "mdi-close"
         }
       })
+    },
+    loadPreset(preset) {
+      for (const key in preset) {
+        this.item[key] = preset[key]
+      }
     },
     resetCustomProps() {
       this.emailCheck = ""

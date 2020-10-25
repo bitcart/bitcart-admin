@@ -14,14 +14,7 @@
     }
   }
 
-  function warn() {
-    if (window.console && window.console.warn) {
-      window.console.warn.apply(window.console, arguments)
-    }
-  }
-
   if (window.bitcart) {
-    warn("bitcart.js attempted to initialize more than once.")
     return
   }
 
