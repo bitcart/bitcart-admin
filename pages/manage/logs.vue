@@ -18,6 +18,11 @@
                   <span>{{ log }}</span>
                 </v-tooltip>
               </v-list-item-content>
+              <v-list-item-action v-if="log !== LOG_FILE_NAME">
+                <v-btn icon @click="deleteLog(log)">
+                  <v-icon> close </v-icon>
+                </v-btn>
+              </v-list-item-action>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -35,7 +40,7 @@
           <div class="col text-right">
             <v-btn
               color="primary"
-              :disabled="model === null"
+              :disabled="!selectedLog"
               @click="downloadLog(logs[model], selectedLog)"
               ><v-icon>mdi-download</v-icon> Download</v-btn
             >
@@ -47,6 +52,7 @@
 </template>
 
 <script>
+import { LOG_FILE_NAME } from "@/version"
 export default {
   layout: "admin",
   middleware: "superuserOnly",
@@ -55,10 +61,15 @@ export default {
       logs: [],
       model: null,
       selectedLog: "",
+      LOG_FILE_NAME,
     }
   },
   watch: {
     model() {
+      if (typeof this.model === "undefined") {
+        this.selectedLog = ""
+        return
+      }
       this.$axios
         .get(`/manage/logs/${this.logs[this.model]}`)
         .then((resp) => (this.selectedLog = resp.data))
@@ -81,6 +92,14 @@ export default {
         element.click()
         document.body.removeChild(element)
       }
+    },
+    deleteLog(log) {
+      this.$axios.delete(`/manage/logs/${log}`).then((r) => {
+        const index = this.logs.indexOf(log)
+        if (index >= 0) {
+          this.logs.splice(index, 1)
+        }
+      })
     },
   },
 }

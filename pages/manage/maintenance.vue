@@ -32,9 +32,22 @@ export default {
         },
         {
           title: "Cleanup the server",
-          details: "Free up server disk space by deleting unused docker images",
+          details:
+            "Free up server disk space by deleting unused docker images and logs of BitcartCC",
           btnText: "Start cleanup process",
           what: "cleanup",
+        },
+        {
+          title: "Cleanup unused images",
+          details: "Free up server disk space by deleting unused docker images",
+          btnText: "Start cleanup process",
+          what: "cleanup/images",
+        },
+        {
+          title: "Cleanup logs",
+          details: "Free up server disk space by deleting logs of BitcartCC",
+          btnText: "Start cleanup process",
+          what: "cleanup/logs",
         },
       ],
     }

@@ -1,9 +1,11 @@
 <template>
   <div>
     <div v-if="done">
-      <p :class="{ 'red--text': error, 'green--text': !error }">
-        {{ detail }}
-      </p>
+      <!-- prettier-ignore -->
+      <p
+        :class="{ 'red--text': error, 'green--text': !error }"
+        style="white-space: pre"
+      >{{ detail }}</p>
     </div>
     <p class="title">
       {{ title }}
