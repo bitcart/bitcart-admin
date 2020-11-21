@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       headers: [
+        { text: "ID", value: "id", mode: "display" },
         { text: "Email", value: "email", rules: ["required", "email"] },
         {
           text: "Password",

@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       headers: [
+        { text: "ID", value: "id", mode: "display" },
         { text: "Price", value: "price", readonly: true, rules: ["required"] },
         {
           text: "Currency",

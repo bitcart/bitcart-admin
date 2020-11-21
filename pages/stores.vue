@@ -67,6 +67,7 @@ export default {
       emailStatus: "",
       itemIndex: -1,
       headers: [
+        { text: "ID", value: "id", mode: "display" },
         { text: "Name", value: "name", rules: ["required"] },
         {
           text: "Default currency",
