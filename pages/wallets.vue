@@ -26,6 +26,7 @@ export default {
           value: "xpub",
           expand: true,
           rules: ["required"],
+          help: "https://docs.bitcartcc.com/getting-started/createwallet",
           errors: { "Wallet key invalid": "Invalid xpub" },
         },
         { text: "Created date", value: "created", mode: "display" },

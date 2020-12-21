@@ -9,10 +9,10 @@
       persistent
       no-click-animation
       :value="showDialog"
-      max-width="500px"
+      max-width="400px"
       class="my-md-12 mx-auto"
       transition="none"
-      :fullscreen="$vuetify.breakpoint.smAndDown"
+      :fullscreen="$vuetify.breakpoint.xsOnly"
     >
       <v-card :loading="loading && !errorText" class="elevation-24">
         <div v-if="loading" :class="$route.query.modal ? 'pb-6' : 'py-6'">
@@ -27,7 +27,7 @@
             :checkout-page="true"
             :tabitem="invoice.payments"
             :invoice="invoice"
-            :product="product"
+            :store="store"
             class="px-0 pb-0"
             @closedialog="closeDialog"
           />
@@ -70,7 +70,7 @@ export default {
       showDialog: true,
       status: "Pending",
       invoice: {},
-      product: {},
+      store: {},
       loading: true,
       errorText: "",
       texts: {
@@ -108,18 +108,14 @@ export default {
         this.status = resp.data.status
         this.loading = false
         window.parent.postMessage("loaded", "*")
-        if (resp.data.products.length > 0) {
-          this.$axios
-            .get(`/products/${resp.data.products[0]}`)
-            .then((resp1) => {
-              this.product = resp1.data
-              this.loading = false
-              this.startWebsocket()
-            })
-            .catch((err) => (this.errorText = err))
-        } else {
-          this.startWebsocket()
-        }
+        this.$axios
+          .get(`/stores/${resp.data.store_id}`)
+          .then((resp1) => {
+            this.store = resp1.data
+            this.loading = false
+            this.startWebsocket()
+          })
+          .catch((err) => (this.errorText = err))
       })
       .catch((err) => this.setError(err))
   },
@@ -162,19 +158,8 @@ export default {
         "red-color": icon !== "mdi-check",
       }
     },
-    copyToClipboard(text) {
-      const el = document.createElement("textarea")
-      el.value = text
-      el.setAttribute("readonly", "")
-      el.style.position = "absolute"
-      el.style.left = "-9999px"
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand("copy")
-      document.body.removeChild(el)
-    },
     copyText(text) {
-      this.copyToClipboard(text)
+      this.$utils.copyToClipboard(text)
       this.whatToCopy = "ID"
       this.showSnackbar = true
     },

@@ -40,6 +40,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    "~/plugins/utils.js",
     "~/plugins/axios.js",
     "~/plugins/eventbus.js",
     { src: "~/plugins/imageinput.js", mode: "client" },
