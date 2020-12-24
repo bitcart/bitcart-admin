@@ -74,20 +74,8 @@ export default {
     postprocess(data) {
       return this.$refs.set.postprocess(data)
     },
-    copyToClipboard(text) {
-      const el = document.createElement("textarea")
-      el.addEventListener("focusin", (e) => e.stopPropagation())
-      el.value = text
-      el.setAttribute("readonly", "")
-      el.style.position = "absolute"
-      el.style.left = "-9999px"
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand("copy")
-      document.body.removeChild(el)
-    },
     copyText(text, desc, hideSnackbar) {
-      this.copyToClipboard(text)
+      this.$utils.copyToClipboard(text)
       this.whatToCopy = desc || "ID"
       if (!hideSnackbar) {
         this.showSnackbar = true

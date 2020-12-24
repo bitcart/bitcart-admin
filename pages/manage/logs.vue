@@ -3,7 +3,7 @@
   <div v-else>
     <div class="row">
       <div class="col-md-2 col-12">
-        <v-list>
+        <v-list class="overflow-y-auto" style="max-height: 300px">
           <v-list-item-group v-model="model">
             <v-list-item v-for="log in logs" :key="log">
               <v-list-item-content>

@@ -32,7 +32,13 @@
                     :value="item[header.value]"
                     :readonly="editMode && header.readonly"
                     @input="update(header.value, $event)"
-                  />
+                  >
+                    <template v-if="header.help" v-slot:append>
+                      <v-btn icon target="_blank" :href="header.help">
+                        <v-icon medium> mdi-help-circle-outline </v-icon>
+                      </v-btn>
+                    </template>
+                  </v-text-field>
                   <v-textarea
                     v-else-if="header.input === 'textarea'"
                     :rows="10"
@@ -41,7 +47,13 @@
                     :label="header.text"
                     :value="item[header.value]"
                     @input="update(header.value, $event)"
-                  />
+                  >
+                    <template v-if="header.help" v-slot:append>
+                      <v-btn icon target="_blank" :href="header.help">
+                        <v-icon medium> mdi-help-circle-outline </v-icon>
+                      </v-btn>
+                    </template>
+                  </v-textarea>
                   <template v-else-if="header.input === 'dynamic'">
                     <v-container>
                       <v-row>

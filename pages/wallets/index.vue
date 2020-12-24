@@ -1,5 +1,9 @@
 <template>
-  <item-data :headers="headers" :url="url" :title="title" />
+  <item-data :headers="headers" :actions="actions" :url="url" :title="title">
+    <template v-slot:item.lightning_enabled="{ item }">
+      <v-switch :input-value="item.lightning_enabled" readonly />
+    </template>
+  </item-data>
 </template>
 <script>
 import ItemData from "@/components/ItemData.vue"
@@ -26,14 +30,29 @@ export default {
           value: "xpub",
           expand: true,
           rules: ["required"],
+          help: "https://docs.bitcartcc.com/getting-started/createwallet",
           errors: { "Wallet key invalid": "Invalid xpub" },
+        },
+        {
+          text: "Lightning",
+          value: "lightning_enabled",
+          input: "switch",
+          mode: "display",
         },
         { text: "Created date", value: "created", mode: "display" },
         { text: "Actions", value: "action", sortable: false },
       ],
+      actions: [
+        { icon: "mdi-lightning-bolt", process: this.configureLightning },
+      ],
       url: "wallets",
       title: "Wallet",
     }
+  },
+  methods: {
+    configureLightning(item, itemIndex) {
+      this.$router.push(`/wallets/${item.id}/lightning`)
+    },
   },
 }
 </script>

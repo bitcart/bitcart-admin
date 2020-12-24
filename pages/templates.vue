@@ -24,7 +24,14 @@ export default {
           },
           rules: ["required"],
         },
-        { text: "Text", value: "text", input: "textarea", rules: ["required"] },
+        {
+          text: "Text",
+          value: "text",
+          input: "textarea",
+          help:
+            "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#templates",
+          rules: ["required"],
+        },
         { text: "Created date", value: "created", mode: "display" },
         { text: "Actions", value: "action", sortable: false },
       ],

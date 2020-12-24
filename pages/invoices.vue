@@ -53,7 +53,13 @@ export default {
           sortable: false,
         },
         { text: "Promocode", value: "promocode" },
-        { text: "Notification url", value: "notification_url", rules: ["url"] },
+        {
+          text: "Notification url",
+          value: "notification_url",
+          help:
+            "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#notification-url",
+          rules: ["url"],
+        },
         { text: "Redirect url", value: "redirect_url", rules: ["url"] },
         { text: "Buyer email", value: "buyer_email", rules: ["email"] },
         { text: "Order", value: "order_id" },

@@ -29,88 +29,176 @@
         </p>
       </v-progress-linear>
     </div>
-    <v-tabs v-if="showProp && !noTabs" v-model="selectedTab" show-arrows>
-      <v-tab v-for="(item, key) in tabitem" :key="key">
-        {{ key }}
-      </v-tab>
-    </v-tabs>
-    <v-tabs-items v-if="showProp && !noTabs" v-model="selectedTab">
-      <v-tab-item v-for="(itemv, key) in tabitem" :key="key">
-        <v-card>
-          <v-card-title class="justify-center">
-            {{ checkoutPage && !isEmpty(product) ? product.name : "QR code" }}
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row class="d-flex justify-center">
-                <div class="d-flex justify-center">
-                  <qrcode
-                    :options="{ width: 240 }"
-                    :value="itemv.payment_url"
-                    tag="v-img"
-                  />
-                </div>
-                <v-col cols="12">
-                  <p class="mt-6 mb-0 title">
-                    1 {{ itemv.currency.toUpperCase() }} =
-                    {{
-                      (invoice.price / itemv.amount)
-                        .toFixed(8)
-                        .replace(/0{0,7}$/, "")
-                    }}
-                    {{ invoice.currency }}<br />
-                    {{ itemv.payment_address }}<br />
-                    Waiting for {{ itemv.amount }}
-                    {{ itemv.currency.toUpperCase() }} payment
-                  </p>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions class="justify-center">
-            <v-btn
-              class="justify-center"
-              color="primary"
-              @click="copyText(itemv.payment_url, 'URL')"
-            >
-              <v-icon left="left"> mdi-content-copy </v-icon><span>Copy</span>
-            </v-btn>
-            <v-btn
-              v-if="!checkoutPage"
-              class="justify-center"
-              color="primary"
-              @click="checkout(invoice.id)"
-            >
-              <v-icon left="left"> mdi-open-in-new </v-icon
-              ><span
-                >Open checkout
-                <v-btn text color="white" @click.stop="showPopup"
-                  >^</v-btn
-                ></span
+    <v-list class="pt-0" dense>
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title>Pay with</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-menu v-model="showMenu" offset-y style="max-width: 600px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-list-item-title
+                class="subtitle-1 font-weight-light"
+                :class="currencySelectClass"
+                v-bind="attrs"
+                v-on="on"
+                >{{ getPaymentMethodName(itemv) }}</v-list-item-title
               >
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-tab-item>
-    </v-tabs-items>
-    <v-card v-if="showProp && noTabs" class="accent--border" raised="raised">
-      <v-card-title class="justify-center"> Empty </v-card-title>
-      <v-card-text class="d-flex justify-center">
-        No payment methods available
-      </v-card-text>
-    </v-card>
-    <v-snackbar v-model="showSnackbar" :timeout="2500" color="success" bottom>
-      <v-icon>mdi-content-copy</v-icon>
-      Successfully copied {{ whatToCopy }} to clipboard!
-    </v-snackbar>
+            </template>
+            <v-list>
+              <v-list-item-group v-model="selectedCurrency" mandatory>
+                <v-list-item
+                  v-for="(item, index) in invoice.payments"
+                  :key="index"
+                >
+                  <v-list-item-title>{{
+                    getPaymentMethodName(item)
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-menu>
+        </v-list-item-action>
+      </v-list-item>
+      <v-divider />
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title>{{ store.name }}</v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-list-item-title class="subtitle-1 font-weight-regular align-right"
+            >{{ itemv.amount }}
+            {{ itemv.currency.toUpperCase() }}</v-list-item-title
+          >
+          <v-list-item-title class="caption font-weight-regular align-right">
+            1 {{ itemv.currency.toUpperCase() }} =
+            {{ itemv.rate_str }}
+          </v-list-item-title>
+        </v-list-item-action>
+      </v-list-item>
+      <v-divider />
+      <v-list-item class="ma-0 pa-0">
+        <v-list-item-content class="ma-0 pa-0">
+          <v-card>
+            <v-card-text class="ma-0 pa-0">
+              <v-container class="ma-0 pa-0">
+                <v-tabs
+                  v-model="selectedAction"
+                  centered
+                  grow
+                  :active-class="checkoutPage ? 'activeTab' : null"
+                  :color="checkoutPage ? 'success' : null"
+                >
+                  <v-tab>Scan</v-tab>
+                  <v-tab>Copy</v-tab>
+                </v-tabs>
+                <v-divider />
+                <v-tabs-items v-model="selectedAction" class="full-height-tab">
+                  <v-tab-item>
+                    <v-container fill-height>
+                      <v-row align="center">
+                        <v-tabs
+                          v-if="itemv.lightning"
+                          v-model="selectedToCopy"
+                          centered
+                          :active-class="checkoutPage ? 'activeTab' : null"
+                          :color="checkoutPage ? 'success' : null"
+                        >
+                          <v-tab>Invoice</v-tab>
+                          <v-tab>Node Info</v-tab>
+                        </v-tabs>
+                        <qrcode
+                          :options="{ width: 240 }"
+                          :value="qrValue"
+                          tag="v-img"
+                          class="d-flex justify-center"
+                        />
+                      </v-row>
+                      <v-row justify="center">
+                        <v-btn color="primary" :href="paymentURL"
+                          >Open in wallet</v-btn
+                        >
+                      </v-row>
+                    </v-container>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-card flat class="pa-0 ma-0">
+                      <v-card-text>
+                        <p class="d-flex justify-center">Amount</p>
+                        <p class="display-1 d-flex justify-center">
+                          {{ itemv.amount }}
+                          {{ itemv.currency.toUpperCase() }}
+                        </p>
+                        <v-divider />
+                        <display-field
+                          :title="itemv.lightning ? 'Invoice' : 'Address'"
+                          :value="itemv.payment_address"
+                        />
+                        <display-field
+                          v-if="itemv.lightning"
+                          title="Node Info"
+                          :value="itemv.node_id"
+                        />
+                        <display-field
+                          v-else
+                          title="Payment Link"
+                          :value="itemv.payment_url"
+                        />
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-container>
+            </v-card-text>
+            <v-card-actions class="justify-center">
+              <v-btn
+                v-if="!checkoutPage"
+                class="justify-center"
+                color="primary"
+                @click="checkout(invoice.id)"
+              >
+                <v-icon left="left"> mdi-open-in-new </v-icon
+                ><span
+                  >Open checkout
+                  <v-btn text color="white" @click.stop="showPopup"
+                    >^</v-btn
+                  ></span
+                >
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+          <v-card
+            v-if="showProp && noTabs"
+            class="accent--border"
+            raised="raised"
+          >
+            <v-card-title class="justify-center"> Empty </v-card-title>
+            <v-card-text class="d-flex justify-center">
+              No payment methods available
+            </v-card-text>
+          </v-card>
+          <v-snackbar
+            v-model="showSnackbar"
+            :timeout="2500"
+            color="success"
+            bottom
+          >
+            <v-icon>mdi-content-copy</v-icon>
+            Successfully copied {{ whatToCopy }} to clipboard!
+          </v-snackbar>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-container>
 </template>
 
 <script>
 import CloseButton from "@/components/CloseButton"
+import DisplayField from "@/components/DisplayField"
 export default {
   components: {
     CloseButton,
+    DisplayField,
   },
   props: {
     showProp: {
@@ -122,9 +210,9 @@ export default {
       default: false,
     },
     tabitem: {
-      type: Object,
+      type: Array,
       default() {
-        return {}
+        return []
       },
     },
     invoice: {
@@ -133,7 +221,7 @@ export default {
         return {}
       },
     },
-    product: {
+    store: {
       type: Object,
       default() {
         return {}
@@ -142,15 +230,26 @@ export default {
   },
   data() {
     return {
-      selectedTab: null,
+      selectedCurrency: 0,
+      selectedAction: null,
+      selectedToCopy: null,
       whatToCopy: "ID",
       showSnackbar: false,
+      showMenu: false,
       endDate: new Date(),
       expirationPercentage: 0,
       timerText: "",
     }
   },
   computed: {
+    itemv() {
+      return this.invoice.payments[this.selectedCurrency]
+    },
+    qrValue() {
+      return this.itemv.lightning && this.selectedToCopy === 1
+        ? this.itemv.node_id
+        : this.itemv.payment_url
+    },
     noTabs() {
       return this.isEmpty(this.tabitem)
     },
@@ -163,12 +262,28 @@ export default {
     backgroundProgressColor() {
       return this.expiringSoon ? "red" : "green"
     },
+    currencySelectClass() {
+      return this.invoice.payments.length > 1
+        ? { multipleCurrency: true, rounded: true }
+        : {}
+    },
+    paymentURL() {
+      return this.itemv.lightning
+        ? `lightning:${this.itemv.payment_url}`
+        : this.itemv.payment_url
+    },
   },
   watch: {
     showProp(val) {
       if (!val) {
-        this.selectedTab = null
+        this.selectedAction = null
+        this.selectedToCopy = null
+        this.selectedCurrency = 0
       }
+    },
+    selectedCurrency(val) {
+      this.selectedAction = null
+      this.selectedToCopy = null
     },
   },
   mounted() {
@@ -178,6 +293,11 @@ export default {
     this.startProgressTimer()
   },
   methods: {
+    getPaymentMethodName(method) {
+      return method.lightning
+        ? `${method.currency.toUpperCase()} (⚡)`
+        : method.currency.toUpperCase()
+    },
     startProgressTimer() {
       const timeLeftS = this.endDate
         ? (this.endDate.getTime() - new Date().getTime()) / 1000
@@ -213,23 +333,37 @@ export default {
       }
       this.$router.push({ path: `/i/${id}` })
     },
-    copyToClipboard(text) {
-      const el = document.createElement("textarea")
-      el.addEventListener("focusin", (e) => e.stopPropagation())
-      el.value = text
-      el.setAttribute("readonly", "")
-      el.style.position = "absolute"
-      el.style.left = "-9999px"
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand("copy")
-      document.body.removeChild(el)
-    },
     copyText(text, desc) {
-      this.copyToClipboard(text)
+      this.$utils.copyToClipboard(text)
       this.whatToCopy = desc || "ID"
       this.showSnackbar = true
     },
   },
 }
 </script>
+
+<style scoped>
+@media (min-width: 576px) {
+  .v-tabs-items.full-height-tab .v-window-item {
+    height: calc(37vh);
+    overflow-y: auto;
+  }
+}
+.activeTab {
+  background: #f5f5f5;
+}
+.v-list-item__title.align-right {
+  align-self: flex-end;
+}
+.multipleCurrency {
+  border-width: 1px;
+  border-style: solid;
+  padding: 6px;
+}
+.v-application.theme--light .multipleCurrency {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+.v-application.theme--dark .multipleCurrency {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+</style>
