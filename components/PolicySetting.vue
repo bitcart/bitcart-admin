@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="title">
+    <p class="text-h6">
       {{ title }}
     </p>
     <v-checkbox

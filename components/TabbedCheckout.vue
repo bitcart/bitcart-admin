@@ -18,18 +18,18 @@
           width="3"
           class="ml-2"
         />
-        <p class="my-auto px-3 white--text subtitle-2">
+        <p class="my-auto px-3 white--text text-subtitle-2">
           {{
             expiringSoon ? "Invoice expiring soon..." : "Awaiting payment..."
           }}
         </p>
         <v-spacer />
-        <p class="white--text my-auto subtitle-2 px-3">
+        <p class="white--text my-auto text-subtitle-2 px-3">
           {{ timerText }}
         </p>
       </v-progress-linear>
     </div>
-    <v-list class="pt-0" dense>
+    <v-list class="py-0" dense>
       <v-list-item>
         <v-list-item-content>
           <v-list-item-title>Pay with</v-list-item-title>
@@ -38,7 +38,7 @@
           <v-menu v-model="showMenu" offset-y style="max-width: 600px">
             <template v-slot:activator="{ on, attrs }">
               <v-list-item-title
-                class="subtitle-1 font-weight-light"
+                class="text-subtitle-1 font-weight-light"
                 :class="currencySelectClass"
                 v-bind="attrs"
                 v-on="on"
@@ -66,11 +66,14 @@
           <v-list-item-title>{{ store.name }}</v-list-item-title>
         </v-list-item-content>
         <v-list-item-action>
-          <v-list-item-title class="subtitle-1 font-weight-regular align-right"
+          <v-list-item-title
+            class="text-subtitle-1 font-weight-regular align-right"
             >{{ itemv.amount }}
             {{ itemv.currency.toUpperCase() }}</v-list-item-title
           >
-          <v-list-item-title class="caption font-weight-regular align-right">
+          <v-list-item-title
+            class="text-caption font-weight-regular align-right"
+          >
             1 {{ itemv.currency.toUpperCase() }} =
             {{ itemv.rate_str }}
           </v-list-item-title>
@@ -79,7 +82,7 @@
       <v-divider />
       <v-list-item class="ma-0 pa-0">
         <v-list-item-content class="ma-0 pa-0">
-          <v-card>
+          <v-card class="ma-0 pa-0">
             <v-card-text class="ma-0 pa-0">
               <v-container class="ma-0 pa-0">
                 <v-tabs
@@ -96,7 +99,7 @@
                 <v-tabs-items v-model="selectedAction" class="full-height-tab">
                   <v-tab-item>
                     <v-container fill-height>
-                      <v-row align="center">
+                      <v-row align="center" justify="center">
                         <v-tabs
                           v-if="itemv.lightning"
                           v-model="selectedToCopy"
@@ -125,7 +128,7 @@
                     <v-card flat class="pa-0 ma-0">
                       <v-card-text>
                         <p class="d-flex justify-center">Amount</p>
-                        <p class="display-1 d-flex justify-center">
+                        <p class="text-h4 d-flex justify-center">
                           {{ itemv.amount }}
                           {{ itemv.currency.toUpperCase() }}
                         </p>
@@ -257,7 +260,7 @@ export default {
       return this.expirationPercentage >= 75
     },
     mainProgressColor() {
-      return this.expiringSoon ? "red darken-2" : "green darken-2"
+      return this.expiringSoon ? "#d32f2f" : "#388e3c"
     },
     backgroundProgressColor() {
       return this.expiringSoon ? "red" : "green"

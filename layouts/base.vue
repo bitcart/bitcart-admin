@@ -1,9 +1,9 @@
 <template>
   <v-app dark :style="customStyle">
     <slot name="header" />
-    <v-content>
+    <v-main>
       <slot />
-    </v-content>
+    </v-main>
     <slot name="footer" />
   </v-app>
 </template>

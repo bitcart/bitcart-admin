@@ -25,7 +25,12 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-navigation-drawer v-model="drawer" app>
+      <v-navigation-drawer
+        v-model="drawer"
+        app
+        disable-route-watcher
+        disable-resize-watcher
+      >
         <v-list>
           <v-list-item
             v-for="(item, i) in items"

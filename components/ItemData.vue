@@ -50,7 +50,7 @@
                 v-if="showImageItem.image"
                 :src="imageURL(showImageItem.image)"
               />
-              <v-card-text v-else class="title"> No image </v-card-text>
+              <v-card-text v-else class="text-h6"> No image </v-card-text>
             </v-card>
           </v-dialog>
           <menu-dropdown

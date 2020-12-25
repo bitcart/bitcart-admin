@@ -7,7 +7,7 @@
         style="white-space: pre"
       >{{ detail }}</p>
     </div>
-    <p class="title">
+    <p class="text-h6">
       {{ title }}
     </p>
     <p>{{ details }}</p>

@@ -11,7 +11,7 @@
     :label="text"
     :item-text="displayProp"
     :clearable="clearable"
-    color="blue-grey lighten-2"
+    color="#90a4ae"
     item-value="id"
     @input="updateValue"
   >

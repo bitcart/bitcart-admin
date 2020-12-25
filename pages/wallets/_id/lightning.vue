@@ -6,7 +6,7 @@
     <v-row v-else>
       <v-col>
         <v-alert type="warning">
-          <p class="title">Warning</p>
+          <p class="text-h6">Warning</p>
           <p>
             Before you proceed, please understand that the Lightning Network is
             still considered experimental and is under active development.
@@ -68,16 +68,16 @@
   </v-container>
   <v-container v-else>
     <v-row class="justify-center">
-      <p class="title">Lightning support enabled</p>
+      <p class="text-h6">Lightning support enabled</p>
     </v-row>
     <v-row class="justify-center">
-      <p class="title">
+      <p class="text-h6">
         Lightning balance:
         <span>{{ lnBalance }} {{ wallet.currency.toUpperCase() }} (⚡)</span>
       </p>
     </v-row>
     <v-row class="justify-center">
-      <p class="title">
+      <p class="text-h6">
         Node ID:
         <span>{{ ourNodeId }}</span>
       </p>

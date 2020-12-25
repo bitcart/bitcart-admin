@@ -28,7 +28,7 @@
             The application has already been authorized before at
             {{ token.redirect_url }}, but is now requiring a different redirect
             url({{ redirectDomain }}). Proceed with
-            <span class="title font-weight-bold"> Caution </span>
+            <span class="text-h6 font-weight-bold"> Caution </span>
           </p>
         </div>
 

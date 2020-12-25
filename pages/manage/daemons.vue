@@ -3,26 +3,23 @@
     <div v-for="(daemon, currency) in daemons" :key="currency">
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title
-            class="display-1"
-            v-text="currency.toUpperCase()"
-          />
+          <v-list-item-title class="text-h4" v-text="currency.toUpperCase()" />
           <v-list-item-subtitle class="text--primary">
-            <p class="display-1">Credentials</p>
-            <p class="title">URL</p>
+            <p class="text-h4">Credentials</p>
+            <p class="text-h6">URL</p>
             <p class="subtitle">
               {{ daemon.credentials.rpc_url }}
             </p>
-            <p class="title">Username</p>
+            <p class="text-h6">Username</p>
             <p class="subtitle">
               {{ daemon.credentials.rpc_user }}
             </p>
-            <p class="title">Password</p>
+            <p class="text-h6">Password</p>
             <p class="subtitle">
               {{ daemon.credentials.rpc_pass }}
             </p>
-            <p class="display-1">Network</p>
-            <p class="title">
+            <p class="text-h4">Network</p>
+            <p class="text-h6">
               {{ daemon.network }}
             </p>
           </v-list-item-subtitle>

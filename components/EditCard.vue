@@ -6,7 +6,7 @@
       </template>
       <v-card>
         <v-card-title>
-          <span class="headline">{{ formTitle }}</span>
+          <span class="text-h5">{{ formTitle }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -96,7 +96,7 @@
                     :rules="header.rules"
                     :error-messages="errors[header.text]"
                     :label="header.text"
-                    color="blue-grey lighten-2"
+                    color="#90a4ae"
                     item-text="name"
                     item-value="id"
                   >
@@ -194,10 +194,8 @@
 
         <v-card-actions>
           <div class="flex-grow-1" />
-          <v-btn color="blue darken-1" text @click="dialog = false">
-            Cancel
-          </v-btn>
-          <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+          <v-btn color="#1e88e5" text @click="dialog = false"> Cancel </v-btn>
+          <v-btn color="#1e88e5" text @click="save"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

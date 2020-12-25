@@ -17,7 +17,7 @@
         <template v-slot:append>
           <v-fade-transition>
             <v-overlay v-if="displayOverlay" absolute color="white" opacity="1">
-              <p class="display-1 pt-4 black--text">Copied</p>
+              <p class="text-h4 pt-4 black--text">Copied</p>
             </v-overlay>
           </v-fade-transition>
         </template>

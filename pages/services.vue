@@ -9,9 +9,9 @@
       <div v-for="(service, name) in $store.state.services" :key="name">
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title class="display-1 pb-4" v-text="name" />
+            <v-list-item-title class="text-h4 pb-4" v-text="name" />
             <v-list-item-subtitle class="text--primary">
-              <p class="display-1">General information</p>
+              <p class="text-h4">General information</p>
               <p class="title">Hostname</p>
               <p class="subtitle">
                 {{ service.hostname }}
@@ -22,7 +22,7 @@
                   {{ service.directory }}
                 </p>
                 <div v-if="service.port_definition">
-                  <p class="display-1">Port definition</p>
+                  <p class="text-h4">Port definition</p>
                   <p class="title">Virtual port</p>
                   <p class="subtitle">
                     {{ service.port_definition.virtual_port }}

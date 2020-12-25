@@ -42,7 +42,7 @@
     "lodash.debounce": "^4.0.8",
     "nuxt": "^2.0.0",
     "prettier": "^2.1.2",
-    "vuetify": "~2.2",
+    "vuetify": "~2.3",
     "vuetify-datetime-picker": "^2.1.1",
     "vuetify-image-input": "^19.1.0"
   }
