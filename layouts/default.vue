@@ -4,7 +4,7 @@
       <v-dialog v-model="showDialog" width="600px">
         <v-card>
           <v-card-title>Merry Christmas and a Happy New Year!</v-card-title>
-          <v-card-text class="white--text"
+          <v-card-text
             >You have found the easter egg! Congratulations!
             <br />
             Merry Christmas and a Happy New Year! We wish you to spend these
@@ -89,7 +89,7 @@
       <v-container>
         <slot />
         <nuxt />
-        <div v-if="showSnow && $vuetify.theme.dark">
+        <div v-if="showSnow">
           <div class="snow layer3 a"></div>
           <div class="snow layer3"></div>
         </div>
