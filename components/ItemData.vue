@@ -90,7 +90,7 @@
             v-if="header.component"
             :data="item[header.value]"
           />
-          <p v-else>{{ header.text }}: {{ item[header.value] }}</p>
+          <p v-else>{{ header.text }}: <br />{{ item[header.value] }}</p>
         </div>
       </template>
       <template v-slot:item.created="{ item }">
@@ -436,3 +436,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.v-dialog--fullscreen {
+  background-color: #1e1e1e;
+}
+</style>

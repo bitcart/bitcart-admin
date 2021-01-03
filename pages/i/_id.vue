@@ -147,7 +147,7 @@ export default {
           )
         }
         if (status === "complete" && this.invoice.redirect_url) {
-          window.location = this.invoice.redirect_url
+          this.$utils.redirectTo(this.invoice.redirect_url)
         }
         this.status = status
       }

@@ -154,7 +154,7 @@ export default {
                   userId: r.data.user_id,
                 })
                 .then((url) => {
-                  window.location.href = url[1]
+                  this.$utils.redirectTo(url[1])
                 })
             }, 2500)
           })
@@ -169,7 +169,7 @@ export default {
           userId: this.token.user_id,
         })
         .then((url) => {
-          window.location.href = url[1]
+          this.$utils.redirectTo(url[1])
         })
     },
     changeRedirect() {

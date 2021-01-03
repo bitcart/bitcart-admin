@@ -11,4 +11,10 @@ export default {
     document.execCommand("copy")
     document.body.removeChild(el)
   },
+  redirectTo(url, newTab = false) {
+    if (url) {
+      if (newTab) window.open(url, "_blank")
+      else window.location = url
+    }
+  },
 }

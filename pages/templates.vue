@@ -28,6 +28,7 @@ export default {
           text: "Text",
           value: "text",
           input: "textarea",
+          expand: true,
           help:
             "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#templates",
           rules: ["required"],

@@ -81,6 +81,8 @@
                     :rules="header.rules"
                     :error-messages="errors[header.text]"
                     :label="header.text"
+                    :append-icon="header.help ? 'mdi-help-circle-outline' : ''"
+                    @click:append="$utils.redirectTo(header.help, true)"
                   />
                   <component
                     :is="header.component || 'v-autocomplete'"

@@ -346,12 +346,11 @@ export default {
 </script>
 
 <style scoped>
-@media (min-width: 576px) {
-  .v-tabs-items.full-height-tab .v-window-item {
-    height: calc(37vh);
-    overflow-y: auto;
-  }
+.v-tabs-items.full-height-tab .v-window-item {
+  height: 38vh;
+  overflow-y: auto;
 }
+
 .activeTab {
   background: #f5f5f5;
 }

@@ -175,6 +175,12 @@ export default {
           rules: ["int"],
           hint: "In minutes",
         },
+        {
+          text: "Use HTML templates",
+          value: "use_html_templates",
+          input: "switch",
+          help: "https://docs.bitcartcc.com/guides/templates#html-templates",
+        },
       ],
       showDialog: false,
       showSettingsDialog: false,
