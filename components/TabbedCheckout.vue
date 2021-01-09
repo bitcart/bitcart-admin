@@ -298,8 +298,8 @@ export default {
   methods: {
     getPaymentMethodName(method) {
       return method.lightning
-        ? `${method.currency.toUpperCase()} (⚡)`
-        : method.currency.toUpperCase()
+        ? `${method.name.toUpperCase()} (⚡)`
+        : method.name.toUpperCase()
     },
     startProgressTimer() {
       const timeLeftS = this.endDate
