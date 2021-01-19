@@ -347,10 +347,9 @@ export default {
 
 <style scoped>
 .v-tabs-items.full-height-tab .v-window-item {
-  height: 38vh;
+  height: 400px;
   overflow-y: auto;
 }
-
 .activeTab {
   background: #f5f5f5;
 }
