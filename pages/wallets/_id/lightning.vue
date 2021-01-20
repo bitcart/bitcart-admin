@@ -95,7 +95,7 @@
     </v-row>
     <v-row class="justify-center">
       <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
+        <template #activator="{ on, attrs }">
           <v-btn color="primary" v-bind="attrs" @click="openChannel" v-on="on"
             >Open channel</v-btn
           >
@@ -119,7 +119,7 @@
           :search="search"
           :loading="loading"
         >
-          <template v-slot:top>
+          <template #top>
             <v-toolbar flat>
               <v-toolbar-title>Channels opened</v-toolbar-title>
               <div class="flex-grow-1" />
@@ -132,7 +132,7 @@
               />
             </v-toolbar>
           </template>
-          <template v-slot:item.actions="{ item }">
+          <template #item.actions="{ item }">
             <tooltip-icon
               icon="mdi-close"
               text="Close"

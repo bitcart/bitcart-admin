@@ -9,7 +9,7 @@
       class="pt-6"
       style="font-size: 0.8em"
     >
-      <template v-slot:prepend-inner>
+      <template #prepend-inner>
         <onion-button :url="onionURL" />
       </template>
     </v-text-field>

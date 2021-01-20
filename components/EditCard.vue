@@ -1,7 +1,8 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div>
     <v-dialog v-model="dialog" max-width="650px">
-      <template v-if="showNew" v-slot:activator="{ on: show }">
+      <template v-if="showNew" #activator="{ on: show }">
         <v-btn color="primary" dark v-on="show"> New {{ title }} </v-btn>
       </template>
       <v-card>
@@ -38,7 +39,7 @@
                     :readonly="editMode && header.readonly"
                     @input="update(header.value, $event)"
                   >
-                    <template v-if="header.help" v-slot:append>
+                    <template v-if="header.help" #append>
                       <v-btn icon target="_blank" :href="header.help">
                         <v-icon medium> mdi-help-circle-outline </v-icon>
                       </v-btn>
@@ -53,7 +54,7 @@
                     :value="item[header.value]"
                     @input="update(header.value, $event)"
                   >
-                    <template v-if="header.help" v-slot:append>
+                    <template v-if="header.help" #append>
                       <v-btn icon target="_blank" :href="header.help">
                         <v-icon medium> mdi-help-circle-outline </v-icon>
                       </v-btn>
@@ -107,7 +108,7 @@
                     item-text="name"
                     item-value="id"
                   >
-                    <template v-if="header.multiple" v-slot:selection="data">
+                    <template v-if="header.multiple" #selection="data">
                       <v-chip
                         v-bind="data.attrs"
                         :input-value="data.selected"
@@ -120,7 +121,7 @@
                         {{ data.item.name }}
                       </v-chip>
                     </template>
-                    <template v-slot:item="data">
+                    <template #item="data">
                       <template v-if="typeof data.item !== 'object'">
                         <v-list-item-content v-text="data.item" />
                       </template>
@@ -479,6 +480,7 @@ export default {
       })
     },
     update(key, value) {
+      // eslint-disable-next-line vue/no-mutating-props
       this.item[key] = value
     },
     getItemsNolimit(

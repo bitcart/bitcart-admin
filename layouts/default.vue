@@ -1,6 +1,6 @@
 <template>
   <BaseLayout>
-    <template v-slot:header>
+    <template #header>
       <v-dialog v-model="showDialog" width="600px">
         <v-card>
           <v-card-title>Merry Christmas and a Happy New Year!</v-card-title>
@@ -62,7 +62,7 @@
           transition="scale-transition"
           @click.native.stop
         >
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn icon large text v-on="on">
               <v-icon size="30px"> account_circle </v-icon>
             </v-btn>
@@ -90,7 +90,7 @@
         <v-icon @click.stop="changeTheme"> mdi-moon-waning-crescent </v-icon>
       </v-app-bar>
     </template>
-    <template v-slot:default>
+    <template #default>
       <v-container>
         <slot />
         <nuxt />
@@ -100,7 +100,7 @@
         </div>
       </v-container>
     </template>
-    <template v-slot:footer>
+    <template #footer>
       <v-footer fixed app>
         <span>&copy; BitcartCC v{{ VERSION }}</span>
         <v-spacer />

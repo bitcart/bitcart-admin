@@ -15,11 +15,11 @@
 <script>
 import ManagementCommand from "@/components/ManagementCommand.vue"
 export default {
-  layout: "admin",
-  middleware: "superuserOnly",
   components: {
     ManagementCommand,
   },
+  layout: "admin",
+  middleware: "superuserOnly",
   data() {
     return {
       commands: [

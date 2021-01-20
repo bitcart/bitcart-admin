@@ -59,11 +59,11 @@ import TabbedCheckout from "@/components/TabbedCheckout"
 import CloseButton from "@/components/CloseButton"
 export default {
   auth: false,
-  layout: "checkout",
   components: {
     TabbedCheckout,
     CloseButton,
   },
+  layout: "checkout",
   data() {
     return {
       showSnackbar: false,

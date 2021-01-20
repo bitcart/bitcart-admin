@@ -14,11 +14,11 @@
 <script>
 import PolicySetting from "@/components/PolicySetting.vue"
 export default {
-  layout: "admin",
-  middleware: "superuserOnly",
   components: {
     PolicySetting,
   },
+  layout: "admin",
+  middleware: "superuserOnly",
   data() {
     return {
       policies: {},

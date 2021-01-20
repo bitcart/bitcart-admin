@@ -10,19 +10,19 @@
 
 <script>
 export default {
-  computed: {
-    customStyle() {
-      return this.$route.query.modal
-        ? { background: "rgba(55, 58, 60, 0.4)" }
-        : {}
-    },
-  },
   head() {
     return this.$store.state.policies.discourage_index
       ? {
           meta: [{ name: "robots", content: "noindex" }],
         }
       : {}
+  },
+  computed: {
+    customStyle() {
+      return this.$route.query.modal
+        ? { background: "rgba(55, 58, 60, 0.4)" }
+        : {}
+    },
   },
 }
 </script>

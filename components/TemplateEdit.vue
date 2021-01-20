@@ -11,7 +11,7 @@
     :dialog-watch.sync="dialogWatch"
     :title="title"
   >
-    <template v-if="dialogWatch" v-slot:dialog="{ item: itemd }">
+    <template v-if="dialogWatch" #dialog="{ item: itemd }">
       <v-col v-for="template in defaultTemplates" :key="template">
         <auto-complete
           v-model="itemd.templates[template]"

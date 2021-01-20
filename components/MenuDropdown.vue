@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <v-btn color="primary" v-bind="attrs" class="mr-2" v-on="on">
         {{ title }} <v-icon>mdi-menu-down</v-icon>
       </v-btn>

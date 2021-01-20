@@ -19,11 +19,11 @@
 import ItemData from "@/components/ItemData.vue"
 import TemplateEdit from "@/components/TemplateEdit.vue"
 export default {
-  layout: "dashboard",
   components: {
     ItemData,
     TemplateEdit,
   },
+  layout: "dashboard",
   data() {
     return {
       headers: [

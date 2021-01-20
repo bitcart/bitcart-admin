@@ -5,7 +5,7 @@
     :title="title"
     :custom-batch-actions="batchActions"
   >
-    <template v-slot:before-toolbar>
+    <template #before-toolbar>
       <menu-dropdown
         :items="exportItems"
         :process="exportInvoices"
@@ -18,11 +18,11 @@
 import ItemData from "@/components/ItemData.vue"
 import MenuDropdown from "@/components/MenuDropdown"
 export default {
-  layout: "dashboard",
   components: {
     ItemData,
     MenuDropdown,
   },
+  layout: "dashboard",
   data() {
     return {
       headers: [
@@ -95,6 +95,11 @@ export default {
       ],
     }
   },
+  head() {
+    return {
+      script: [{ src: "/modal/bitcart.js" }],
+    }
+  },
   methods: {
     exportInvoices(format) {
       this.$axios
@@ -118,11 +123,6 @@ export default {
           link.click()
         })
     },
-  },
-  head() {
-    return {
-      script: [{ src: "/modal/bitcart.js" }],
-    }
   },
 }
 </script>

@@ -58,6 +58,7 @@ export default {
   components: {
     OnionTextField,
   },
+  middleware: "registeroff",
   data() {
     return {
       email: "",
@@ -85,7 +86,6 @@ export default {
     }
   },
   auth: "guest",
-  middleware: "registeroff",
   methods: {
     register() {
       if (this.$refs.form.validate()) {

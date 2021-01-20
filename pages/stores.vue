@@ -18,7 +18,7 @@
       title="store email settings"
       @reset-custom-props="resetCustomProps"
     >
-      <template v-slot:dialog>
+      <template #dialog>
         <v-col :cols="6">
           <menu-dropdown
             :items="emailPresets"
@@ -52,13 +52,13 @@ import EditCard from "@/components/EditCard.vue"
 import TemplateEdit from "@/components/TemplateEdit.vue"
 import MenuDropdown from "@/components/MenuDropdown.vue"
 export default {
-  layout: "dashboard",
   components: {
     ItemData,
     EditCard,
     TemplateEdit,
     MenuDropdown,
   },
+  layout: "dashboard",
   data() {
     return {
       item: {},
