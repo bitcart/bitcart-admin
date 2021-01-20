@@ -42,7 +42,7 @@
                 :class="currencySelectClass"
                 v-bind="attrs"
                 v-on="on"
-                >{{ getPaymentMethodName(itemv) }}</v-list-item-title
+                >{{ itemv.name }}</v-list-item-title
               >
             </template>
             <v-list>
@@ -51,9 +51,7 @@
                   v-for="(item, index) in invoice.payments"
                   :key="index"
                 >
-                  <v-list-item-title>{{
-                    getPaymentMethodName(item)
-                  }}</v-list-item-title>
+                  <v-list-item-title>{{ item.name }}</v-list-item-title>
                 </v-list-item>
               </v-list-item-group>
             </v-list>
@@ -296,11 +294,6 @@ export default {
     this.startProgressTimer()
   },
   methods: {
-    getPaymentMethodName(method) {
-      return method.lightning
-        ? `${method.name.toUpperCase()} (⚡)`
-        : method.name.toUpperCase()
-    },
     startProgressTimer() {
       const timeLeftS = this.endDate
         ? (this.endDate.getTime() - new Date().getTime()) / 1000
