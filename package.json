@@ -30,7 +30,7 @@
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
-    "@nuxtjs/pwa": "^3.0.0-0",
+    "@nuxtjs/pwa": "^3.3.4",
     "@nuxtjs/vuetify": "^1.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
