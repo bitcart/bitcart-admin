@@ -1,6 +1,6 @@
 <template>
   <item-data :headers="headers" :url="url" :title="title">
-    <template v-slot:item.is_superuser="{ item }">
+    <template #item.is_superuser="{ item }">
       <v-switch v-model="item.is_superuser" @change="updateSuperuser(item)" />
     </template>
   </item-data>
@@ -8,11 +8,11 @@
 <script>
 import ItemData from "@/components/ItemData.vue"
 export default {
-  layout: "admin",
-  middleware: "superuserOnly",
   components: {
     ItemData,
   },
+  layout: "admin",
+  middleware: "superuserOnly",
   data() {
     return {
       headers: [

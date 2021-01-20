@@ -15,7 +15,7 @@
     item-value="id"
     @input="updateValue"
   >
-    <template v-if="multiple" v-slot:selection="data">
+    <template v-if="multiple" #selection="data">
       <v-chip
         v-bind="data.attrs"
         :input-value="data.selected"
@@ -26,7 +26,7 @@
         {{ data.item[displayProp] }}
       </v-chip>
     </template>
-    <template v-slot:item="data">
+    <template #item="data">
       <template v-if="typeof data.item !== 'object'">
         <v-list-item-content v-text="data.item" />
       </template>
@@ -119,6 +119,7 @@ export default {
     removeMultiple(item) {
       const index = this.value.indexOf(item.id)
       if (index >= 0) {
+        // eslint-disable-next-line vue/no-mutating-props
         this.value.splice(index, 1)
       }
     },

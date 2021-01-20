@@ -5,10 +5,10 @@
 import ItemData from "@/components/ItemData.vue"
 import JSONField from "@/components/JSONField.vue"
 export default {
-  layout: "dashboard",
   components: {
     ItemData,
   },
+  layout: "dashboard",
   data() {
     return {
       headers: [

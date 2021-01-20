@@ -24,13 +24,13 @@ export default {
       otherError: "An error occurred",
     }
   },
+  head() {
+    return { title: this.title }
+  },
   computed: {
     title() {
       return this.error.statusCode === 404 ? this.pageNotFound : this.otherError
     },
-  },
-  head() {
-    return { title: this.title }
   },
 }
 </script>

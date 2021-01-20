@@ -1,6 +1,6 @@
 <template>
   <v-tooltip bottom>
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <v-icon small v-bind="attrs" v-on="on" @click="$emit('click')">
         {{ icon }}
       </v-icon>

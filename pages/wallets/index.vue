@@ -1,6 +1,6 @@
 <template>
   <item-data :headers="headers" :actions="actions" :url="url" :title="title">
-    <template v-slot:item.lightning_enabled="{ item }">
+    <template #item.lightning_enabled="{ item }">
       <v-switch :input-value="item.lightning_enabled" readonly />
     </template>
   </item-data>
@@ -8,10 +8,10 @@
 <script>
 import ItemData from "@/components/ItemData.vue"
 export default {
-  layout: "dashboard",
   components: {
     ItemData,
   },
+  layout: "dashboard",
   data() {
     return {
       headers: [

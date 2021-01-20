@@ -14,7 +14,7 @@
         @click="copyText(value)"
         @focus="$event.target.blur()"
       >
-        <template v-slot:append>
+        <template #append>
           <v-fade-transition>
             <v-overlay v-if="displayOverlay" absolute color="white" opacity="1">
               <p class="text-h4 pt-4 black--text">Copied</p>

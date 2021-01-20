@@ -6,7 +6,7 @@
       :rules="rules"
       @change="$emit('input', $event)"
     >
-      <template v-slot:label>
+      <template #label>
         <h3>
           {{
             customTitle

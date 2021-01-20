@@ -6,4 +6,4 @@ if (process.env.NODE_ENV === "production") {
   VImageInput = require("vuetify-image-input")
 }
 
-Vue.component("v-image-input", VImageInput)
+Vue.component("VImageInput", VImageInput)

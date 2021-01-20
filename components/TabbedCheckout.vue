@@ -36,7 +36,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-menu v-model="showMenu" offset-y style="max-width: 600px">
-            <template v-slot:activator="{ on, attrs }">
+            <template #activator="{ on, attrs }">
               <v-list-item-title
                 class="text-subtitle-1 font-weight-light"
                 :class="currencySelectClass"

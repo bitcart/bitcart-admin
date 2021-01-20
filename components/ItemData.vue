@@ -15,10 +15,10 @@
     >
       <slot />
       <!-- Pass child templates to v-datatable for extensibility -->
-      <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+      <template v-for="(_, slot) of $scopedSlots" #[slot]="scope">
         <slot v-if="slot.startsWith('item.')" :name="slot" v-bind="scope" />
       </template>
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-toolbar-title>{{ title + "s" }}</v-toolbar-title>
           <div class="flex-grow-1" />
@@ -69,7 +69,7 @@
             :postprocess="postprocess"
             :postclose="postclose"
           >
-            <template v-slot:dialog>
+            <template #dialog>
               <slot name="dialog" />
             </template>
           </edit-card>
@@ -79,7 +79,7 @@
           </v-btn>
         </v-toolbar>
       </template>
-      <template v-slot:expanded-item="{ item }">
+      <template #expanded-item="{ item }">
         <div
           v-for="header in toExpand"
           :key="header.text"
@@ -93,18 +93,18 @@
           <p v-else>{{ header.text }}: <br />{{ item[header.value] }}</p>
         </div>
       </template>
-      <template v-slot:item.created="{ item }">
+      <template #item.created="{ item }">
         {{ new Date(item.created).toLocaleString() }}
       </template>
-      <template v-slot:item.end_date="{ item }">
+      <template #item.end_date="{ item }">
         {{ new Date(item.end_date).toLocaleString() }}
       </template>
       <template
         v-for="(slotName, key) in dropdownSlotNames"
-        v-slot:[slotName]="{ item }"
+        #[slotName]="{ item }"
       >
         <v-menu :key="slotName" offset-y allow-overflow max-height="300">
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn color="primary" v-on="on"> Show </v-btn>
           </template>
           <v-list v-if="item[dropdownNames[key]].length > 0">
@@ -123,15 +123,15 @@
           </v-list>
         </v-menu>
       </template>
-      <template v-slot:[tabbedSlotName]="{ item }">
+      <template #[tabbedSlotName]="{ item }">
         <v-btn color="primary" @click="showTabbedDialog(item, item.id)">
           Show
         </v-btn>
       </template>
-      <template v-slot:[imageSlotName]="{ item }">
+      <template #[imageSlotName]="{ item }">
         <v-btn color="primary" @click="showImage(item)"> Show </v-btn>
       </template>
-      <template v-slot:item.action="{ item }">
+      <template #item.action="{ item }">
         <v-icon small class="mr-2" @click="copyText(item.id)">
           mdi-content-copy
         </v-icon>

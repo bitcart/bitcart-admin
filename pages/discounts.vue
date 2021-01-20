@@ -4,10 +4,10 @@
 <script>
 import ItemData from "@/components/ItemData.vue"
 export default {
-  layout: "dashboard",
   components: {
     ItemData,
   },
+  layout: "dashboard",
   data() {
     return {
       headers: [
