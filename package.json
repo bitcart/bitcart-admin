@@ -40,7 +40,7 @@
     "husky": "^4.3.8",
     "lint-staged": "^8.2.1",
     "lodash.debounce": "^4.0.8",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.14.12",
     "prettier": "^2.1.2",
     "vuetify": "~2.3",
     "vuetify-datetime-picker": "^2.1.1",
