@@ -41,7 +41,7 @@
     "lint-staged": "^8.2.1",
     "lodash.debounce": "^4.0.8",
     "nuxt": "^2.14.12",
-    "prettier": "^2.1.2",
+    "prettier": "^2.2.1",
     "vuetify": "~2.3",
     "vuetify-datetime-picker": "^2.1.1",
     "vuetify-image-input": "^19.2.0"
