@@ -10,7 +10,12 @@
         </v-card-title>
 
         <v-card-text>
-          <v-form ref="form" v-model="formValid">
+          <v-form
+            id="myform"
+            ref="form"
+            v-model="formValid"
+            @submit.prevent="save"
+          >
             <v-container>
               <v-row>
                 <component
@@ -197,7 +202,7 @@
         <v-card-actions>
           <div class="flex-grow-1" />
           <v-btn color="#1e88e5" text @click="dialog = false"> Cancel </v-btn>
-          <v-btn color="#1e88e5" text @click="save"> Save </v-btn>
+          <v-btn color="#1e88e5" text type="submit" form="myform"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
