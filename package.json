@@ -24,7 +24,7 @@
     "@chenfengyuan/vue-qrcode": "^1.0.1",
     "@nuxtjs/auth": "^4.9.0",
     "@nuxtjs/axios": "^5.3.6",
-    "nuxt-start": "^2.0.0",
+    "nuxt-start": "^2.14.12",
     "socks-proxy-agent": "^5.0.0"
   },
   "devDependencies": {
