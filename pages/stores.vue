@@ -187,6 +187,19 @@ export default {
           help: "https://docs.bitcartcc.com/guides/transaction-speed",
         },
         {
+          text: "Underpaid percentage",
+          value: "underpaid_percentage",
+          rules: ["int"],
+          hint:
+            "Consider the invoice paid even if the paid amount is ... % less than expected",
+          errors: {
+            "Underpaid percentage must be in range from 0 to 99":
+              "Underpaid percentage must be in range from 0 to 99",
+          },
+          help:
+            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-underpaid-percentage",
+        },
+        {
           text: "Use HTML templates",
           value: "use_html_templates",
           input: "switch",

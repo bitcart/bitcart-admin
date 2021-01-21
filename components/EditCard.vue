@@ -34,6 +34,7 @@
                     :error-messages="errors[header.text]"
                     :label="header.text"
                     :hint="header.hint"
+                    persistent-hint
                     :value="item[header.value]"
                     :readonly="editMode && header.readonly"
                     @input="update(header.value, $event)"
