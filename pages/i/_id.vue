@@ -23,7 +23,7 @@
         </div>
         <div v-else>
           <TabbedCheckout
-            v-if="status === 'Pending' || status === 'active'"
+            v-if="status === 'pending'"
             :checkout-page="true"
             :tabitem="invoice.payments"
             :invoice="invoice"
@@ -68,7 +68,7 @@ export default {
     return {
       showSnackbar: false,
       showDialog: true,
-      status: "Pending",
+      status: "pending",
       invoice: {},
       store: {},
       loading: true,
@@ -78,17 +78,21 @@ export default {
           icon: "mdi-close",
           text: "This invoice has expired",
         },
-        complete: {
+        invalid: {
+          icon: "mdi-close",
+          text: "This invoice has been marked as invalid",
+        },
+        paid: {
           icon: "mdi-check",
           text: "This invoice has been paid",
         },
-        Failed: {
-          icon: "mdi-close",
-          text: "This invoice has failed",
+        confirmed: {
+          icon: "mdi-check",
+          text: "This invoice has been paid",
         },
-        Invalid: {
-          icon: "mdi-close",
-          text: "This invoice is invalid",
+        complete: {
+          icon: "mdi-check",
+          text: "This invoice has been paid",
         },
         "": {
           icon: "mdi-close",
@@ -146,7 +150,10 @@ export default {
             "*"
           )
         }
-        if (status === "complete" && this.invoice.redirect_url) {
+        if (
+          ["paid", "confirmed", "complete"].includes(status) &&
+          this.invoice.redirect_url
+        ) {
           this.$utils.redirectTo(this.invoice.redirect_url)
         }
         this.status = status

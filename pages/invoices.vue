@@ -89,6 +89,10 @@ export default {
       ],
       batchActions: [
         {
+          title: "Mark as complete",
+          command: "mark_complete",
+        },
+        {
           title: "Mark as invalid",
           command: "mark_invalid",
         },
