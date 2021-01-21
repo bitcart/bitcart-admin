@@ -23,11 +23,12 @@
           <v-toolbar-title>{{ title + "s" }}</v-toolbar-title>
           <div class="flex-grow-1" />
           <v-text-field
-            v-model="search"
+            :value="search"
             append-icon="search"
             label="Search"
             single-line
             hide-details
+            @input="$emit('update:search', $event)"
           />
           <v-spacer />
           <v-dialog
@@ -195,6 +196,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    search: {
+      type: String,
+      default: "",
+    },
     customBatchActions: {
       type: Array,
       default() {
@@ -218,7 +223,6 @@ export default {
   },
   data() {
     return {
-      search: "",
       options: {},
       numItems: 0,
       dialog: false,
@@ -297,7 +301,8 @@ export default {
       },
       deep: true,
     },
-    search() {
+    search(val) {
+      this.$emit("update:search", val)
       this.triggerReload(true)
     },
     dialog(val) {

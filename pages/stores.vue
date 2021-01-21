@@ -177,7 +177,7 @@ export default {
         },
         {
           text: "Transaction speed",
-          value: "confirmation_policy",
+          value: "transaction_speed",
           rules: ["int"],
           hint: "Number of confirmations for invoice to be considered complete",
           errors: {
