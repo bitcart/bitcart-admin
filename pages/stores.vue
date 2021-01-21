@@ -176,6 +176,17 @@ export default {
           hint: "In minutes",
         },
         {
+          text: "Transaction speed",
+          value: "transaction_speed",
+          rules: ["int"],
+          hint: "Number of confirmations for invoice to be considered complete",
+          errors: {
+            "Confirmation policy must be in range from 0 to 6":
+              "Transaction speed must be in range from 0 to 6",
+          },
+          help: "https://docs.bitcartcc.com/guides/transaction-speed",
+        },
+        {
           text: "Use HTML templates",
           value: "use_html_templates",
           input: "switch",

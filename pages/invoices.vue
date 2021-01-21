@@ -1,11 +1,17 @@
 <template>
   <item-data
+    :search.sync="search"
     :headers="headers"
     :url="url"
     :title="title"
     :custom-batch-actions="batchActions"
   >
     <template #before-toolbar>
+      <menu-dropdown
+        :items="filterItems"
+        :process="applyFilter"
+        title="Filters"
+      />
       <menu-dropdown
         :items="exportItems"
         :process="exportInvoices"
@@ -25,6 +31,7 @@ export default {
   layout: "dashboard",
   data() {
     return {
+      search: "",
       headers: [
         { text: "ID", value: "id", mode: "display" },
         { text: "Price", value: "price", readonly: true, rules: ["required"] },
@@ -87,7 +94,25 @@ export default {
           command: "csv",
         },
       ],
+      filterItems: [
+        {
+          title: "Paid invoices",
+          command: "paid|confirmed|complete",
+        },
+        {
+          title: "Invalid invoices",
+          command: "invalid",
+        },
+        {
+          title: "Unfiltered",
+          command: "",
+        },
+      ],
       batchActions: [
+        {
+          title: "Mark as complete",
+          command: "mark_complete",
+        },
         {
           title: "Mark as invalid",
           command: "mark_invalid",
@@ -122,6 +147,9 @@ export default {
           document.body.appendChild(link)
           link.click()
         })
+    },
+    applyFilter(filter) {
+      this.search = filter
     },
   },
 }
