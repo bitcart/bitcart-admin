@@ -120,6 +120,9 @@
                           >Open in wallet</v-btn
                         >
                       </v-row>
+                      <v-row v-if="showRecommendedFee" justify="center">
+                        Recommended fee: {{ itemv.recommended_fee }} sat/byte
+                      </v-row>
                     </v-container>
                   </v-tab-item>
                   <v-tab-item>
@@ -281,6 +284,13 @@ export default {
       )
         url = this.store.checkout_settings.custom_logo_link
       return url
+    },
+    showRecommendedFee() {
+      return (
+        this.store.checkout_settings &&
+        this.store.checkout_settings.show_recommended_fee &&
+        this.itemv.recommended_fee !== 0
+      )
     },
   },
   watch: {

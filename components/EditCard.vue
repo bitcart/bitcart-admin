@@ -554,8 +554,12 @@ export default {
       if (err.response) {
         const errText = err.response.data.detail
         for (const header of this.headers) {
-          if (header.errors && errText in header.errors) {
-            this.$set(this.errors, header.text, [header.errors[errText]])
+          if (header.errors) {
+            for (const [error, message] of Object.entries(header.errors)) {
+              if (errText.includes(error)) {
+                this.$set(this.errors, header.text, [message])
+              }
+            }
           }
         }
       }

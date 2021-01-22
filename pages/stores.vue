@@ -182,7 +182,7 @@ export default {
           rules: ["int"],
           hint: "Number of confirmations for invoice to be considered complete",
           errors: {
-            "Confirmation policy must be in range from 0 to 6":
+            "Transaction speed must be in range from 0 to 6":
               "Transaction speed must be in range from 0 to 6",
           },
           help: "https://docs.bitcartcc.com/guides/transaction-speed",
@@ -199,6 +199,26 @@ export default {
           },
           help:
             "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-underpaid-percentage",
+        },
+        {
+          text: "Show recommended fee",
+          value: "show_recommended_fee",
+          input: "switch",
+          help:
+            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
+        },
+        {
+          text: "Recommended fee confirmation target blocks",
+          value: "recommended_fee_target_blocks",
+          rules: ["int"],
+          hint:
+            "The fee the customer must pay for transaction to be confirmed in ... blocks",
+          errors: {
+            "Recommended fee confirmation target blocks must be either of":
+              "Recommended fee confirmation target blocks must be either of: 25, 10, 5, 2, 1",
+          },
+          help:
+            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
         },
         {
           text: "Custom logo link",
