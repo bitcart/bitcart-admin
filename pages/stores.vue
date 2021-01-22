@@ -201,6 +201,19 @@ export default {
             "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-underpaid-percentage",
         },
         {
+          text: "Custom logo link",
+          value: "custom_logo_link",
+          help:
+            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-custom-logo-link",
+        },
+        {
+          text: "Use Dark Mode",
+          value: "use_dark_mode",
+          input: "switch",
+          help:
+            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-the-use-dark-mode-setting",
+        },
+        {
           text: "Use HTML templates",
           value: "use_html_templates",
           input: "switch",

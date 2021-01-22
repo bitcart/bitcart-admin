@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div v-if="checkoutPage">
-      <v-img contain max-height="40" src="/checkout-logo.png" class="mb-2">
+      <v-img contain max-height="40" :src="logoURL" class="mb-2">
         <close-button @closedialog="$emit('closedialog')" />
       </v-img>
       <v-progress-linear
@@ -273,6 +273,15 @@ export default {
         ? `lightning:${this.itemv.payment_url}`
         : this.itemv.payment_url
     },
+    logoURL() {
+      let url = "/checkout-logo.png"
+      if (
+        this.store.checkout_settings &&
+        this.store.checkout_settings.custom_logo_link
+      )
+        url = this.store.checkout_settings.custom_logo_link
+      return url
+    },
   },
   watch: {
     showProp(val) {
@@ -343,8 +352,11 @@ export default {
   height: 400px;
   overflow-y: auto;
 }
-.activeTab {
+.v-application.theme--light .activeTab {
   background: #f5f5f5;
+}
+.v-application.theme--dark .activeTab {
+  background: #424242;
 }
 .v-list-item__title.align-right {
   align-self: flex-end;
