@@ -5,18 +5,13 @@
       <template v-if="showNew" #activator="{ on: show }">
         <v-btn color="primary" dark v-on="show"> New {{ title }} </v-btn>
       </template>
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">{{ formTitle }}</span>
-        </v-card-title>
+      <v-form ref="form" v-model="formValid" @submit.prevent="save">
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">{{ formTitle }}</span>
+          </v-card-title>
 
-        <v-card-text>
-          <v-form
-            id="myform"
-            ref="form"
-            v-model="formValid"
-            @submit.prevent="save"
-          >
+          <v-card-text>
             <v-container>
               <v-row>
                 <component
@@ -197,15 +192,15 @@
                 <slot :item="item" name="dialog" />
               </v-row>
             </v-container>
-          </v-form>
-        </v-card-text>
+          </v-card-text>
 
-        <v-card-actions>
-          <div class="flex-grow-1" />
-          <v-btn color="#1e88e5" text @click="dialog = false"> Cancel </v-btn>
-          <v-btn color="#1e88e5" text type="submit" form="myform"> Save </v-btn>
-        </v-card-actions>
-      </v-card>
+          <v-card-actions>
+            <div class="flex-grow-1" />
+            <v-btn color="#1e88e5" text @click="dialog = false"> Cancel </v-btn>
+            <v-btn color="#1e88e5" text type="submit"> Save </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
   </div>
 </template>
@@ -264,6 +259,10 @@ export default {
     body: {
       type: Boolean,
       default: false,
+    },
+    getEditUrl: {
+      type: Function,
+      default: (item) => {},
     },
     postprocess: {
       type: Function,
@@ -602,8 +601,10 @@ export default {
           headers = { "content-type": "application/x-www-form-urlencoded" }
         }
         if (this.editMode) {
+          const url =
+            this.getEditUrl(this.item) || `/${this.url}/${this.item.id}`
           this.$axios
-            .patch(`/${this.url}/${this.item.id}`, data, headers)
+            .patch(url, data, headers)
             .then((resp) => {
               if (resp.status === 200) {
                 resp.data.password = ""

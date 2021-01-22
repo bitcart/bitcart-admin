@@ -32,10 +32,11 @@
       :url="url"
       :on.sync="showSettingsDialog"
       :headers="settingsHeaders"
-      :item.sync="item"
+      :item.sync="item.checkout_settings"
       :item-index="itemIndex"
       :show-new="false"
       :edit-mode="true"
+      :get-edit-url="getEditURL"
       title="store checkout settings"
     />
     <template-edit
@@ -219,6 +220,9 @@ export default {
     })
   },
   methods: {
+    getEditURL(item) {
+      return `/${this.url}/${this.item.id}/checkout_settings`
+    },
     setup(item, itemIndex) {
       this.item = JSON.parse(JSON.stringify(item))
       this.itemIndex = itemIndex
