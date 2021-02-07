@@ -25,7 +25,6 @@
           <TabbedCheckout
             v-if="status === 'pending'"
             :checkout-page="true"
-            :tabitem="invoice.payments"
             :invoice="invoice"
             :store="store"
             class="px-0 pb-0"

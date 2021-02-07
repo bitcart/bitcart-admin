@@ -1,198 +1,192 @@
 <template>
-  <v-container>
-    <div v-if="checkoutPage">
-      <v-img contain max-height="40" :src="logoURL" class="mb-2">
-        <close-button @closedialog="$emit('closedialog')" />
-      </v-img>
-      <v-progress-linear
-        :value="expirationPercentage"
-        height="25"
-        :color="mainProgressColor"
-        :background-color="backgroundProgressColor"
-        class="mx-0"
-      >
-        <v-progress-circular
-          indeterminate
-          size="18"
-          color="white"
-          width="3"
-          class="ml-2"
-        />
-        <p class="my-auto px-3 white--text text-subtitle-2">
-          {{
-            expiringSoon ? "Invoice expiring soon..." : "Awaiting payment..."
-          }}
-        </p>
-        <v-spacer />
-        <p class="white--text my-auto text-subtitle-2 px-3">
-          {{ timerText }}
-        </p>
-      </v-progress-linear>
+  <v-container v-if="showProp">
+    <v-card v-if="noTabs" flat>
+      <v-card-title class="justify-center"> Empty </v-card-title>
+      <v-card-text class="d-flex justify-center">
+        No payment methods available<br />
+        It probably means that there was an error on invoice creation.<br />
+        Please check server logs
+      </v-card-text>
+    </v-card>
+    <div v-else>
+      <div v-if="checkoutPage">
+        <v-img contain max-height="40" :src="logoURL" class="mb-2">
+          <close-button @closedialog="$emit('closedialog')" />
+        </v-img>
+        <v-progress-linear
+          :value="expirationPercentage"
+          height="25"
+          :color="mainProgressColor"
+          :background-color="backgroundProgressColor"
+          class="mx-0"
+        >
+          <v-progress-circular
+            indeterminate
+            size="18"
+            color="white"
+            width="3"
+            class="ml-2"
+          />
+          <p class="my-auto px-3 white--text text-subtitle-2">
+            {{
+              expiringSoon ? "Invoice expiring soon..." : "Awaiting payment..."
+            }}
+          </p>
+          <v-spacer />
+          <p class="white--text my-auto text-subtitle-2 px-3">
+            {{ timerText }}
+          </p>
+        </v-progress-linear>
+      </div>
+      <v-list class="py-0" dense>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>Pay with</v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-menu v-model="showMenu" offset-y style="max-width: 600px">
+              <template #activator="{ on, attrs }">
+                <v-list-item-title
+                  class="text-subtitle-1 font-weight-light"
+                  :class="currencySelectClass"
+                  v-bind="attrs"
+                  v-on="on"
+                  >{{ itemv.name }}</v-list-item-title
+                >
+              </template>
+              <v-list>
+                <v-list-item-group v-model="selectedCurrency" mandatory>
+                  <v-list-item
+                    v-for="(item, index) in invoice.payments"
+                    :key="index"
+                  >
+                    <v-list-item-title>{{ item.name }}</v-list-item-title>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-menu>
+          </v-list-item-action>
+        </v-list-item>
+        <v-divider />
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>{{ store.name }}</v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-list-item-title
+              class="text-subtitle-1 font-weight-regular align-right"
+              >{{ itemv.amount }}
+              {{ itemv.currency.toUpperCase() }}</v-list-item-title
+            >
+            <v-list-item-title
+              class="text-caption font-weight-regular align-right"
+            >
+              1 {{ itemv.currency.toUpperCase() }} =
+              {{ itemv.rate_str }}
+            </v-list-item-title>
+          </v-list-item-action>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="ma-0 pa-0">
+          <v-list-item-content class="ma-0 pa-0">
+            <v-card class="ma-0 pa-0">
+              <v-card-text class="ma-0 pa-0">
+                <v-container class="ma-0 pa-0">
+                  <v-tabs
+                    v-model="selectedAction"
+                    centered
+                    grow
+                    :active-class="checkoutPage ? 'activeTab' : null"
+                    :color="checkoutPage ? 'success' : null"
+                  >
+                    <v-tab>Scan</v-tab>
+                    <v-tab>Copy</v-tab>
+                  </v-tabs>
+                  <v-divider />
+                  <v-tabs-items
+                    v-model="selectedAction"
+                    class="full-height-tab"
+                  >
+                    <v-tab-item>
+                      <v-container fill-height>
+                        <v-row align="center" justify="center">
+                          <v-tabs
+                            v-if="itemv.lightning"
+                            v-model="selectedToCopy"
+                            centered
+                            :active-class="checkoutPage ? 'activeTab' : null"
+                            :color="checkoutPage ? 'success' : null"
+                          >
+                            <v-tab>Invoice</v-tab>
+                            <v-tab>Node Info</v-tab>
+                          </v-tabs>
+                          <qrcode
+                            :options="{ width: 240 }"
+                            :value="qrValue"
+                            tag="v-img"
+                            class="d-flex justify-center"
+                          />
+                        </v-row>
+                        <v-row justify="center">
+                          <v-btn color="primary" :href="paymentURL"
+                            >Open in wallet</v-btn
+                          >
+                        </v-row>
+                        <v-row v-if="showRecommendedFee" justify="center">
+                          Recommended fee: {{ itemv.recommended_fee }} sat/byte
+                        </v-row>
+                      </v-container>
+                    </v-tab-item>
+                    <v-tab-item>
+                      <v-card flat class="pa-0 ma-0">
+                        <v-card-text>
+                          <p class="d-flex justify-center">Amount</p>
+                          <p class="text-h4 d-flex justify-center">
+                            {{ itemv.amount }}
+                            {{ itemv.currency.toUpperCase() }}
+                          </p>
+                          <v-divider />
+                          <display-field
+                            :title="itemv.lightning ? 'Invoice' : 'Address'"
+                            :value="itemv.payment_address"
+                          />
+                          <display-field
+                            v-if="itemv.lightning"
+                            title="Node Info"
+                            :value="itemv.node_id"
+                          />
+                          <display-field
+                            v-else
+                            title="Payment Link"
+                            :value="itemv.payment_url"
+                          />
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
+                  </v-tabs-items>
+                </v-container>
+              </v-card-text>
+              <v-card-actions class="justify-center">
+                <v-btn
+                  v-if="!checkoutPage"
+                  class="justify-center"
+                  color="primary"
+                  @click="checkout(invoice.id)"
+                >
+                  <v-icon left="left"> mdi-open-in-new </v-icon
+                  ><span
+                    >Open checkout
+                    <v-btn text color="white" @click.stop="showPopup"
+                      >^</v-btn
+                    ></span
+                  >
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </div>
-    <v-list class="py-0" dense>
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title>Pay with</v-list-item-title>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-menu v-model="showMenu" offset-y style="max-width: 600px">
-            <template #activator="{ on, attrs }">
-              <v-list-item-title
-                class="text-subtitle-1 font-weight-light"
-                :class="currencySelectClass"
-                v-bind="attrs"
-                v-on="on"
-                >{{ itemv.name }}</v-list-item-title
-              >
-            </template>
-            <v-list>
-              <v-list-item-group v-model="selectedCurrency" mandatory>
-                <v-list-item
-                  v-for="(item, index) in invoice.payments"
-                  :key="index"
-                >
-                  <v-list-item-title>{{ item.name }}</v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-menu>
-        </v-list-item-action>
-      </v-list-item>
-      <v-divider />
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title>{{ store.name }}</v-list-item-title>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-list-item-title
-            class="text-subtitle-1 font-weight-regular align-right"
-            >{{ itemv.amount }}
-            {{ itemv.currency.toUpperCase() }}</v-list-item-title
-          >
-          <v-list-item-title
-            class="text-caption font-weight-regular align-right"
-          >
-            1 {{ itemv.currency.toUpperCase() }} =
-            {{ itemv.rate_str }}
-          </v-list-item-title>
-        </v-list-item-action>
-      </v-list-item>
-      <v-divider />
-      <v-list-item class="ma-0 pa-0">
-        <v-list-item-content class="ma-0 pa-0">
-          <v-card class="ma-0 pa-0">
-            <v-card-text class="ma-0 pa-0">
-              <v-container class="ma-0 pa-0">
-                <v-tabs
-                  v-model="selectedAction"
-                  centered
-                  grow
-                  :active-class="checkoutPage ? 'activeTab' : null"
-                  :color="checkoutPage ? 'success' : null"
-                >
-                  <v-tab>Scan</v-tab>
-                  <v-tab>Copy</v-tab>
-                </v-tabs>
-                <v-divider />
-                <v-tabs-items v-model="selectedAction" class="full-height-tab">
-                  <v-tab-item>
-                    <v-container fill-height>
-                      <v-row align="center" justify="center">
-                        <v-tabs
-                          v-if="itemv.lightning"
-                          v-model="selectedToCopy"
-                          centered
-                          :active-class="checkoutPage ? 'activeTab' : null"
-                          :color="checkoutPage ? 'success' : null"
-                        >
-                          <v-tab>Invoice</v-tab>
-                          <v-tab>Node Info</v-tab>
-                        </v-tabs>
-                        <qrcode
-                          :options="{ width: 240 }"
-                          :value="qrValue"
-                          tag="v-img"
-                          class="d-flex justify-center"
-                        />
-                      </v-row>
-                      <v-row justify="center">
-                        <v-btn color="primary" :href="paymentURL"
-                          >Open in wallet</v-btn
-                        >
-                      </v-row>
-                      <v-row v-if="showRecommendedFee" justify="center">
-                        Recommended fee: {{ itemv.recommended_fee }} sat/byte
-                      </v-row>
-                    </v-container>
-                  </v-tab-item>
-                  <v-tab-item>
-                    <v-card flat class="pa-0 ma-0">
-                      <v-card-text>
-                        <p class="d-flex justify-center">Amount</p>
-                        <p class="text-h4 d-flex justify-center">
-                          {{ itemv.amount }}
-                          {{ itemv.currency.toUpperCase() }}
-                        </p>
-                        <v-divider />
-                        <display-field
-                          :title="itemv.lightning ? 'Invoice' : 'Address'"
-                          :value="itemv.payment_address"
-                        />
-                        <display-field
-                          v-if="itemv.lightning"
-                          title="Node Info"
-                          :value="itemv.node_id"
-                        />
-                        <display-field
-                          v-else
-                          title="Payment Link"
-                          :value="itemv.payment_url"
-                        />
-                      </v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                </v-tabs-items>
-              </v-container>
-            </v-card-text>
-            <v-card-actions class="justify-center">
-              <v-btn
-                v-if="!checkoutPage"
-                class="justify-center"
-                color="primary"
-                @click="checkout(invoice.id)"
-              >
-                <v-icon left="left"> mdi-open-in-new </v-icon
-                ><span
-                  >Open checkout
-                  <v-btn text color="white" @click.stop="showPopup"
-                    >^</v-btn
-                  ></span
-                >
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-          <v-card
-            v-if="showProp && noTabs"
-            class="accent--border"
-            raised="raised"
-          >
-            <v-card-title class="justify-center"> Empty </v-card-title>
-            <v-card-text class="d-flex justify-center">
-              No payment methods available
-            </v-card-text>
-          </v-card>
-          <v-snackbar
-            v-model="showSnackbar"
-            :timeout="2500"
-            color="success"
-            bottom
-          >
-            <v-icon>mdi-content-copy</v-icon>
-            Successfully copied {{ whatToCopy }} to clipboard!
-          </v-snackbar>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
   </v-container>
 </template>
 
@@ -213,12 +207,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    tabitem: {
-      type: Array,
-      default() {
-        return []
-      },
-    },
     invoice: {
       type: Object,
       default() {
@@ -237,8 +225,6 @@ export default {
       selectedCurrency: 0,
       selectedAction: null,
       selectedToCopy: null,
-      whatToCopy: "ID",
-      showSnackbar: false,
       showMenu: false,
       endDate: new Date(),
       expirationPercentage: 0,
@@ -255,7 +241,7 @@ export default {
         : this.itemv.payment_url
     },
     noTabs() {
-      return this.isEmpty(this.tabitem)
+      return this.invoice.payments.length === 0
     },
     expiringSoon() {
       return this.expirationPercentage >= 75
@@ -347,11 +333,6 @@ export default {
         id = this.qrItem.id
       }
       this.$router.push({ path: `/i/${id}` })
-    },
-    copyText(text, desc) {
-      this.$utils.copyToClipboard(text)
-      this.whatToCopy = desc || "ID"
-      this.showSnackbar = true
     },
   },
 }

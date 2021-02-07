@@ -38,7 +38,6 @@
           >
             <TabbedCheckout
               :show-prop="showTabDialog"
-              :tabitem="tabbedDialogItem[tabbedName]"
               :invoice="tabbedDialogItem"
               class="pa-0"
               @closedialog="showTabDialog = false"
