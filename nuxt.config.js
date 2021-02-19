@@ -84,6 +84,7 @@ export default {
   },
   router: {
     middleware: ["onion", "auth"],
+    base: process.env.BITCART_ADMIN_ROOTPATH || "/",
   },
   auth: {
     localStorage: false,

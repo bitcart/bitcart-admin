@@ -7,6 +7,9 @@
       <v-btn to="/services" text>
         <v-icon left> mdi-apps-box </v-icon>Services
       </v-btn>
+      <v-btn to="/configurator" text>
+        <v-icon left> mdi-cog </v-icon>Configurator
+      </v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>
