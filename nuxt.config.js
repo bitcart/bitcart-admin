@@ -59,8 +59,8 @@ export default {
    ** Runtime config
    */
   publicRuntimeConfig: {
-    URL: process.env.BITCART_ADMIN_URL || "http://localhost:8000",
-    ONION_URL: process.env.BITCART_ADMIN_ONION_URL,
+    URL: process.env.BITCART_ADMIN_API_URL || "http://localhost:8000",
+    ONION_URL: process.env.BITCART_ADMIN_API_ONION_URL,
     SOCKS_PROXY: process.env.BITCART_ADMIN_SOCKS_PROXY,
   },
   /*
