@@ -53,6 +53,7 @@
 export default {
   auth: false,
   layout: "basicadmin",
+  middleware: "configurator",
   data() {
     return {
       showDialog: false,
