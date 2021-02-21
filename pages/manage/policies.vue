@@ -24,6 +24,8 @@ export default {
         disable_registration: "Disable user registration",
         discourage_index: "Discourage search engines from indexing this site",
         check_updates: "Check for updates once a day",
+        allow_anonymous_configurator:
+          "Allow access to configurator for unauthorized users",
       },
     }
   },
