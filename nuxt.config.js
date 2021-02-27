@@ -19,7 +19,7 @@ export default {
       },
     ],
     link: [
-      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "icon", type: "image/x-icon", href: "favicon.ico" },
       {
         rel: "stylesheet",
         href:
@@ -39,6 +39,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    "~/plugins/routerbase.js",
     "~/plugins/utils.js",
     "~/plugins/axios.js",
     "~/plugins/eventbus.js",
@@ -62,6 +63,7 @@ export default {
     URL: process.env.BITCART_ADMIN_API_URL || "http://localhost:8000",
     ONION_URL: process.env.BITCART_ADMIN_API_ONION_URL,
     SOCKS_PROXY: process.env.BITCART_ADMIN_SOCKS_PROXY,
+    ROOTPATH: process.env.BITCART_ADMIN_ROOTPATH || "/",
   },
   /*
    ** Nuxt.js modules

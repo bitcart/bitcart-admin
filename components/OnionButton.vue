@@ -1,6 +1,6 @@
 <template>
   <v-btn icon :href="url">
-    <v-img src="/onion.svg" height="32" width="32" contain />
+    <v-img :src="`${STATIC_PATH}/onion.svg`" height="32" width="32" contain />
   </v-btn>
 </template>
 

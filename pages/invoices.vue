@@ -122,7 +122,7 @@ export default {
   },
   head() {
     return {
-      script: [{ src: "/modal/bitcart.js" }],
+      script: [{ src: `${this.STATIC_PATH}/modal/bitcart.js` }],
     }
   },
   methods: {

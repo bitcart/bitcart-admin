@@ -263,7 +263,7 @@ export default {
         : this.itemv.payment_url
     },
     logoURL() {
-      let url = "/checkout-logo.png"
+      let url = `${this.STATIC_PATH}/checkout-logo.png`
       if (
         this.store.checkout_settings &&
         this.store.checkout_settings.custom_logo_link
