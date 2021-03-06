@@ -2,7 +2,7 @@
   <v-container class="container">
     <div class="alerts">
       <v-alert
-        v-if="isUnset(value.domainSettings.domain) && !isEnabledService('tor')"
+        v-if="!value.domainSettings.domain && !isEnabledService('tor')"
         type="warning"
         >Warning: no domain specified. Please enter your domain or enable Tor
         support to be able to get a working installation</v-alert
@@ -19,16 +19,26 @@
             >Deployment</v-card-title
           >
           <v-card-text class="text--primary">
-            <v-row class="pa-0">
-              <v-col cols="8" class="py-0">
-                <p class="text-h6">Destination:</p>
-              </v-col>
-              <v-col cols="4" class="py-0">
-                <p class="text-h6 font-weight-regular">
-                  {{ value.mode }}
-                </p>
-              </v-col>
-            </v-row>
+            <pretty-text text="Destination:" :value="value.mode.name" />
+            <p class="text-h4 font-weight-bold">SSH Settings</p>
+            <pretty-text text="Host:" :value="value.mode.sshSettings.host" />
+            <pretty-text
+              text="Username:"
+              :value="value.mode.sshSettings.username"
+            />
+            <pretty-text
+              text="Password:"
+              :value="value.mode.sshSettings.password"
+            />
+            <pretty-text
+              text="Root password:"
+              :value="value.mode.sshSettings.root_password"
+            />
+            <v-checkbox
+              :input-value="value.mode.sshSettings.load_settings"
+              disabled
+              label="Load existing settings (if possible)"
+            />
           </v-card-text>
         </v-card>
       </v-col>
@@ -36,16 +46,7 @@
         <v-card height="100%">
           <v-card-title class="text-h4 font-weight-bold">Domains</v-card-title>
           <v-card-text class="text--primary">
-            <v-row class="pa-0">
-              <v-col cols="8" class="py-0">
-                <p class="text-h6">Domain:</p>
-              </v-col>
-              <v-col cols="4" class="py-0">
-                <p class="text-h6 font-weight-regular">
-                  {{ getOrEmpty(value.domainSettings.domain) }}
-                </p>
-              </v-col>
-            </v-row>
+            <pretty-text text="Domain:" :value="value.domainSettings.domain" />
             <v-checkbox
               :input-value="value.domainSettings.https"
               disabled
@@ -60,16 +61,7 @@
           <v-card-text v-if="!noCoins" class="text--primary">
             <div v-for="(coin, symbol) in availableCoins" :key="symbol">
               <p class="text-h5">{{ symbol.toUpperCase() }}</p>
-              <v-row class="pa-0">
-                <v-col cols="8" class="py-0">
-                  <p class="text-h6">Network:</p>
-                </v-col>
-                <v-col cols="4" class="py-0">
-                  <p class="text-h6 font-weight-regular">
-                    {{ coin.network }}
-                  </p>
-                </v-col>
-              </v-row>
+              <pretty-text text="Network:" :value="coin.network" />
               <v-checkbox
                 :input-value="coin.lightning"
                 disabled
@@ -94,16 +86,11 @@
               v-for="(enabled, service) in value.additionalServices"
               :key="service"
             >
-              <v-row class="pa-0">
-                <v-col cols="8" class="py-0">
-                  <p class="text-h5">{{ capitalize(service) }}:</p>
-                </v-col>
-                <v-col cols="4" class="py-0">
-                  <p class="text-h6 font-weight-regular">
-                    {{ enabled ? "Enabled" : "Not enabled" }}
-                  </p>
-                </v-col>
-              </v-row>
+              <pretty-text
+                :text="`${capitalize(service)}:`"
+                :value="enabled ? 'Enabled' : 'Not enabled'"
+                title-class="text-h5"
+              />
             </div>
           </v-card-text>
         </v-card>
@@ -114,40 +101,18 @@
             >Advanced Settings</v-card-title
           >
           <v-card-text class="text--primary">
-            <v-row class="pa-0">
-              <v-col cols="8" class="py-0">
-                <p class="text-h6">Installation pack:</p>
-              </v-col>
-              <v-col cols="4" class="py-0">
-                <p class="text-h6 font-weight-regular">
-                  {{ getOrEmpty(value.advancedSettings.installationPack) }}
-                </p>
-              </v-col>
-            </v-row>
-            <v-row class="pa-0">
-              <v-col cols="8" class="py-0">
-                <p class="text-h6">Additional components:</p>
-              </v-col>
-              <v-col cols="4" class="py-0">
-                <p class="text-h6 font-weight-regular">
-                  {{
-                    getOrEmpty(
-                      value.advancedSettings.additionalComponents.join(", ")
-                    )
-                  }}
-                </p>
-              </v-col>
-            </v-row>
-            <v-row class="pa-0">
-              <v-col cols="8" class="py-0">
-                <p class="text-h6">Custom bitcart-docker URL:</p>
-              </v-col>
-              <v-col cols="4" class="py-0">
-                <p class="text-h6 font-weight-regular">
-                  {{ getOrEmpty(value.advancedSettings.customRepoURL) }}
-                </p>
-              </v-col>
-            </v-row>
+            <pretty-text
+              text="Installation pack:"
+              :value="value.advancedSettings.installationPack"
+            />
+            <pretty-text
+              text="Additional components:"
+              :value="value.advancedSettings.additionalComponents.join(', ')"
+            />
+            <pretty-text
+              text="Custom bitcart-docker URL:"
+              :value="value.advancedSettings.customRepoURL"
+            />
           </v-card-text>
         </v-card>
       </v-col>
@@ -156,7 +121,11 @@
 </template>
 
 <script>
+import PrettyText from "@/components/PrettyText"
 export default {
+  components: {
+    PrettyText,
+  },
   props: {
     value: {
       type: Object,
@@ -177,13 +146,6 @@ export default {
     },
   },
   methods: {
-    isUnset(val) {
-      return !val
-    },
-    getOrEmpty(val) {
-      if (this.isUnset(val)) return "Not set"
-      return val
-    },
     capitalize(string) {
       return string.charAt(0).toUpperCase() + string.slice(1)
     },

@@ -14,9 +14,11 @@
               @click.stop
             />
           </v-card-text>
-          <v-icon v-if="isEnabled(symbol)" class="check-icon">
-            mdi-check
-          </v-icon>
+          <v-checkbox
+            :input-value="isEnabled(symbol)"
+            readonly
+            class="check-icon"
+          />
         </v-card>
       </v-col>
     </v-row>
