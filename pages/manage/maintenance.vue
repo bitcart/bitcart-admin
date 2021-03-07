@@ -31,6 +31,13 @@ export default {
           what: "update",
         },
         {
+          title: "Restart the server",
+          details:
+            "Restarting your BitcartCC instance will make it unavailable for some time. It might fix some issues you are experiencing",
+          btnText: "Start restart process",
+          what: "restart",
+        },
+        {
           title: "Cleanup the server",
           details:
             "Free up server disk space by deleting unused docker images and logs of BitcartCC",

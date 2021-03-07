@@ -3,10 +3,10 @@
     <PolicySetting
       v-for="(value, policy) in policies"
       :key="policy"
-      :title="titles[policy]"
+      :title="descriptions[policy].title"
       :what="policy"
+      :type="descriptions[policy].type"
       :initial-value="value"
-      type="integer"
       policy-url="manage/stores"
     />
   </div>
@@ -22,8 +22,12 @@ export default {
   data() {
     return {
       policies: {},
-      titles: {
-        pos_id: "ID of the store to enable on POS",
+      descriptions: {
+        pos_id: { title: "ID of the store to enable on POS", type: "integer" },
+        email_required: {
+          title: "Require email on POS checkout",
+          type: "checkbox",
+        },
       },
     }
   },

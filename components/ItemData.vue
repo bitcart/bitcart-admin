@@ -74,7 +74,7 @@
             </template>
           </edit-card>
           <slot name="after-toolbar" />
-          <v-btn icon @click="triggerReload(false)">
+          <v-btn icon @click="triggerReload()">
             <v-icon> mdi-reload </v-icon>
           </v-btn>
         </v-toolbar>
@@ -296,13 +296,13 @@ export default {
   watch: {
     options: {
       handler() {
-        this.triggerReload()
+        this.triggerReload(false, false)
       },
       deep: true,
     },
     search(val) {
       this.$emit("update:search", val)
-      this.triggerReload(true)
+      this.triggerReload(true, false)
     },
     dialog(val) {
       this.$emit("update:dialogWatch", val)
@@ -321,13 +321,14 @@ export default {
     this.getItems = debounce(this.getItemsNolimit, 250)
   },
   methods: {
-    triggerReload(search = false) {
+    triggerReload(search = false, refreshStats = true) {
       const { sortBy, sortDesc, itemsPerPage } = this.options
       let page = this.options.page
       if (search) {
         page = this.options.page = 1
       }
       this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+      if (refreshStats) this.$store.dispatch("syncStats", false)
     },
     processBatchCommand(command) {
       this.$axios
@@ -372,7 +373,6 @@ export default {
     addItem(item) {
       this.triggerReload()
       this.postsave(item)
-      this.$store.dispatch("syncStats", false)
     },
     combineURLs(baseURL, relativeURL) {
       return relativeURL
@@ -417,7 +417,7 @@ export default {
         if (this.items.length - 1 === 0 && this.options.page > 1) {
           this.options.page--
         } else {
-          this.triggerReload()
+          this.triggerReload(false, false)
         }
         this.$store.dispatch("syncStats", false)
       })
