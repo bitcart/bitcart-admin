@@ -1,38 +1,85 @@
 <template>
-  <v-row>
-    <v-col
-      v-for="(card, index) in cards"
-      :key="index"
-      cols="3"
-      class="mx-6"
-      :class="getClass(index)"
-    >
-      <v-card height="100%" @click.native="$emit('input', card.id)">
-        <v-card-text>
-          <v-icon size="50px" class="mb-5 d-flex justify-center">
-            {{ card.icon }}
-          </v-icon>
-          <p class="text-h4 font-weight-medium text-center">{{ card.title }}</p>
-          <v-card-subtitle class="text-h6 font-weight-regular">
-            {{ card.text }}
-          </v-card-subtitle>
-        </v-card-text>
-        <v-icon v-if="card.id === value" class="check-icon"> mdi-check </v-icon>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-container>
+    <v-row>
+      <v-col
+        v-for="(card, index) in cards"
+        :key="index"
+        cols="3"
+        :class="getClass(index)"
+      >
+        <v-card height="100%" @click.native="modeSettings.name = card.id">
+          <v-card-text>
+            <v-icon size="50px" class="mb-5 d-flex justify-center">
+              {{ card.icon }}
+            </v-icon>
+            <p class="text-h4 font-weight-medium text-center">
+              {{ card.title }}
+            </p>
+            <v-card-subtitle class="text-h6 font-weight-regular">
+              {{ card.text }}
+            </v-card-subtitle>
+          </v-card-text>
+          <v-checkbox
+            :input-value="card.id === modeSettings.name"
+            readonly
+            class="check-icon"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row v-if="modeSettings.name === 'Remote'">
+      <v-col cols="3" class="mx-auto">
+        <v-card height="100%">
+          <v-card-text>
+            <p class="text-h5 font-weight-medium text-center">
+              Remote Machine SSH Details
+            </p>
+            <v-text-field
+              v-model="modeSettings.sshSettings.host"
+              label="Host"
+            />
+            <v-text-field
+              v-model="modeSettings.sshSettings.username"
+              label="Username"
+            />
+            <v-text-field
+              v-model="modeSettings.sshSettings.password"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPassword ? 'text' : 'password'"
+              label="Password"
+              @click:append="showPassword = !showPassword"
+            />
+            <v-text-field
+              v-model="modeSettings.sshSettings.root_password"
+              :append-icon="showRootPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showRootPassword ? 'text' : 'password'"
+              label="Root password (if ssh user is not root)"
+              @click:append="showRootPassword = !showRootPassword"
+            />
+            <v-checkbox
+              v-model="modeSettings.sshSettings.load_settings"
+              label="Load existing settings (if possible)"
+            />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 export default {
   props: {
     value: {
-      type: String,
+      type: Object,
       required: true,
     },
   },
   data() {
     return {
+      showPassword: false,
+      showRootPassword: false,
+      modeSettings: this.value,
       cards: [
         {
           title: "A remote machine",

@@ -53,7 +53,6 @@ export const actions = {
   loadEnv({ commit }, { env, req }) {
     commit("env", {
       URL: env.URL,
-      ONION_URL: env.ONION_URL,
       SOCKS_PROXY: env.SOCKS_PROXY,
     })
     if (req) {
@@ -108,7 +107,7 @@ export const getters = {
   },
   apiOnionURL({ services, env }) {
     const service = services["BitcartCC Merchants API"]
-    return env.ONION_URL ? env.ONION_URL : service ? service.hostname : ""
+    return service ? service.hostname : ""
   },
   apiURL({ onion, env }, { apiOnionURL }) {
     return onion && apiOnionURL ? apiOnionURL : env.URL

@@ -22,9 +22,11 @@
         <v-card-actions class="justify-center card-actions">
           <v-btn color="primary" target="_blank" :href="card.docs">Docs</v-btn>
         </v-card-actions>
-        <v-icon v-if="isEnabled(card.service)" class="check-icon">
-          mdi-check
-        </v-icon>
+        <v-checkbox
+          :input-value="isEnabled(card.service)"
+          readonly
+          class="check-icon"
+        />
       </v-card>
     </v-col>
   </v-row>

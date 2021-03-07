@@ -42,9 +42,42 @@
           >Deployment result</v-card-title
         >
         <v-card-text class="text--primary">
-          <p class="text-h6">Copy those commands to your terminal</p>
-          <code style="white-space: pre-wrap" v-text="deploymentScript" />
+          <div v-if="isManualDeployment">
+            <p class="text-h6">Copy those commands to your terminal</p>
+            <code
+              style="white-space: pre-wrap"
+              v-text="deploymentInfo.output"
+            />
+          </div>
+          <div v-else>
+            <div v-if="deploymentInfo.finished">
+              <p class="text-h6">{{ statusText }}</p>
+              <p class="text-h6">Output</p>
+              <code
+                v-if="deploymentInfo.output"
+                style="white-space: pre-wrap"
+                v-text="deploymentInfo.output"
+              />
+            </div>
+            <div v-else>
+              <p class="text-h6">
+                We're sending the commands to the server and executing. This
+                could take a few minutes!
+              </p>
+              <v-progress-linear
+                indeterminate
+                color="green"
+              ></v-progress-linear>
+            </div>
+          </div>
         </v-card-text>
+        <v-card-actions
+          v-if="
+            deploymentInfo.finished && !isManualDeployment && failedDeployment
+          "
+        >
+          <v-btn color="primary" @click="install">Retry</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -57,9 +90,9 @@ export default {
   data() {
     return {
       showDialog: false,
-      deploymentScript: "",
+      deploymentInfo: { finished: false },
       installData: {
-        mode: "Manual",
+        mode: { name: "Manual", sshSettings: { load_settings: true } },
         domainSettings: { domain: null, https: true },
         coins: { btc: { network: "mainnet", lightning: false, enabled: true } },
         additionalServices: { tor: false },
@@ -115,6 +148,26 @@ export default {
         this.installData[this.currentKey] = v
       },
     },
+    isManualDeployment() {
+      return this.installData.mode.name === "Manual"
+    },
+    failedDeployment() {
+      return !this.deploymentInfo.success
+    },
+    statusText() {
+      return !this.failedDeployment
+        ? "Successfully installed BitcartCC"
+        : "Deployment failed"
+    },
+  },
+  mounted() {
+    this.handler = (e) => {
+      if (e.keyCode === 13) this.nextStep()
+    }
+    window.addEventListener("keyup", this.handler)
+  },
+  beforeDestroy() {
+    window.removeEventListener("keyup", this.handler)
   },
   methods: {
     nextStep() {
@@ -133,9 +186,12 @@ export default {
           .filter(([k, v]) => v.enabled)
           .map(([k, v]) => ({ [k]: v }))
       )
+      this.deploymentInfo.finished = false
+      this.showDialog = true
       this.$axios
         .post("/configurator/deploy/bash", {
-          mode: this.installData.mode,
+          mode: this.installData.mode.name,
+          ssh_settings: this.installData.mode.sshSettings,
           domain_settings: this.installData.domainSettings,
           coins: enabledCoins,
           additional_services: additionalServices,
@@ -149,8 +205,8 @@ export default {
           },
         })
         .then((r) => {
-          this.deploymentScript = r.data
-          this.showDialog = true
+          this.deploymentInfo = r.data
+          this.$set(this.deploymentInfo, "finished", true)
         })
     },
   },
