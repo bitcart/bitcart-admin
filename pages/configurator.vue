@@ -189,7 +189,7 @@ export default {
       this.deploymentInfo.finished = false
       this.showDialog = true
       this.$axios
-        .post("/configurator/deploy/bash", {
+        .post("/configurator/deploy", {
           mode: this.installData.mode.name,
           ssh_settings: this.installData.mode.sshSettings,
           domain_settings: this.installData.domainSettings,
@@ -206,8 +206,15 @@ export default {
         })
         .then((r) => {
           this.deploymentInfo = r.data
-          this.$set(this.deploymentInfo, "finished", true)
+          if (!this.isManualDeployment) this.pollDeployment(r.data.id)
         })
+    },
+    pollDeployment(deployId) {
+      this.$axios.get(`/configurator/deploy-result/${deployId}`).then((r) => {
+        this.deploymentInfo = r.data
+        if (!this.deploymentInfo.finished)
+          setTimeout(this.pollDeployment, 3000, deployId)
+      })
     },
   },
 }
