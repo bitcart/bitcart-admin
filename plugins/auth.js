@@ -18,7 +18,7 @@ export default ({ $axios, $auth, $config }) => {
   })
   $auth.onRedirect((to, from) => {
     if (!process.server) return
-    if (to.startsWith(decodeURI($config.app.basePath))) return to
-    return urlJoin($config.app.basePath, to)
+    if (to.startsWith(decodeURI($config.ROOTPATH))) return to
+    return urlJoin($config.ROOTPATH, to)
   })
 }
