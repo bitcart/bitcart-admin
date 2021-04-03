@@ -1,30 +1,6 @@
 <template>
   <BaseLayout>
     <template #header>
-      <v-dialog v-model="showDialog" width="600px">
-        <v-card>
-          <v-card-title>Merry Christmas and a Happy New Year!</v-card-title>
-          <v-card-text
-            >You have found the easter egg! Congratulations!
-            <br />
-            Merry Christmas and a Happy New Year! We wish you to spend these
-            holidays with pleasure, and we want that, in 2021, we all have a
-            better time. All the best in the coming year!
-            <br />
-            We, the BitcartCC team, will continue improving BitcartCC by
-            listening to your feedback and ideas!
-            <br />
-            We always love hearing new opinions from you, so, if you have
-            something to say, let us know in our telegram group!
-            <br />
-            Have a good day!
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-card-subtitle>Your BitcartCC Team</v-card-subtitle>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
       <v-navigation-drawer
         v-model="drawer"
         app
@@ -38,7 +14,6 @@
             :to="item.to"
             router
             exact
-            @click="processItem(item)"
           >
             <v-list-item-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -99,10 +74,6 @@
       <v-container>
         <slot />
         <nuxt />
-        <div v-if="showSnow">
-          <div class="snow layer3 a"></div>
-          <div class="snow layer3"></div>
-        </div>
       </v-container>
     </template>
     <template #footer>
@@ -138,10 +109,8 @@ export default {
   data() {
     return {
       VERSION,
-      showSnow: false,
       toolbar: false,
       dark: true,
-      showDialog: false,
       drawer: false,
       items: [
         {
@@ -158,12 +127,6 @@ export default {
           icon: "mdi-account-plus",
           title: "Register",
           to: "/register",
-        },
-        {
-          icon: "mdi-snowflake",
-          title: "Happy New Year!",
-          to: null,
-          easteregg: true,
         },
       ],
       profileItems: [
@@ -230,85 +193,6 @@ export default {
       this.$store.dispatch("fetchServices")
       this.$router.push("/login")
     },
-    processItem(item) {
-      if (item.easteregg) {
-        this.showSnow = true
-        this.showDialog = true
-      }
-    },
   },
 }
 </script>
-
-<style lang="scss" scoped>
-$s1: "";
-$s2: "";
-$s3: "";
-@for $i from 1 through 400 {
-  $s1: $s1 +
-    random(1000) *
-    0.1vw +
-    " " +
-    random(1000) *
-    0.1vh +
-    " " +
-    0 +
-    " " +
-    random(50) *
-    -0.01rem +
-    #fff;
-  $s2: $s2 +
-    random(1000) *
-    0.1vw +
-    " " +
-    random(1000) *
-    0.1vh +
-    " " +
-    0 +
-    " " +
-    random(50) *
-    -0.01rem +
-    #fff;
-  $s3: $s3 +
-    random(1000) *
-    0.1vw +
-    " " +
-    random(1000) *
-    0.1vh +
-    " " +
-    0 +
-    " " +
-    random(50) *
-    -0.01rem +
-    #fff;
-  @if $i < 400 {
-    $s1: $s1 + ",";
-    $s2: $s2 + ",";
-    $s3: $s3 + ",";
-  }
-}
-.snow {
-  border-radius: 50%;
-  opacity: 0.8;
-  position: absolute;
-  top: -100vh;
-  animation-name: fall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-.layer3 {
-  width: 0.8rem;
-  height: 0.8rem;
-  filter: blur(4px);
-  box-shadow: #{$s3};
-  animation-duration: 10s;
-}
-.layer3.a {
-  animation-delay: -5s;
-}
-@keyframes fall {
-  100% {
-    transform: translateY(200vh);
-  }
-}
-</style>
