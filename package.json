@@ -16,11 +16,6 @@
   "lint-staged": {
     "*.{js,vue}": "eslint"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.1",
     "@nuxtjs/auth": "^4.9.0",
