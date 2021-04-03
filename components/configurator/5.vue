@@ -14,6 +14,8 @@
           deletable-chips
           clearable
           chips
+          @focus="advancedSettings.focusOn = true"
+          @blur="advancedSettings.focusOn = false"
         ></v-combobox>
         <v-text-field
           v-model="advancedSettings.customRepoURL"

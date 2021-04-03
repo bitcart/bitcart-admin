@@ -27,7 +27,9 @@
             </v-row>
 
             <v-row justify="center" class="mb-4">
-              <component :is="currentComponent" v-model="passedProp" />
+              <keep-alive>
+                <component :is="currentComponent" v-model="passedProp" />
+              </keep-alive>
             </v-row>
             <v-row justify="center">
               <v-btn color="primary" @click="nextStep"> Continue </v-btn>
@@ -94,12 +96,18 @@ export default {
       installData: {
         mode: { name: "Manual", sshSettings: { load_settings: true } },
         domainSettings: { domain: null, https: true },
-        coins: { btc: { network: "mainnet", lightning: false, enabled: true } },
+        coins: {
+          coins: {
+            btc: { network: "mainnet", lightning: false, enabled: true },
+          },
+          titles: { btc: "Bitcoin" }, // fallback
+        },
         additionalServices: { tor: false },
         advancedSettings: {
           installationPack: "all",
           additionalComponents: [],
           customRepoURL: null,
+          focusOn: false, // used for enter key management, not for sending
         },
       },
       currentStep: 1,
@@ -162,9 +170,13 @@ export default {
   },
   mounted() {
     this.handler = (e) => {
-      if (e.keyCode === 13) this.nextStep()
+      if (e.keyCode === 13 && !this.installData.advancedSettings.focusOn)
+        this.nextStep()
     }
     window.addEventListener("keyup", this.handler)
+    this.$axios
+      .get("/cryptos/supported")
+      .then((r) => (this.installData.coins.titles = r.data))
   },
   beforeDestroy() {
     window.removeEventListener("keyup", this.handler)
@@ -182,7 +194,7 @@ export default {
         .map(([k, v]) => k)
       const enabledCoins = Object.assign(
         {},
-        ...Object.entries(this.installData.coins)
+        ...Object.entries(this.installData.coins.coins)
           .filter(([k, v]) => v.enabled)
           .map(([k, v]) => ({ [k]: v }))
       )

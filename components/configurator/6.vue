@@ -136,7 +136,7 @@ export default {
     availableCoins() {
       return Object.assign(
         {},
-        ...Object.entries(this.value.coins)
+        ...Object.entries(this.value.coins.coins)
           .filter(([k, v]) => v.enabled)
           .map(([k, v]) => ({ [k]: v }))
       )
