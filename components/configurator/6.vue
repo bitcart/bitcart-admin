@@ -13,7 +13,7 @@
       >
     </div>
     <v-row>
-      <v-col cols="4">
+      <v-col cols="12" md="4">
         <v-card height="100%">
           <v-card-title class="text-h4 font-weight-bold"
             >Deployment</v-card-title
@@ -34,15 +34,10 @@
               text="Root password:"
               :value="value.mode.sshSettings.root_password"
             />
-            <v-checkbox
-              :input-value="value.mode.sshSettings.load_settings"
-              disabled
-              label="Load existing settings (if possible)"
-            />
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="12" md="4">
         <v-card height="100%">
           <v-card-title class="text-h4 font-weight-bold">Domains</v-card-title>
           <v-card-text class="text--primary">
@@ -55,7 +50,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="12" md="4">
         <v-card height="100%">
           <v-card-title class="text-h4 font-weight-bold">Coins</v-card-title>
           <v-card-text v-if="!noCoins" class="text--primary">
@@ -76,14 +71,14 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="4">
+      <v-col cols="12" md="4">
         <v-card height="100%">
           <v-card-title class="text-h4 font-weight-bold"
             >Additional services</v-card-title
           >
           <v-card-text class="text--primary">
             <div
-              v-for="(enabled, service) in value.additionalServices"
+              v-for="(enabled, service) in value.additionalServices.services"
               :key="service"
             >
               <pretty-text
@@ -95,7 +90,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="12" md="4">
         <v-card height="100%">
           <v-card-title class="text-h4 font-weight-bold"
             >Advanced Settings</v-card-title
@@ -151,8 +146,8 @@ export default {
     },
     isEnabledService(service) {
       return (
-        service in this.value.additionalServices &&
-        this.value.additionalServices[service]
+        service in this.value.additionalServices.services &&
+        this.value.additionalServices.services[service]
       )
     },
   },

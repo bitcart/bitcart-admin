@@ -32,6 +32,9 @@ export default {
     domainSettings(v) {
       this.$emit("input", v)
     },
+    value(v) {
+      this.domainSettings = v
+    },
   },
 }
 </script>

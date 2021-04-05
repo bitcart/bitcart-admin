@@ -1,9 +1,10 @@
 <template>
   <v-row>
     <v-col
-      v-for="(card, index) in cards"
+      v-for="(card, index) in services.cards"
       :key="index"
-      cols="3"
+      cols="12"
+      md="3"
       :class="getClass(index)"
     >
       <v-card
@@ -43,36 +44,35 @@ export default {
   data() {
     const dt = {
       services: this.value,
-      cards: [
-        {
-          title: "Tor support",
-          text:
-            "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run BitcartCC in complex network conditions or without a domain",
-          docs: "https://docs.bitcartcc.com/guides/tor",
-          service: "tor",
-        },
-      ],
     }
-    for (const card of dt.cards) {
-      if (!(card.service in dt.services))
-        this.$set(dt.services, card.service, false)
+    for (const card of dt.services.cards) {
+      if (!(card.service in dt.services.services))
+        this.$set(dt.services.services, card.service, false)
     }
     return dt
+  },
+  watch: {
+    value(v) {
+      this.services = v
+    },
   },
   methods: {
     getClass(index) {
       let classV = "mx-6"
-      if (this.cards.length === 1) classV = "mx-auto"
-      if (this.cards.length > 1 && index === 0) classV += " ml-auto"
-      if (this.cards.length > 1 && index === this.cards.length - 1)
+      if (this.services.cards.length === 1) classV = "mx-auto"
+      if (this.services.cards.length > 1 && index === 0) classV += " ml-auto"
+      if (
+        this.services.cards.length > 1 &&
+        index === this.services.cards.length - 1
+      )
         classV += " mr-auto"
       return classV
     },
     selectItem(service) {
-      this.services[service] = !this.services[service]
+      this.services.services[service] = !this.services.services[service]
     },
     isEnabled(service) {
-      return this.services[service]
+      return this.services.services[service]
     },
   },
 }
