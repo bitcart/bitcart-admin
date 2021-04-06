@@ -2,9 +2,10 @@
   <v-container>
     <v-row>
       <v-col
-        v-for="(card, index) in cards"
+        v-for="(card, index) in availableCards"
         :key="index"
-        cols="3"
+        cols="12"
+        md="3"
         :class="getClass(index)"
       >
         <v-card height="100%" @click.native="modeSettings.name = card.id">
@@ -28,7 +29,7 @@
       </v-col>
     </v-row>
     <v-row v-if="modeSettings.name === 'Remote'">
-      <v-col cols="3" class="mx-auto">
+      <v-col cols="12" md="3" class="mx-auto">
         <v-card height="100%">
           <v-card-text>
             <p class="text-h5 font-weight-medium text-center">
@@ -56,11 +57,12 @@
               label="Root password (if ssh user is not root)"
               @click:append="showRootPassword = !showRootPassword"
             />
-            <v-checkbox
-              v-model="modeSettings.sshSettings.load_settings"
-              label="Load existing settings (if possible)"
-            />
           </v-card-text>
+          <v-card-actions class="justify-center mb-3">
+            <v-btn color="primary" @click="$emit('refresh')"
+              >Load settings</v-btn
+            >
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -95,19 +97,36 @@ export default {
           icon: "mdi-console",
           id: "Manual",
         },
-        {
-          title: "Current instance",
-          text: "Change current instance's settings",
-          icon: "mdi-cogs",
-          id: "Current",
-        },
       ],
+      currentInstance: {
+        title: "Current instance",
+        text: "Change current instance's settings",
+        icon: "mdi-cogs",
+        id: "Current",
+      },
     }
+  },
+  computed: {
+    isServerAdmin() {
+      return this.$auth.loggedIn && this.$auth.user.is_superuser
+    },
+    availableCards() {
+      return this.isServerAdmin
+        ? this.cards.concat(this.currentInstance)
+        : this.cards
+    },
+  },
+  watch: {
+    value(v) {
+      // TODO: not sure why is reactivity not working and requiring a watcher
+      // same applies to all configurator/x.vue files
+      this.modeSettings = v
+    },
   },
   methods: {
     getClass(index) {
       if (index === 0) return "ml-auto"
-      if (index === this.cards.length - 1) return "mr-auto"
+      if (index === this.availableCards.length - 1) return "mr-auto"
     },
   },
 }

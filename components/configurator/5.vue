@@ -1,5 +1,5 @@
 <template>
-  <v-col cols="3">
+  <v-col cols="12" md="3">
     <v-card>
       <v-card-text>
         <v-select
@@ -43,6 +43,9 @@ export default {
   watch: {
     advancedSettings(v) {
       this.$emit("input", v)
+    },
+    value(v) {
+      this.advancedSettings = v
     },
   },
 }

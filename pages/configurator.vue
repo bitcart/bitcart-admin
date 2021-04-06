@@ -22,18 +22,24 @@
             :key="`${step}-content`"
             :step="step"
           >
-            <v-row justify="center">
-              <p class="text-h6">{{ title }}</p>
-            </v-row>
+            <v-container>
+              <v-row justify="center">
+                <p class="text-h6">{{ title }}</p>
+              </v-row>
 
-            <v-row justify="center" class="mb-4">
-              <keep-alive>
-                <component :is="currentComponent" v-model="passedProp" />
-              </keep-alive>
-            </v-row>
-            <v-row justify="center">
-              <v-btn color="primary" @click="nextStep"> Continue </v-btn>
-            </v-row>
+              <v-row justify="center" class="mb-4">
+                <keep-alive>
+                  <component
+                    :is="currentComponent"
+                    v-model="passedProp"
+                    @refresh="fetchSettings()"
+                  />
+                </keep-alive>
+              </v-row>
+              <v-row justify="center">
+                <v-btn color="primary" @click="nextStep"> Continue </v-btn>
+              </v-row>
+            </v-container>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
@@ -85,16 +91,17 @@
   </div>
 </template>
 <script>
+import merge from "lodash.merge"
 export default {
   auth: false,
   layout: "basicadmin",
   middleware: "configurator",
   data() {
-    return {
+    const dt = {
       showDialog: false,
       deploymentInfo: { finished: false },
-      installData: {
-        mode: { name: "Manual", sshSettings: { load_settings: true } },
+      initialInstallData: {
+        mode: { name: "Manual", sshSettings: {} },
         domainSettings: { domain: null, https: true },
         coins: {
           coins: {
@@ -102,7 +109,18 @@ export default {
           },
           titles: { btc: "Bitcoin" }, // fallback
         },
-        additionalServices: { tor: false },
+        additionalServices: {
+          cards: [
+            {
+              title: "Tor support",
+              text:
+                "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run BitcartCC in complex network conditions or without a domain",
+              docs: "https://docs.bitcartcc.com/guides/tor",
+              service: "tor",
+            },
+          ],
+          services: { tor: false },
+        },
         advancedSettings: {
           installationPack: "all",
           additionalComponents: [],
@@ -136,6 +154,8 @@ export default {
         "advancedSettings",
       ],
     }
+    dt.installData = JSON.parse(JSON.stringify(dt.initialInstallData))
+    return dt
   },
   computed: {
     title() {
@@ -148,6 +168,9 @@ export default {
     currentKey() {
       return this.keys[this.currentStep - 1]
     },
+    currentMode() {
+      return this.installData.mode.name
+    },
     passedProp: {
       get() {
         return this.installData[this.currentKey] || this.installData
@@ -157,7 +180,7 @@ export default {
       },
     },
     isManualDeployment() {
-      return this.installData.mode.name === "Manual"
+      return this.currentMode === "Manual"
     },
     failedDeployment() {
       return !this.deploymentInfo.success
@@ -168,27 +191,74 @@ export default {
         : "Deployment failed"
     },
   },
+  watch: {
+    currentMode(v) {
+      if (v === "Current") this.fetchSettings()
+    },
+  },
   mounted() {
     this.handler = (e) => {
       if (e.keyCode === 13 && !this.installData.advancedSettings.focusOn)
         this.nextStep()
     }
     window.addEventListener("keyup", this.handler)
-    this.$axios
-      .get("/cryptos/supported")
-      .then((r) => (this.installData.coins.titles = r.data))
+    this.$axios.get("/cryptos/supported").then((r) => {
+      this.installData.coins.titles = r.data
+      this.initialInstallData.coins.titles = r.data
+    })
   },
   beforeDestroy() {
     window.removeEventListener("keyup", this.handler)
   },
   methods: {
+    getAdditionalServices(enabledServices) {
+      const services = {}
+      for (const service of this.installData.additionalServices.cards) {
+        services[service.service] = enabledServices.includes(service.service)
+      }
+      return services
+    },
+    fetchSettings() {
+      let sshSettings = null
+      if (this.currentMode === "Remote")
+        sshSettings = this.installData.mode.sshSettings
+      this.$axios
+        .post("/configurator/server-settings", sshSettings)
+        .then((r) => {
+          const data = {
+            domainSettings: {
+              domain: r.data.domain_settings.domain,
+              https: r.data.domain_settings.https,
+            },
+            coins: {
+              coins: r.data.coins,
+            },
+            additionalServices: {
+              services: this.getAdditionalServices(
+                r.data.advanced_settings.additional_components
+              ),
+            },
+            advancedSettings: {
+              installationPack: r.data.advanced_settings.installation_pack,
+              additionalComponents:
+                r.data.advanced_settings.additional_components,
+              customRepoURL: r.data.advanced_settings.bitcart_docker_repository,
+            },
+            mode: {
+              name: this.currentMode,
+              sshSettings: this.installData.mode.sshSettings,
+            },
+          }
+          this.installData = merge({}, this.initialInstallData, data)
+        })
+    },
     nextStep() {
       if (this.currentStep === this.maxSteps) this.install()
       else this.currentStep++
     },
     install() {
       const additionalServices = Object.entries(
-        this.installData.additionalServices
+        this.installData.additionalServices.services
       )
         .filter(([k, v]) => v)
         .map(([k, v]) => k)
@@ -202,7 +272,7 @@ export default {
       this.showDialog = true
       this.$axios
         .post("/configurator/deploy", {
-          mode: this.installData.mode.name,
+          mode: this.currentMode,
           ssh_settings: this.installData.mode.sshSettings,
           domain_settings: this.installData.domainSettings,
           coins: enabledCoins,

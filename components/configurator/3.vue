@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-row v-for="(crypto, symbol) in cryptos.coins" :key="symbol">
-      <v-col cols="4" class="mx-auto">
+    <v-row v-for="(crypto, symbol) in coins" :key="symbol">
+      <v-col cols="12" md="4" class="mx-auto">
         <v-card width="100%" @click.native="selectItem(symbol)">
           <v-card-text>
             <p class="text-h4 font-weight-medium text-center">
@@ -23,7 +23,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="4" class="mx-auto">
+      <v-col cols="12" md="4" class="mx-auto">
         <v-card width="100%">
           <v-card-text>
             <p class="text-h4 font-weight-medium text-center">
@@ -56,21 +56,30 @@ export default {
       networks: ["mainnet", "testnet"],
     }
   },
+  computed: {
+    coins() {
+      return this.cryptos.coins
+    },
+  },
   watch: {
-    cryptos(v) {
-      this.$emit("input", v)
+    coins(v) {
+      this.$emit("input", this.cryptos)
+    },
+    value(v) {
+      this.cryptos = v
     },
   },
   methods: {
     selectItem(symbol) {
-      this.cryptos.coins[symbol].enabled = !this.cryptos.coins[symbol].enabled
+      this.coins[symbol].enabled = !this.coins[symbol].enabled
     },
     isEnabled(symbol) {
-      return this.cryptos.coins[symbol].enabled
+      return this.coins[symbol].enabled
     },
     addCrypto(symbol) {
+      this.newCrypto = null // clear select
       if (!symbol) return
-      this.$set(this.cryptos.coins, symbol, {
+      this.$set(this.coins, symbol, {
         network: "mainnet",
         lightning: false,
         enabled: true,
@@ -84,7 +93,7 @@ export default {
 .check-icon {
   font-size: 40px;
   position: absolute;
-  right: 2rem;
+  right: 0.5rem;
   top: 0.5rem;
   text-align: center;
 }
