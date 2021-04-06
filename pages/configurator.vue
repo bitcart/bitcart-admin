@@ -212,10 +212,9 @@ export default {
   },
   methods: {
     getAdditionalServices(enabledServices) {
-      const services = []
-      for (const service in this.installData.additionalServices.cards) {
-        if (enabledServices.includes(service.service))
-          services.push(service.service)
+      const services = {}
+      for (const service of this.installData.additionalServices.cards) {
+        services[service.service] = enabledServices.includes(service.service)
       }
       return services
     },
