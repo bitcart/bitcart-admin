@@ -75,7 +75,7 @@ export default {
           value: "default_currency",
           default: "USD",
           input: "autocomplete",
-          url: "fiatlist",
+          url: "cryptos/fiatlist",
           body: true,
         },
         {

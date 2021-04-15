@@ -44,8 +44,8 @@ export const actions = {
   async nuxtServerInit({ commit, dispatch }, { req, $axios }) {
     await dispatch("loadEnv", { env: this.$config, req })
     const { data } = await $axios.get("/manage/policies")
-    const { data: services } = await $axios.get("/services")
-    const { data: updatedata } = await $axios.get("/updatecheck")
+    const { data: services } = await $axios.get("/tor/services")
+    const { data: updatedata } = await $axios.get("/update/check")
     commit("policies", data)
     commit("services", services)
     commit("updatedata", updatedata)
@@ -65,7 +65,7 @@ export const actions = {
       .then((resp) => commit("policies", resp.data))
     if (this.state.auth.loggedIn) {
       this.$axios
-        .get("/crud/stats")
+        .get("/users/stats")
         .then((resp) => commit("setStats", resp.data))
     }
     if (alwaysRun) {
@@ -75,7 +75,9 @@ export const actions = {
     }
   },
   fetchServices({ commit }) {
-    return this.$axios.get("/services").then((r) => commit("services", r.data))
+    return this.$axios
+      .get("/tor/services")
+      .then((r) => commit("services", r.data))
   },
   redirectA(_, { where, token, permissions, userId }) {
     return new Promise((resolve, reject) => {

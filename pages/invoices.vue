@@ -39,7 +39,7 @@ export default {
           text: "Currency",
           value: "currency",
           input: "autocomplete",
-          url: "fiatlist",
+          url: "cryptos/fiatlist",
           body: true,
         },
         { text: "Paid Currency", value: "paid_currency", mode: "display" },
