@@ -58,6 +58,7 @@ export default {
           url: "products",
           multiple: true,
           sortable: false,
+          mode: "create",
         },
         { text: "Promocode", value: "promocode" },
         {
