@@ -23,12 +23,11 @@
           <v-toolbar-title>{{ title + "s" }}</v-toolbar-title>
           <div class="flex-grow-1" />
           <v-text-field
-            :value="search"
+            v-model="searchProp"
             append-icon="search"
             label="Search"
             single-line
             hide-details
-            @input="$emit('update:search', $event)"
           />
           <v-spacer />
           <v-dialog
@@ -222,6 +221,7 @@ export default {
   },
   data() {
     return {
+      searchProp: this.search,
       options: {},
       numItems: 0,
       dialog: false,
@@ -301,6 +301,9 @@ export default {
       deep: true,
     },
     search(val) {
+      this.searchProp = val
+    },
+    searchProp(val) {
       this.$emit("update:search", val)
       this.triggerReload(true, false)
     },
@@ -327,7 +330,7 @@ export default {
       if (search) {
         page = this.options.page = 1
       }
-      this.getItems(sortBy, sortDesc, page, itemsPerPage, this.search)
+      this.getItems(sortBy, sortDesc, page, itemsPerPage, this.searchProp)
       if (refreshStats) this.$store.dispatch("syncStats", false)
     },
     processBatchCommand(command) {

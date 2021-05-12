@@ -32,6 +32,7 @@
           max-width="60"
           contain
           :src="`${STATIC_PATH}/icon.svg`"
+          :style="logoStyle"
         />
         <v-spacer />
         <onion-button v-if="onionURL" :url="onionURL" />
@@ -174,6 +175,9 @@ export default {
             (x) => !x.superuser || (x.superuser && this.$auth.user.is_superuser)
           )
         : this.guestItems
+    },
+    logoStyle() {
+      return this.$vuetify.theme.dark ? "filter: invert(1)" : ""
     },
   },
   beforeCreate() {
