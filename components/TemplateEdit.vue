@@ -14,11 +14,12 @@
     <template v-if="dialogWatch" #dialog="{ item: itemd }">
       <v-col v-for="template in defaultTemplates" :key="template">
         <auto-complete
-          v-model="itemd.templates[template]"
+          :value="itemd.templates[template]"
           :label="template"
           :initial-items="initialTemplates"
           url="templates"
           clearable
+          @input="updateTemplates(template, $event)"
         />
       </v-col>
     </template>
@@ -92,6 +93,12 @@ export default {
     this.$axios.get("/templates").then((r) => {
       this.initialTemplates = r.data.result
     })
+  },
+  methods: {
+    updateTemplates(template, value) {
+      if (value === null) this.$delete(this.itemCopy.templates, template)
+      else this.itemCopy.templates[template] = value
+    },
   },
 }
 </script>
