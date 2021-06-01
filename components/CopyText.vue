@@ -8,7 +8,9 @@
       >
         Copied
       </p>
-      <p v-else key="value" class="ma-0 pa-0">{{ $utils.truncate(value) }}</p>
+      <p v-else key="value" class="ma-0 pa-0" style="user-select: all">
+        {{ $utils.truncate(value) }}
+      </p>
     </v-fade-transition>
   </div>
 </template>
