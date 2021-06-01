@@ -13,7 +13,6 @@
       v-model="data"
       hide-details
       single-line
-      type="number"
       @change="updatePolicy"
     />
   </div>

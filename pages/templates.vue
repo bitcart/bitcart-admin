@@ -11,7 +11,7 @@ export default {
   data() {
     return {
       headers: [
-        { text: "ID", value: "id", mode: "display" },
+        { text: "ID", value: "id", mode: "display", copy: true },
         {
           text: "Name",
           value: "name",

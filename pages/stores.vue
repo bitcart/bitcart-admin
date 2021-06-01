@@ -68,7 +68,7 @@ export default {
       emailStatus: "",
       itemIndex: -1,
       headers: [
-        { text: "ID", value: "id", mode: "display" },
+        { text: "ID", value: "id", mode: "display", copy: true },
         { text: "Name", value: "name", rules: ["required"] },
         {
           text: "Default currency",
@@ -250,6 +250,9 @@ export default {
     this.$bus.$on("updateitem", (item, index) => {
       this.item = item
     })
+  },
+  beforeDestroy() {
+    this.$bus.$off("updateitem")
   },
   methods: {
     getEditURL(item) {

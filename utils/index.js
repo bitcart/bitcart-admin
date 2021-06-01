@@ -17,4 +17,9 @@ export default {
       else window.location = url
     }
   },
+  truncate(str, length = 22) {
+    if (str === null) str = ""
+    if (str.length > length) return str.slice(0, length) + "..."
+    else return str
+  },
 }

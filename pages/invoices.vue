@@ -33,7 +33,7 @@ export default {
     return {
       search: "",
       headers: [
-        { text: "ID", value: "id", mode: "display" },
+        { text: "ID", value: "id", mode: "display", copy: true },
         { text: "Price", value: "price", readonly: true, rules: ["required"] },
         {
           text: "Currency",
@@ -50,6 +50,7 @@ export default {
           input: "autocomplete",
           url: "stores",
           errors: { "No wallet linked": "No wallet linked" },
+          copy: true,
         },
         {
           text: "Products",
@@ -70,8 +71,8 @@ export default {
         },
         { text: "Redirect url", value: "redirect_url", rules: ["url"] },
         { text: "Buyer email", value: "buyer_email", rules: ["email"] },
-        { text: "Order", value: "order_id" },
-        { text: "Discount", value: "discount", mode: "edit" },
+        { text: "Order", value: "order_id", copy: true },
+        { text: "Discount", value: "discount", mode: "edit", copy: true },
         { text: "Status", value: "status", mode: "edit" },
         { text: "Created date", value: "created", mode: "display" },
         {

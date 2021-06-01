@@ -38,7 +38,7 @@ export default {
   data() {
     return {
       headers: [
-        { text: "Key", value: "id", mode: "display" },
+        { text: "Key", value: "id", mode: "display", copy: true },
         { text: "App ID", value: "app_id", readonly: true },
         { text: "App Domain", value: "redirect_url" },
         { text: "Permissions", value: "permissions", mode: "display" },

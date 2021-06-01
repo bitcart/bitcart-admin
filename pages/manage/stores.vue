@@ -23,7 +23,7 @@ export default {
     return {
       policies: {},
       descriptions: {
-        pos_id: { title: "ID of the store to enable on POS", type: "integer" },
+        pos_id: { title: "ID of the store to enable on POS", type: "string" },
         email_required: {
           title: "Require email on POS checkout",
           type: "checkbox",

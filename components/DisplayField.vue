@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="d-flex justify-center pt-3">{{ title }}</p>
+    <p v-if="title" class="d-flex justify-center pt-3">{{ title }}</p>
     <div>
       <v-text-field
         single-line
@@ -31,7 +31,7 @@ export default {
   props: {
     title: {
       type: String,
-      required: true,
+      default: null,
     },
     value: {
       type: String,

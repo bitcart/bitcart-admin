@@ -27,7 +27,7 @@ export default {
   data() {
     return {
       headers: [
-        { text: "ID", value: "id", mode: "display" },
+        { text: "ID", value: "id", mode: "display", copy: true },
         { text: "Name", value: "name", rules: ["required"] },
         { text: "Price", value: "price", rules: ["required"] },
         { text: "Quantity", value: "quantity", rules: ["required"] },
@@ -48,6 +48,7 @@ export default {
           rules: ["required"],
           input: "autocomplete",
           url: "stores",
+          copy: true,
         },
         { text: "Created date", value: "created", mode: "display" },
         { text: "Description", value: "description", expand: true },

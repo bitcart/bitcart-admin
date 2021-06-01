@@ -99,6 +99,12 @@
         {{ new Date(item.end_date).toLocaleString() }}
       </template>
       <template
+        v-for="(slotNameCopy, key) in copiableSlotNames"
+        #[slotNameCopy]="{ item }"
+      >
+        <copy-text :key="slotNameCopy" :value="item[copiableNames[key]]" />
+      </template>
+      <template
         v-for="(slotName, key) in dropdownSlotNames"
         #[slotName]="{ item }"
       >
@@ -159,11 +165,13 @@ import debounce from "lodash.debounce"
 import EditCard from "@/components/EditCard"
 import TabbedCheckout from "@/components/TabbedCheckout"
 import MenuDropdown from "@/components/MenuDropdown"
+import CopyText from "@/components/CopyText"
 export default {
   components: {
     EditCard,
     TabbedCheckout,
     MenuDropdown,
+    CopyText,
   },
   props: {
     headers: {
@@ -272,6 +280,12 @@ export default {
     dropdownSlotNames() {
       return this.dropdownNames.map((x) => "item." + x)
     },
+    copiableNames() {
+      return this.headers.filter((x) => x.copy).map((x) => x.value)
+    },
+    copiableSlotNames() {
+      return this.copiableNames.map((x) => "item." + x)
+    },
     tabbedName() {
       const header = this.headers.find((x) => x.input === "tabbed")
       return header ? header.value : ""
@@ -322,6 +336,10 @@ export default {
       this.addItem(item)
     })
     this.getItems = debounce(this.getItemsNolimit, 250)
+  },
+  beforeDestroy() {
+    this.$bus.$off("updateitem")
+    this.$bus.$off("additem")
   },
   methods: {
     triggerReload(search = false, refreshStats = true) {
