@@ -12,6 +12,8 @@
       show-select
       loading-text="Loading..."
       class="elevation-1"
+      :page.sync="page"
+      @page-count="pageCount = $event"
     >
       <slot />
       <!-- Pass child templates to v-datatable for extensibility -->
@@ -153,6 +155,9 @@
         <v-icon small class="mr-2" @click="deleteItem(item)"> delete </v-icon>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="page" :length="pageCount" :total-visible="11" />
+    </div>
     <v-snackbar v-model="showSnackbar" :timeout="2500" color="success" bottom>
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied {{ whatToCopy }} to clipboard!
@@ -229,6 +234,8 @@ export default {
   },
   data() {
     return {
+      page: 1,
+      pageCount: 0,
       searchProp: this.search,
       options: {},
       numItems: 0,
