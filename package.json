@@ -43,6 +43,6 @@
     "prettier": "^2.2.1",
     "vuetify": "~2.4",
     "vuetify-datetime-picker": "^2.1.1",
-    "vuetify-image-input": "19.1.0"
+    "vuetify-image-input": "19.2.2"
   }
 }
