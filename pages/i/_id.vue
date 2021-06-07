@@ -115,7 +115,8 @@ export default {
           .get(`/stores/${resp.data.store_id}`)
           .then((resp1) => {
             this.store = resp1.data
-            this.$vuetify.theme.dark = this.store.checkout_settings.use_dark_mode
+            this.$vuetify.theme.dark =
+              this.store.checkout_settings.use_dark_mode
             this.loading = false
             this.startWebsocket()
           })

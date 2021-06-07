@@ -65,8 +65,7 @@ export default {
         {
           text: "Notification url",
           value: "notification_url",
-          help:
-            "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#notification-url",
+          help: "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#notification-url",
           rules: ["url"],
         },
         { text: "Redirect url", value: "redirect_url", rules: ["url"] },

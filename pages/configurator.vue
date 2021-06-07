@@ -113,8 +113,7 @@ export default {
           cards: [
             {
               title: "Tor support",
-              text:
-                "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run BitcartCC in complex network conditions or without a domain",
+              text: "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run BitcartCC in complex network conditions or without a domain",
               docs: "https://docs.bitcartcc.com/guides/tor",
               service: "tor",
             },
@@ -278,12 +277,12 @@ export default {
           coins: enabledCoins,
           additional_services: additionalServices,
           advanced_settings: {
-            installation_pack: this.installData.advancedSettings
-              .installationPack,
-            bitcart_docker_repository: this.installData.advancedSettings
-              .customRepoURL,
-            additional_components: this.installData.advancedSettings
-              .additionalComponents,
+            installation_pack:
+              this.installData.advancedSettings.installationPack,
+            bitcart_docker_repository:
+              this.installData.advancedSettings.customRepoURL,
+            additional_components:
+              this.installData.advancedSettings.additionalComponents,
           },
         })
         .then((r) => {

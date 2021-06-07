@@ -85,15 +85,13 @@ export default {
       cards: [
         {
           title: "A remote machine",
-          text:
-            "A remote machine that you can provide the SSH connectivity details to so that the configurator automagically sets it up for you",
+          text: "A remote machine that you can provide the SSH connectivity details to so that the configurator automagically sets it up for you",
           icon: "mdi-remote",
           id: "Remote",
         },
         {
           title: "Manual",
-          text:
-            "We'll generate a bash script that you run on the server without ever providing us access.",
+          text: "We'll generate a bash script that you run on the server without ever providing us access.",
           icon: "mdi-console",
           id: "Manual",
         },

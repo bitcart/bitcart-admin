@@ -190,47 +190,40 @@ export default {
         {
           text: "Underpaid percentage",
           value: "underpaid_percentage",
-          hint:
-            "Consider the invoice paid even if the paid amount is ... % less than expected",
+          hint: "Consider the invoice paid even if the paid amount is ... % less than expected",
           errors: {
             "Underpaid percentage must be in range from 0 to 99.99":
               "Underpaid percentage must be in range from 0 to 99.99",
           },
-          help:
-            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-underpaid-percentage",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-underpaid-percentage",
         },
         {
           text: "Show recommended fee",
           value: "show_recommended_fee",
           input: "switch",
-          help:
-            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
         },
         {
           text: "Recommended fee confirmation target blocks",
           value: "recommended_fee_target_blocks",
           rules: ["int"],
-          hint:
-            "The fee the customer must pay for transaction to be confirmed in ... blocks",
+          hint: "The fee the customer must pay for transaction to be confirmed in ... blocks",
           errors: {
             "Recommended fee confirmation target blocks must be either of":
               "Recommended fee confirmation target blocks must be either of: 25, 10, 5, 2, 1",
           },
-          help:
-            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
         },
         {
           text: "Custom logo link",
           value: "custom_logo_link",
-          help:
-            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-custom-logo-link",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-custom-logo-link",
         },
         {
           text: "Use Dark Mode",
           value: "use_dark_mode",
           input: "switch",
-          help:
-            "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-the-use-dark-mode-setting",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-the-use-dark-mode-setting",
         },
         {
           text: "Use HTML templates",

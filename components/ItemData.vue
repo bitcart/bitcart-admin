@@ -249,10 +249,9 @@ export default {
       loading: true,
       editedIndex: -1,
       editedItem: Object.assign(
-        ...Array.from(this.headers, (x) => [
-          x.value,
-          x.default,
-        ]).map((k, i) => ({ [k[0]]: typeof k[1] === "undefined" ? "" : k[1] }))
+        ...Array.from(this.headers, (x) => [x.value, x.default]).map(
+          (k, i) => ({ [k[0]]: typeof k[1] === "undefined" ? "" : k[1] })
+        )
       ),
       items: [],
       selected: [],
