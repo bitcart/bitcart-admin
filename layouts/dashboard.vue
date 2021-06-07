@@ -2,7 +2,7 @@
   <Basicadmin>
     <v-row>
       <v-col md="3" cols="12">
-        <info-card v-col link="/wallets" :texts="walletTexts" />
+        <info-card link="/wallets" :texts="walletTexts" />
       </v-col>
       <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
         <InfoCard :texts="card.texts" :link="card.link" />
