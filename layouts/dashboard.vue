@@ -1,6 +1,9 @@
 <template>
   <Basicadmin>
     <v-row>
+      <v-col md="3" cols="12">
+        <info-card v-col link="/wallets" :texts="walletTexts" />
+      </v-col>
       <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
         <InfoCard :texts="card.texts" :link="card.link" />
       </v-col>
@@ -19,21 +22,6 @@ export default {
   data() {
     return {
       cards: [
-        {
-          texts: [
-            {
-              header: "Wallets Balance",
-              key: "balance",
-              value: "",
-            },
-            {
-              header: "Total wallets connected:",
-              key: "wallets",
-              value: "wallets connected",
-            },
-          ],
-          link: "/wallets",
-        },
         {
           texts: [
             {
@@ -126,6 +114,22 @@ export default {
         },
       ],
     }
+  },
+  computed: {
+    walletTexts() {
+      return [
+        {
+          header: "Wallets Balance",
+          key: "balance",
+          value: this.$auth.user.settings.balance_currency,
+        },
+        {
+          header: "Total wallets connected:",
+          key: "wallets",
+          value: "wallets connected",
+        },
+      ]
+    },
   },
   beforeCreate() {
     if (process.client) {

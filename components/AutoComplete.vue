@@ -80,6 +80,10 @@ export default {
         return []
       },
     },
+    body: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -113,7 +117,8 @@ export default {
       }
       const url = `/${this.url}?limit=${limit}&query=${val}&multiple=${this.multiple}`
       this.$axios.get(url).then((resp) => {
-        this.items = resp.data.result
+        if (this.body) this.items = resp.data
+        else this.items = resp.data.result
       })
     },
     removeMultiple(item) {

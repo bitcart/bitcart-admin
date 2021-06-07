@@ -34,7 +34,7 @@ export default {
     ItemData,
     PermissionSet,
   },
-  layout: "dashboard",
+  layout: "profile",
   data() {
     return {
       headers: [
