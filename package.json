@@ -41,7 +41,7 @@
     "lodash.merge": "^4.6.2",
     "nuxt": "^2.15.1",
     "prettier": "^2.2.1",
-    "vuetify": "~2.4",
+    "vuetify": "~2.5.0",
     "vuetify-datetime-picker": "^2.1.1",
     "vuetify-image-input": "19.2.2"
   }
