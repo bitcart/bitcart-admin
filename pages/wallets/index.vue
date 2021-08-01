@@ -34,6 +34,11 @@ export default {
           errors: { "Wallet key invalid": "Invalid xpub" },
         },
         {
+          text: "Label",
+          value: "label",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-change-my-payment-methods-name",
+        },
+        {
           text: "Lightning",
           value: "lightning_enabled",
           input: "switch",
