@@ -62,6 +62,7 @@ export default {
     URL: process.env.BITCART_ADMIN_API_URL || "http://localhost:8000",
     SOCKS_PROXY: process.env.BITCART_ADMIN_SOCKS_PROXY,
     ROOTPATH: process.env.BITCART_ADMIN_ROOTPATH || "/",
+    LOG_FILE_NAME: process.env.BITCART_ADMIN_LOG_FILE || "bitcart.log",
   },
   /*
    ** Nuxt.js modules

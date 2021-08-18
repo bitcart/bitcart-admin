@@ -18,7 +18,7 @@
                   <span>{{ log }}</span>
                 </v-tooltip>
               </v-list-item-content>
-              <v-list-item-action v-if="log !== LOG_FILE_NAME">
+              <v-list-item-action v-if="log !== $config.LOG_FILE_NAME">
                 <v-btn icon @click="deleteLog(log)">
                   <v-icon> close </v-icon>
                 </v-btn>
@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import { LOG_FILE_NAME } from "@/version"
 export default {
   layout: "admin",
   middleware: "superuserOnly",
@@ -61,7 +60,6 @@ export default {
       logs: [],
       model: null,
       selectedLog: "",
-      LOG_FILE_NAME,
     }
   },
   watch: {
