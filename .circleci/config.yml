@@ -62,7 +62,7 @@ jobs:
     executor: build-ubuntu
 
     environment:
-      BUILD_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8
+      BUILD_PLATFORMS: linux/amd64
 
     steps:
       - checkout
@@ -77,7 +77,7 @@ jobs:
     executor: build-ubuntu-arm
 
     environment:
-      BUILD_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8
+      BUILD_PLATFORMS: linux/arm/v7,linux/arm64/v8
 
     steps:
       - checkout
