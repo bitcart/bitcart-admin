@@ -32,7 +32,6 @@ commands:
           command: |
             sudo apt update
             sudo apt install qemu qemu-user-static binfmt-support debootstrap -y
-            docker run --privileged --rm tonistiigi/binfmt --install ${BUILD_PLATFORMS}
             docker buildx create --name builder --use
 
 jobs:
