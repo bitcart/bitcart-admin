@@ -60,5 +60,3 @@ steps:
         from_secret: DOCKER_USER
       password:
         from_secret: DOCKER_PASS
----
-
