@@ -93,7 +93,7 @@ workflows:
   test-and-deploy:
     jobs:
       - test
-      - deploy:
+      - deploy-amd64:
           context: global
       - deploy-arm:
           context: global
