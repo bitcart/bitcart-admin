@@ -8,7 +8,8 @@ RUN yarn install \
     --prefer-offline \
     --frozen-lockfile \
     --non-interactive \
-    --production=false
+    --production=false \
+    --network-timeout=60000
 
 RUN yarn build
 
@@ -17,7 +18,8 @@ RUN rm -rf node_modules && \
     --prefer-offline \
     --pure-lockfile \
     --non-interactive \
-    --production=true
+    --production=true \
+    --network-timeout=60000
 
 FROM node:14-alpine
 
