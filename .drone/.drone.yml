@@ -10,7 +10,6 @@ steps:
   - name: build amd64
     image: plugins/docker
     settings:
-      tags: test2,stable2
       repo: mrnaif/test-admin
       username:
         from_secret: DOCKER_USER
@@ -29,7 +28,6 @@ steps:
   - name: build arm
     image: plugins/docker
     settings:
-      tags: test2,stable2
       repo: mrnaif/test-admin
       username:
         from_secret: DOCKER_USER
@@ -48,7 +46,6 @@ steps:
   - name: build arm64
     image: plugins/docker
     settings:
-      tags: test2,stable2
       repo: mrnaif/test-admin
       username:
         from_secret: DOCKER_USER
