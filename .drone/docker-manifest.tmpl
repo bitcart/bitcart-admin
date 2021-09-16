@@ -1,0 +1,17 @@
+image: mrnaif/test-admin3
+tags:
+  - stable
+  - {{build.tags}}
+manifests:
+  - image: mrnaif/test-admin3:{{build.tags}}-amd64
+    platform:
+      architecture: amd64
+      os: linux
+  - image: mrnaif/test-admin3:{{build.tags}}-arm
+    platform:
+      architecture: arm
+      os: linux
+  - image: mrnaif/test-admin3:{{build.tags}}-arm64
+    platform:
+      architecture: arm64
+      os: linux

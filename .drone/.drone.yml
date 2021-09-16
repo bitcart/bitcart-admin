@@ -54,3 +54,25 @@ steps:
         from_secret: DOCKER_USER
       password:
         from_secret: DOCKER_PASS
+---
+kind: pipeline
+name: manifest
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: manifest
+    image: plugins/manifest
+    settings:
+      username:
+        from_secret: DOCKER_USER
+      password:
+        from_secret: DOCKER_PASS
+      spec: .drone/docker-manifest.tmpl
+
+depends_on:
+  - amd64
+  - arm
+  - arm64
