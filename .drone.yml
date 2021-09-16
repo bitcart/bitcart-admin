@@ -1,4 +1,5 @@
 kind: pipeline
+type: docker
 name: amd64
 
 platform:
@@ -20,6 +21,7 @@ steps:
         from_secret: DOCKER_PASS
 ---
 kind: pipeline
+type: docker
 name: arm
 
 platform:
@@ -41,6 +43,7 @@ steps:
         from_secret: DOCKER_PASS
 ---
 kind: pipeline
+type: docker
 name: arm64
 
 platform:
