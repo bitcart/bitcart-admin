@@ -26,26 +26,22 @@ jobs:
   deploy:
     docker:
       - image: circleci/node:14
+
+    environment:
+      BUILD_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8
+
     steps:
       - checkout
       - setup_remote_docker:
-          version: 19.03.13
+          version: 20.10.7
       - run: |
-          docker build -t $DOCKER_IMAGE:$CIRCLE_TAG .
-          docker tag $DOCKER_IMAGE:$CIRCLE_TAG $DOCKER_IMAGE:stable
           docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push $DOCKER_IMAGE:$CIRCLE_TAG
-          docker push $DOCKER_IMAGE:stable
+          docker run --privileged --rm tonistiigi/binfmt --install ${BUILD_PLATFORMS}
+          docker buildx build --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin:test --tag mrnaif/test-admin/:stable .
 
 workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - test
       - deploy:
           context: global
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              only: /[0-9]+(\.[0-9]+)*/
