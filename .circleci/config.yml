@@ -42,7 +42,7 @@ jobs:
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker run --privileged --rm tonistiigi/binfmt --install ${BUILD_PLATFORMS}
-          docker buildx build --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin:test --tag mrnaif/test-admin/:stable .
+          docker buildx build --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin:test --tag mrnaif/test-admin:stable .
 
 workflows:
   version: 2
