@@ -9,7 +9,7 @@ RUN yarn install \
     --frozen-lockfile \
     --non-interactive \
     --production=false \
-    --network-timeout=100000100000
+    --network-timeout=100000
 
 RUN yarn build
 
