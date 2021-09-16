@@ -8,7 +8,7 @@ platform:
 
 steps:
   - name: build amd64
-    image: thegeeklab/drone-docker-buildx
+    image: plugins/docker
     settings:
       purge: true
       compress: true
