@@ -58,7 +58,7 @@ jobs:
       - run: yarn lint
 
   deploy-amd64:
-    executor: deploy-machine
+    executor: build-ubuntu
 
     environment:
       BUILD_PLATFORMS: linux/amd64
