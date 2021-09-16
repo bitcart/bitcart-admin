@@ -91,7 +91,4 @@ workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - deploy-amd64:
-          context: global
-      - deploy-arm:
-          context: global
+      - test
