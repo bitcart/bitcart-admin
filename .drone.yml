@@ -13,7 +13,7 @@ steps:
     settings:
       purge: true
       compress: true
-      tags: test2, stable2
+      tags: test2,stable2
       repo: mrnaif/test-admin
       username:
         from_secret: DOCKER_USER
