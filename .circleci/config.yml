@@ -1,4 +1,12 @@
 version: 2
+executors:
+  deploy-machine:
+    machine:
+      enabled: true
+      image: ubuntu-2004:202101-01
+    environment:
+      DOCKER_CLI_EXPERIMENTAL: enabled
+
 jobs:
   test:
     docker:
@@ -24,16 +32,13 @@ jobs:
       - run: yarn lint
 
   deploy:
-    docker:
-      - image: circleci/node:14
+    executor: deploy-machine
 
     environment:
       BUILD_PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8
 
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.7
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker run --privileged --rm tonistiigi/binfmt --install ${BUILD_PLATFORMS}
