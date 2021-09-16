@@ -1,65 +1,20 @@
 kind: pipeline
 type: docker
-name: amd64
-
-platform:
-  os: linux
-  arch: amd64
+name: en
 
 steps:
-  - name: build amd64
-    image: thegeeklab/drone-docker-buildx
-    privileged: true
-    settings:
-      purge: true
-      compress: true
-      tags: test2,stable2
-      repo: mrnaif/test-admin
-      username:
-        from_secret: DOCKER_USER
-      password:
-        from_secret: DOCKER_PASS
+  - name: greeting
+    image: alpine
+    commands:
+      - echo hello world
+
 ---
 kind: pipeline
 type: docker
-name: arm
-
-platform:
-  os: linux
-  arch: arm
+name: fr
 
 steps:
-  - name: build arm
-    image: thegeeklab/drone-docker-buildx
-    privileged: true
-    settings:
-      purge: true
-      compress: true
-      tags: test2, stable2
-      repo: mrnaif/test-admin
-      username:
-        from_secret: DOCKER_USER
-      password:
-        from_secret: DOCKER_PASS
----
-kind: pipeline
-type: docker
-name: arm64
-
-platform:
-  os: linux
-  arch: arm64
-
-steps:
-  - name: build arm64
-    image: thegeeklab/drone-docker-buildx
-    privileged: true
-    settings:
-      purge: true
-      compress: true
-      tags: test2, stable2
-      repo: mrnaif/test-admin
-      username:
-        from_secret: DOCKER_USER
-      password:
-        from_secret: DOCKER_PASS
+  - name: greeting
+    image: alpine
+    commands:
+      - echo bonjour monde
