@@ -41,7 +41,7 @@ jobs:
       - checkout
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker run --privileged --rm tonistiigi/binfmt --install ${BUILD_PLATFORMS}
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker buildx create --name builder --use
           docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin:test --tag mrnaif/test-admin:stable .
 
