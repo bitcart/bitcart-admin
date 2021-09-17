@@ -71,7 +71,9 @@ jobs:
       - run:
           name: Build AMD64 image
           command: |
-            docker buildx build --progress plain --pull --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin7:test --tag mrnaif/test-admin7:stable .
+            export DOCKER_IMAGE=mrnaif/test-admin8
+            export CIRCLE_TAG=test
+            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-amd64 --tag $DOCKER_IMAGE:stable-amd64 .
 
   deploy-arm:
     executor: build-ubuntu-arm
@@ -86,7 +88,25 @@ jobs:
       - run:
           name: Build ARM images
           command: |
-            docker buildx build --progress plain --pull --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin7:test --tag mrnaif/test-admin7:stable .
+            export DOCKER_IMAGE=mrnaif/test-admin8
+            export CIRCLE_TAG=test
+            docker buildx build --progress plain --pull --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-arm --tag $DOCKER_IMAGE:stable-arm .
+
+  deploy:
+    executor: build-ubuntu
+
+    steps:
+      - checkout
+      - login-to-dockerhub
+      - run:
+          name: Push docker manifest
+          command: |
+            export DOCKER_IMAGE=mrnaif/test-admin8
+            export CIRCLE_TAG=test
+            docker manifest create $DOCKER_IMAGE:$CIRCLE_TAG --amend $DOCKER_IMAGE:$CIRCLE_TAG-amd64 $DOCKER_IMAGE:$CIRCLE_TAG-arm
+            docker manifest create $DOCKER_IMAGE:stable --amend $DOCKER_IMAGE:stable-amd64 $DOCKER_IMAGE:stable-arm
+            docker manifest push $DOCKER_IMAGE:$CIRCLE_TAG
+            docker manifest push $DOCKER_IMAGE:stable
 
 workflows:
   version: 2
@@ -96,3 +116,8 @@ workflows:
           context: global
       - deploy-arm:
           context: global
+      - deploy:
+          context: global
+          requires:
+            - deploy-amd64
+            - deploy-arm
