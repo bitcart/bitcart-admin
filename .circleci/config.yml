@@ -103,10 +103,8 @@ jobs:
           command: |
             export DOCKER_IMAGE=mrnaif/test-admin8
             export CIRCLE_TAG=test
-            docker manifest create $DOCKER_IMAGE:$CIRCLE_TAG --amend $DOCKER_IMAGE:$CIRCLE_TAG-amd64 $DOCKER_IMAGE:$CIRCLE_TAG-arm
-            docker manifest create $DOCKER_IMAGE:stable --amend $DOCKER_IMAGE:stable-amd64 $DOCKER_IMAGE:stable-arm
-            docker manifest push $DOCKER_IMAGE:$CIRCLE_TAG
-            docker manifest push $DOCKER_IMAGE:stable
+            docker buildx imagetools create -t $DOCKER_IMAGE:$CIRCLE_TAG $DOCKER_IMAGE:$CIRCLE_TAG-amd64 $DOCKER_IMAGE:$CIRCLE_TAG-arm
+            docker buildx imagetools create -t $DOCKER_IMAGE:stable $DOCKER_IMAGE:stable-amd64 $DOCKER_IMAGE:stable-arm
 
 workflows:
   version: 2
