@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+
+orbs:
+  bitcartcc: bitcartcc/bitcartcc-shared@1
+
 jobs:
   test:
     docker:
@@ -23,27 +27,33 @@ jobs:
 
       - run: yarn lint
 
-  deploy:
-    docker:
-      - image: circleci/node:14
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 19.03.13
-      - run: |
-          docker build -t $DOCKER_IMAGE:$CIRCLE_TAG .
-          docker tag $DOCKER_IMAGE:$CIRCLE_TAG $DOCKER_IMAGE:stable
-          docker login -u $DOCKER_USER -p $DOCKER_PASS
-          docker push $DOCKER_IMAGE:$CIRCLE_TAG
-          docker push $DOCKER_IMAGE:stable
-
 workflows:
   version: 2
   test-and-deploy:
     jobs:
       - test
-      - deploy:
+      - bitcartcc/deploy-amd64:
+          name: deploy-amd64
           context: global
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+      - bitcartcc/deploy-arm:
+          name: deploy-arm
+          context: global
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+      - bitcartcc/deploy:
+          name: deploy
+          context: global
+          requires:
+            - deploy-amd64
+            - deploy-arm
           filters:
             branches:
               ignore: /.*/
