@@ -36,15 +36,15 @@ workflows:
           context: global
           pre-steps:
             - run: |
-                export DOCKER_IMAGE=mrnaif/test-admin11
-                export CIRCLE_TAG=0.6.0.0
+                echo 'export DOCKER_IMAGE=mrnaif/test-admin11' >> $BASH_ENV
+                echo 'CIRCLE_TAG=0.6.0.0' >> $BASH_ENV
       - bitcartcc/deploy-arm:
           name: deploy-arm
           context: global
           pre-steps:
             - run: |
-                export DOCKER_IMAGE=mrnaif/test-admin11
-                export CIRCLE_TAG=0.6.0.0
+                echo 'export DOCKER_IMAGE=mrnaif/test-admin11' >> $BASH_ENV
+                echo 'CIRCLE_TAG=0.6.0.0' >> $BASH_ENV
       - bitcartcc/deploy:
           name: deploy
           context: global
@@ -53,5 +53,5 @@ workflows:
             - deploy-arm
           pre-steps:
             - run: |
-                export DOCKER_IMAGE=mrnaif/test-admin11
-                export CIRCLE_TAG=0.6.0.0
+                echo 'export DOCKER_IMAGE=mrnaif/test-admin11' >> $BASH_ENV
+                echo 'CIRCLE_TAG=0.6.0.0' >> $BASH_ENV
