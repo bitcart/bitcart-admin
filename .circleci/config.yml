@@ -90,7 +90,7 @@ jobs:
       - enable-buildx
       - run:
           command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin8' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE=mrnaif/test-admin9' >> $BASH_ENV
             echo 'export CIRCLE_TAG=test' >> $BASH_ENV
       - build-docker-image:
           arch: AMD64
@@ -107,7 +107,7 @@ jobs:
       - enable-buildx
       - run:
           command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin8' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE=mrnaif/test-admin9' >> $BASH_ENV
             echo 'export CIRCLE_TAG=test' >> $BASH_ENV
       - build-docker-image:
           arch: ARM
@@ -120,7 +120,7 @@ jobs:
       - login-to-dockerhub
       - run:
           command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin8' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE=mrnaif/test-admin9' >> $BASH_ENV
             echo 'export CIRCLE_TAG=test' >> $BASH_ENV
       - create-docker-manifest:
           tag: $CIRCLE_TAG
