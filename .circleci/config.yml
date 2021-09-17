@@ -1,58 +1,7 @@
 version: 2.1
 
-executors:
-  build-ubuntu:
-    machine:
-      enabled: true
-      image: ubuntu-2004:202101-01
-    environment:
-      DOCKER_CLI_EXPERIMENTAL: enabled
-    resource_class: medium
-
-  build-ubuntu-arm:
-    machine:
-      enabled: true
-      image: ubuntu-2004:202101-01
-    environment:
-      DOCKER_CLI_EXPERIMENTAL: enabled
-    resource_class: arm.medium
-
-commands:
-  login-to-dockerhub:
-    steps:
-      - run:
-          name: Login to dockerhub
-          command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
-
-  enable-buildx:
-    steps:
-      - run:
-          name: Enable Docker Buildx
-          command: |
-            sudo apt update
-            sudo apt install qemu qemu-user-static binfmt-support debootstrap -y
-            docker buildx create --name builder --use
-
-  build-docker-image:
-    parameters:
-      arch:
-        type: string
-    steps:
-      - run:
-          name: Build <<parameters.arch>> image
-          command: |
-            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-<<parameters.arch>> --tag $DOCKER_IMAGE:stable-<<parameters.arch>> .
-
-  create-docker-manifest:
-    parameters:
-      tag:
-        type: string
-    steps:
-      - run:
-          name: Create <<parameters.tag>> manifest
-          command: |
-            docker buildx imagetools create -t $DOCKER_IMAGE:<<parameters.tag>> $DOCKER_IMAGE:<<parameters.tag>>-amd64 $DOCKER_IMAGE:<<parameters.tag>>-arm
+orbs:
+  bitcartcc: bitcartcc/bitcartcc-shared@1.0.0
 
 jobs:
   test:
@@ -78,64 +27,18 @@ jobs:
 
       - run: yarn lint
 
-  deploy-amd64:
-    executor: build-ubuntu
-
-    environment:
-      BUILD_PLATFORMS: linux/amd64
-
-    steps:
-      - checkout
-      - login-to-dockerhub
-      - enable-buildx
-      - run:
-          command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin10' >> $BASH_ENV
-            echo 'export CIRCLE_TAG=test' >> $BASH_ENV
-      - build-docker-image:
-          arch: amd64
-
-  deploy-arm:
-    executor: build-ubuntu-arm
-
-    environment:
-      BUILD_PLATFORMS: linux/arm/v7,linux/arm64/v8
-
-    steps:
-      - checkout
-      - login-to-dockerhub
-      - enable-buildx
-      - run:
-          command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin10' >> $BASH_ENV
-            echo 'export CIRCLE_TAG=test' >> $BASH_ENV
-      - build-docker-image:
-          arch: arm
-
-  deploy:
-    executor: build-ubuntu
-
-    steps:
-      - checkout
-      - login-to-dockerhub
-      - run:
-          command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin10' >> $BASH_ENV
-            echo 'export CIRCLE_TAG=test' >> $BASH_ENV
-      - create-docker-manifest:
-          tag: $CIRCLE_TAG
-      - create-docker-manifest:
-          tag: stable
-
 workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - deploy-amd64:
+      - bitcartcc/deploy-amd64:
+          name: deploy-amd64
           context: global
-      - deploy-arm:
+      - bitcartcc/deploy-arm:
+          name: deploy-arm
           context: global
-      - deploy:
+      - bitcartcc/deploy:
+          name: deploy
           context: global
           requires:
             - deploy-amd64
