@@ -42,7 +42,7 @@ commands:
       - run:
           name: Build <<parameters.arch>> image
           command: |
-            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-amd64 --tag $DOCKER_IMAGE:stable-amd64 .
+            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-<<parameters.arch>> --tag $DOCKER_IMAGE:stable-<<parameters.arch>> .
 
   create-docker-manifest:
     parameters:
@@ -90,10 +90,10 @@ jobs:
       - enable-buildx
       - run:
           command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin9' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE=mrnaif/test-admin10' >> $BASH_ENV
             echo 'export CIRCLE_TAG=test' >> $BASH_ENV
       - build-docker-image:
-          arch: AMD64
+          arch: amd64
 
   deploy-arm:
     executor: build-ubuntu-arm
@@ -107,10 +107,10 @@ jobs:
       - enable-buildx
       - run:
           command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin9' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE=mrnaif/test-admin10' >> $BASH_ENV
             echo 'export CIRCLE_TAG=test' >> $BASH_ENV
       - build-docker-image:
-          arch: ARM
+          arch: arm
 
   deploy:
     executor: build-ubuntu
@@ -120,7 +120,7 @@ jobs:
       - login-to-dockerhub
       - run:
           command: |
-            echo 'export DOCKER_IMAGE=mrnaif/test-admin9' >> $BASH_ENV
+            echo 'export DOCKER_IMAGE=mrnaif/test-admin10' >> $BASH_ENV
             echo 'export CIRCLE_TAG=test' >> $BASH_ENV
       - create-docker-manifest:
           tag: $CIRCLE_TAG
