@@ -34,6 +34,26 @@ commands:
             sudo apt install qemu qemu-user-static binfmt-support debootstrap -y
             docker buildx create --name builder --use
 
+  build-docker-image:
+    parameters:
+      arch:
+        type: string
+    steps:
+      - run:
+          name: Build <<parameters.arch>> image
+          command: |
+            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-amd64 --tag $DOCKER_IMAGE:stable-amd64 .
+
+  create-docker-manifest:
+    parameters:
+      tag:
+        type: string
+    steps:
+      - run:
+          name: Create <<parameters.tag>> manifest
+          command: |
+            docker buildx imagetools create -t $DOCKER_IMAGE:<<parameters.tag>> $DOCKER_IMAGE:<<parameters.tag>>-amd64 $DOCKER_IMAGE:<<parameters.tag>>-arm
+
 jobs:
   test:
     docker:
@@ -69,11 +89,11 @@ jobs:
       - login-to-dockerhub
       - enable-buildx
       - run:
-          name: Build AMD64 image
           command: |
             export DOCKER_IMAGE=mrnaif/test-admin8
             export CIRCLE_TAG=test
-            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-amd64 --tag $DOCKER_IMAGE:stable-amd64 .
+      - build-docker-image:
+          arch: AMD64
 
   deploy-arm:
     executor: build-ubuntu-arm
@@ -86,11 +106,11 @@ jobs:
       - login-to-dockerhub
       - enable-buildx
       - run:
-          name: Build ARM images
           command: |
             export DOCKER_IMAGE=mrnaif/test-admin8
             export CIRCLE_TAG=test
-            docker buildx build --progress plain --pull --push --platform ${BUILD_PLATFORMS} --tag $DOCKER_IMAGE:$CIRCLE_TAG-arm --tag $DOCKER_IMAGE:stable-arm .
+      - build-docker-image:
+          arch: ARM
 
   deploy:
     executor: build-ubuntu
@@ -99,12 +119,13 @@ jobs:
       - checkout
       - login-to-dockerhub
       - run:
-          name: Push docker manifest
           command: |
             export DOCKER_IMAGE=mrnaif/test-admin8
             export CIRCLE_TAG=test
-            docker buildx imagetools create -t $DOCKER_IMAGE:$CIRCLE_TAG $DOCKER_IMAGE:$CIRCLE_TAG-amd64 $DOCKER_IMAGE:$CIRCLE_TAG-arm
-            docker buildx imagetools create -t $DOCKER_IMAGE:stable $DOCKER_IMAGE:stable-amd64 $DOCKER_IMAGE:stable-arm
+      - create-docker-manifest:
+          tag: $CIRCLE_TAG
+      - create-docker-manifest:
+          tag: stable
 
 workflows:
   version: 2
