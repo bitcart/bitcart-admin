@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  bitcartcc: bitcartcc/bitcartcc-shared@1.0.1
+  bitcartcc: bitcartcc/bitcartcc-shared@1
 
 jobs:
   test:
@@ -36,14 +36,14 @@ workflows:
           context: global
           pre-steps:
             - run: |
-                echo 'export DOCKER_IMAGE=mrnaif/test-admin12' >> $BASH_ENV
+                echo 'export DOCKER_IMAGE=mrnaif/test-admin14' >> $BASH_ENV
                 echo 'CIRCLE_TAG=0.6.0.0' >> $BASH_ENV
       - bitcartcc/deploy-arm:
           name: deploy-arm
           context: global
           pre-steps:
             - run: |
-                echo 'export DOCKER_IMAGE=mrnaif/test-admin12' >> $BASH_ENV
+                echo 'export DOCKER_IMAGE=mrnaif/test-admin14' >> $BASH_ENV
                 echo 'CIRCLE_TAG=0.6.0.0' >> $BASH_ENV
       - bitcartcc/deploy:
           name: deploy
@@ -53,5 +53,5 @@ workflows:
             - deploy-arm
           pre-steps:
             - run: |
-                echo 'export DOCKER_IMAGE=mrnaif/test-admin12' >> $BASH_ENV
+                echo 'export DOCKER_IMAGE=mrnaif/test-admin14' >> $BASH_ENV
                 echo 'CIRCLE_TAG=0.6.0.0' >> $BASH_ENV
