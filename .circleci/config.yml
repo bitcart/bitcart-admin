@@ -71,7 +71,7 @@ jobs:
       - run:
           name: Build AMD64 image
           command: |
-            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin7:test --tag mrnaif/test-admin7:stable .
+            docker buildx build --progress plain --pull --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin7:test --tag mrnaif/test-admin7:stable .
 
   deploy-arm:
     executor: build-ubuntu-arm
@@ -86,7 +86,7 @@ jobs:
       - run:
           name: Build ARM images
           command: |
-            docker buildx build --progress plain --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin7:test --tag mrnaif/test-admin7:stable .
+            docker buildx build --progress plain --pull --push --platform ${BUILD_PLATFORMS} --tag mrnaif/test-admin7:test --tag mrnaif/test-admin7:stable .
 
 workflows:
   version: 2
