@@ -8,6 +8,19 @@
       v-model="data"
       @change="updatePolicy"
     />
+    <auto-complete
+      v-else-if="type === 'autocomplete'"
+      v-model="data"
+      :url="url"
+      :label="title"
+      :body="true"
+      @input="updatePolicy"
+    />
+    <list-edit
+      v-else-if="type === 'listedit'"
+      :initial-value="data"
+      @input="updateListEdit"
+    />
     <v-text-field
       v-else
       v-model="data"
@@ -18,7 +31,13 @@
   </div>
 </template>
 <script>
+import AutoComplete from "@/components/AutoComplete"
+import ListEdit from "@/components/ListEdit"
 export default {
+  components: {
+    AutoComplete,
+    ListEdit,
+  },
   props: {
     title: {
       type: String,
@@ -40,6 +59,10 @@ export default {
       type: String,
       default: "/manage/policies",
     },
+    url: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -49,6 +72,13 @@ export default {
   methods: {
     updatePolicy(value) {
       this.$axios.post(this.policyUrl, { [this.what]: value })
+    },
+    updateListEdit(value) {
+      const obj = Object.fromEntries(
+        value.map((item) => [item.key, item.value])
+      )
+      delete obj[""] // Remove empty value
+      this.updatePolicy(obj)
     },
   },
 }

@@ -18,6 +18,7 @@ export default {
         { text: "User management", to: "/manage" },
         { text: "Server logs", to: "/manage/logs" },
         { text: "Maintenance commands", to: "/manage/maintenance" },
+        { text: "Backups", to: "/manage/backups" },
         { text: "Policies", to: "/manage/policies" },
         { text: "Store Policies", to: "/manage/stores" },
         { text: "Daemons management", to: "/manage/daemons" },
