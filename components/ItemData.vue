@@ -65,7 +65,7 @@
               title="Actions"
             />
           </mobile-wrap>
-          <mobile-wrap v-if="$slots['before-toolbar']">
+          <mobile-wrap v-if="$slots['before-toolbar']" :wrap="true">
             <slot name="before-toolbar" />
           </mobile-wrap>
           <mobile-wrap>
@@ -84,7 +84,7 @@
               </template>
             </edit-card>
           </mobile-wrap>
-          <mobile-wrap v-if="$slots['after-toolbar']">
+          <mobile-wrap v-if="$slots['after-toolbar']" :wrap="true">
             <slot name="after-toolbar" />
           </mobile-wrap>
           <mobile-wrap>
