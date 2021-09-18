@@ -6,26 +6,15 @@
         app
         disable-route-watcher
         disable-resize-watcher
+        class="mb-3 hidden-md-and-up"
       >
-        <v-list>
-          <v-list-item
-            v-for="(item, i) in items"
-            :key="i"
-            :to="item.to"
-            router
-            exact
-          >
-            <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.title" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+        <NavToolbarMobile :items="availableItems" />
       </v-navigation-drawer>
       <v-app-bar fixed app>
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+        <v-app-bar-nav-icon
+          class="mb-3 hidden-md-and-up"
+          @click.stop="drawer = !drawer"
+        />
         <v-spacer />
         <v-img
           max-height="60"
@@ -50,7 +39,7 @@
           </template>
           <v-list class="pa-0">
             <v-list-item
-              v-for="(item, index) in availableItems"
+              v-for="(item, index) in availableProfileItems"
               :key="index"
               :to="item.href"
               :disabled="item.disabled"
@@ -73,6 +62,7 @@
     </template>
     <template #default>
       <v-container>
+        <Toolbar :items="availableItems" class="mb-3 hidden-sm-and-down" />
         <slot />
         <nuxt />
       </v-container>
@@ -101,11 +91,16 @@
 import { mapGetters } from "vuex"
 import BaseLayout from "@/layouts/base"
 import OnionButton from "@/components/OnionButton"
+import Toolbar from "@/components/Toolbar"
+import OnionIcon from "@/components/OnionIcon"
+import NavToolbarMobile from "@/components/NavToolbarMobile"
 import VERSION from "@/version"
 export default {
   components: {
     OnionButton,
     BaseLayout,
+    Toolbar,
+    NavToolbarMobile,
   },
   data() {
     return {
@@ -113,21 +108,39 @@ export default {
       toolbar: false,
       dark: true,
       drawer: false,
-      items: [
+      guestItems: [
         {
-          icon: "mdi-apps",
-          title: "Welcome",
-          to: "/",
+          icon: "mdi-cog",
+          text: "Configurator",
+          to: "/configurator",
+          configurator: true,
         },
         {
           icon: "mdi-login",
-          title: "Login",
+          text: "Login",
           to: "/login",
         },
         {
           icon: "mdi-account-plus",
-          title: "Register",
+          text: "Register",
           to: "/register",
+        },
+      ],
+      items: [
+        {
+          icon: "mdi-view-dashboard-outline",
+          text: "Dashboard",
+          to: "/",
+        },
+        {
+          component: OnionIcon,
+          text: "Tor services",
+          to: "/services",
+        },
+        {
+          icon: "mdi-cog",
+          text: "Configurator",
+          to: "/configurator",
         },
       ],
       profileItems: [
@@ -151,7 +164,7 @@ export default {
           click: this.handleLogout,
         },
       ],
-      guestItems: [
+      guestProfileItems: [
         {
           icon: "mdi-login",
           href: "/login",
@@ -171,10 +184,20 @@ export default {
     ...mapGetters(["onionURL"]),
     availableItems() {
       return this.$auth.loggedIn
+        ? this.items
+        : this.guestItems.filter(
+            (x) =>
+              !x.configurator ||
+              (x.configurator &&
+                this.$store.state.policies.allow_anonymous_configurator)
+          )
+    },
+    availableProfileItems() {
+      return this.$auth.loggedIn
         ? this.profileItems.filter(
             (x) => !x.superuser || (x.superuser && this.$auth.user.is_superuser)
           )
-        : this.guestItems
+        : this.guestProfileItems
     },
     logoStyle() {
       return this.$vuetify.theme.dark ? "filter: invert(1)" : ""

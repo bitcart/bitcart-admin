@@ -1,5 +1,5 @@
 <template>
-  <Basicadmin>
+  <Default>
     <v-row>
       <v-col md="3" cols="12">
         <info-card link="/wallets" :texts="walletTexts" />
@@ -9,14 +9,14 @@
       </v-col>
     </v-row>
     <slot />
-  </Basicadmin>
+  </Default>
 </template>
 <script>
-import Basicadmin from "@/layouts/basicadmin"
+import Default from "@/layouts/default"
 import InfoCard from "@/components/InfoCard"
 export default {
   components: {
-    Basicadmin,
+    Default,
     InfoCard,
   },
   data() {
@@ -121,7 +121,9 @@ export default {
         {
           header: "Wallets Balance",
           key: "balance",
-          value: this.$auth.user.settings.balance_currency,
+          value: this.$auth.user
+            ? this.$auth.user.settings.balance_currency
+            : 0,
         },
         {
           header: "Total wallets connected:",

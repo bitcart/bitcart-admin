@@ -48,7 +48,6 @@
 
 <script>
 export default {
-  layout: "basicadmin",
   computed: {
     noServices() {
       return (

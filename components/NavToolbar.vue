@@ -9,20 +9,18 @@
     </v-toolbar>
     <div class="mb-3 hidden-md-and-up">
       <v-divider />
-      <v-list>
-        <v-list-item v-for="item in items" :key="item.text" :to="item.to" exact>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.text" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+      <NavToolbarMobile :items="items" />
       <v-divider />
     </div>
   </div>
 </template>
 
 <script>
+import NavToolbarMobile from "@/components/NavToolbarMobile"
 export default {
+  components: {
+    NavToolbarMobile,
+  },
   props: {
     items: {
       type: Array,

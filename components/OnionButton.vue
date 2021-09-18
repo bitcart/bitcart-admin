@@ -1,11 +1,15 @@
 <template>
   <v-btn icon :href="url">
-    <v-img :src="`${STATIC_PATH}/onion.svg`" height="32" width="32" contain />
+    <OnionIcon />
   </v-btn>
 </template>
 
 <script>
+import OnionIcon from "@/components/OnionIcon.vue"
 export default {
+  components: {
+    OnionIcon,
+  },
   props: {
     url: {
       type: String,

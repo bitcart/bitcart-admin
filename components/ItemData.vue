@@ -21,64 +21,76 @@
         <slot v-if="slot.startsWith('item.')" :name="slot" v-bind="scope" />
       </template>
       <template #top>
-        <v-toolbar flat>
-          <v-toolbar-title>{{ title + "s" }}</v-toolbar-title>
-          <div class="flex-grow-1" />
-          <v-text-field
-            v-model="searchProp"
-            append-icon="search"
-            label="Search"
-            single-line
-            hide-details
+        <v-dialog
+          v-model="showTabDialog"
+          :fullscreen="$vuetify.breakpoint.mobile"
+          max-width="400px"
+        >
+          <TabbedCheckout
+            :show-prop="showTabDialog"
+            :invoice="tabbedDialogItem"
+            class="pa-0"
+            @closedialog="showTabDialog = false"
           />
-          <v-spacer />
-          <v-dialog
-            v-model="showTabDialog"
-            :fullscreen="$vuetify.breakpoint.smAndDown"
-            max-width="400px"
-          >
-            <TabbedCheckout
-              :show-prop="showTabDialog"
-              :invoice="tabbedDialogItem"
-              class="pa-0"
-              @closedialog="showTabDialog = false"
+        </v-dialog>
+        <v-dialog v-model="showImageDialog" max-width="500px">
+          <v-card>
+            <v-card-title>Image preview</v-card-title>
+            <v-img
+              v-if="showImageItem.image"
+              :src="imageURL(showImageItem.image)"
             />
-          </v-dialog>
-          <v-dialog v-model="showImageDialog" max-width="500px">
-            <v-card>
-              <v-card-title>Image preview</v-card-title>
-              <v-img
-                v-if="showImageItem.image"
-                :src="imageURL(showImageItem.image)"
-              />
-              <v-card-text v-else class="text-h6"> No image </v-card-text>
-            </v-card>
-          </v-dialog>
-          <menu-dropdown
-            :items="batchActions.concat(customBatchActions)"
-            :process="processBatchCommand"
-            title="Actions"
-          />
-          <slot name="before-toolbar" />
-          <edit-card
-            :url="url"
-            :headers="headers"
-            :title="title"
-            :on.sync="dialog"
-            :item.sync="editedItem"
-            :edit-mode="editing"
-            :postprocess="postprocess"
-            :postclose="postclose"
-          >
-            <template #dialog>
-              <slot name="dialog" />
-            </template>
-          </edit-card>
-          <slot name="after-toolbar" />
-          <v-btn icon @click="triggerReload()">
-            <v-icon> mdi-reload </v-icon>
-          </v-btn>
-        </v-toolbar>
+            <v-card-text v-else class="text-h6"> No image </v-card-text>
+          </v-card>
+        </v-dialog>
+        <component :is="toolbarComponent" flat class="mb-3">
+          <v-toolbar-title>
+            <mobile-wrap>{{ title + "s" }}</mobile-wrap>
+          </v-toolbar-title>
+          <div class="flex-grow-1" />
+          <mobile-wrap>
+            <v-text-field
+              v-model="searchProp"
+              append-icon="search"
+              label="Search"
+              single-line
+              hide-details
+            />
+          </mobile-wrap>
+          <v-spacer />
+          <mobile-wrap>
+            <menu-dropdown
+              :items="batchActions.concat(customBatchActions)"
+              :process="processBatchCommand"
+              title="Actions"
+            />
+          </mobile-wrap>
+          <mobile-wrap v-if="$slots['before-toolbar']">
+            <slot name="before-toolbar" />
+          </mobile-wrap>
+          <mobile-wrap>
+            <edit-card
+              :url="url"
+              :headers="headers"
+              :title="title"
+              :on.sync="dialog"
+              :item.sync="editedItem"
+              :edit-mode="editing"
+              :postprocess="postprocess"
+              :postclose="postclose"
+            >
+              <template #dialog>
+                <slot name="dialog" />
+              </template>
+            </edit-card>
+          </mobile-wrap>
+          <mobile-wrap v-if="$slots['after-toolbar']">
+            <slot name="after-toolbar" />
+          </mobile-wrap>
+          <mobile-wrap>
+            <RefreshButton :func="triggerReload" />
+          </mobile-wrap>
+        </component>
       </template>
       <template #expanded-item="{ item }">
         <div
@@ -171,12 +183,16 @@ import EditCard from "@/components/EditCard"
 import TabbedCheckout from "@/components/TabbedCheckout"
 import MenuDropdown from "@/components/MenuDropdown"
 import CopyText from "@/components/CopyText"
+import RefreshButton from "@/components/RefreshButton"
+import MobileWrap from "@/components/MobileWrap"
 export default {
   components: {
     EditCard,
     TabbedCheckout,
     MenuDropdown,
     CopyText,
+    RefreshButton,
+    MobileWrap,
   },
   props: {
     headers: {
@@ -311,6 +327,9 @@ export default {
     },
     imageSlotName() {
       return this.imageName ? "item." + this.imageName : undefined
+    },
+    toolbarComponent() {
+      return this.$vuetify.breakpoint.mobile ? "v-list" : "v-toolbar"
     },
   },
   watch: {

@@ -94,7 +94,6 @@
 import merge from "lodash.merge"
 export default {
   auth: false,
-  layout: "basicadmin",
   middleware: "configurator",
   data() {
     const dt = {

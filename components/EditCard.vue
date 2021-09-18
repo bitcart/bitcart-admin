@@ -1,7 +1,11 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div>
-    <v-dialog v-model="dialog" max-width="650px">
+    <v-dialog
+      v-model="dialog"
+      max-width="650px"
+      :fullscreen="$vuetify.breakpoint.mobile"
+    >
       <template v-if="showNew" #activator="{ on: show }">
         <v-btn color="primary" dark v-on="show"> New {{ title }} </v-btn>
       </template>

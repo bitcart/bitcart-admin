@@ -1,5 +1,10 @@
 <template>
   <v-container v-if="showProp">
+    <close-button
+      :show="$vuetify.breakpoint.mobile && !checkoutPage"
+      style="background-color: #ffffff"
+      @closedialog="$emit('closedialog')"
+    />
     <v-card v-if="noTabs" flat>
       <v-card-title class="justify-center"> Empty </v-card-title>
       <v-card-text class="d-flex justify-center">

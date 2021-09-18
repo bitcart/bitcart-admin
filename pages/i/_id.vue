@@ -12,7 +12,7 @@
       max-width="400px"
       class="my-md-12 mx-auto"
       transition="none"
-      :fullscreen="$vuetify.breakpoint.xsOnly"
+      :fullscreen="$vuetify.breakpoint.mobile"
     >
       <v-card :loading="loading && !errorText" class="elevation-24">
         <div v-if="loading" :class="$route.query.modal ? 'pb-6' : 'py-6'">
