@@ -8,6 +8,21 @@
       what="backups/backup"
       class="pb-3"
     />
+    <p class="text-h4">Restore backup</p>
+    <v-file-input
+      v-model="file"
+      :rules="fileRules"
+      label="Backup file"
+    ></v-file-input>
+    <ManagementCommand
+      title="Restore backup"
+      details="Restores a backup from a .tar.gz file. Maximum 50 MB"
+      btn-text="Start restore process"
+      what="backups/restore"
+      class="pb-3"
+      :file="true"
+      :file-to-upload="file"
+    />
     <p class="text-h4">Backup settings</p>
     <v-alert outlined text type="info"
       >All backup providers, except for local, require environment variables to
@@ -41,6 +56,7 @@ export default {
   middleware: "superuserOnly",
   data() {
     return {
+      file: null,
       policies: {},
       descriptions: {
         provider: {
@@ -66,6 +82,12 @@ export default {
         required: (value) =>
           (typeof value !== "undefined" && !!value) || "Required.",
       },
+      fileRules: [
+        (value) =>
+          !value ||
+          value.size < 50 * 1024 * 1024 ||
+          "Backup size should be less than 50 MB!",
+      ],
     }
   },
   beforeMount() {

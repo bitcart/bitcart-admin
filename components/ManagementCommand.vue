@@ -36,6 +36,14 @@ export default {
       type: String,
       default: "",
     },
+    fileToUpload: {
+      type: null,
+      default: null,
+    },
+    file: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -46,8 +54,30 @@ export default {
   },
   methods: {
     manage(what) {
+      let data = null
+      let headers = null
+      if (this.file) {
+        data = new FormData()
+        console.log(this.fileToUpload)
+        if (!this.fileToUpload) {
+          this.done = true
+          this.error = true
+          this.detail = "No file selected"
+          return
+        }
+        if (this.fileToUpload.size >= 50 * 1024 * 1024) {
+          this.done = true
+          this.error = true
+          this.detail = "Backup size should be less than 50 MB!"
+          return
+        }
+        data.append("backup", this.fileToUpload)
+        headers = {
+          "Content-Type": "multipart/form-data",
+        }
+      }
       this.$axios
-        .post(`/manage/${what}`)
+        .post(`/manage/${what}`, data, headers)
         .then((resp) => {
           this.done = true
           this.error = resp.data.status === "error"
