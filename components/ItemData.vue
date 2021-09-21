@@ -193,6 +193,15 @@ import MenuDropdown from "@/components/MenuDropdown"
 import CopyText from "@/components/CopyText"
 import RefreshButton from "@/components/RefreshButton"
 import MobileWrap from "@/components/MobileWrap"
+let runtimeComponents = {}
+if (process.env.NODE_ENV === "production") {
+  const VList = require("vuetify/lib/components/VList").VList
+  const VToolbar = require("vuetify/lib/components/VToolbar").VToolbar
+  runtimeComponents = Object.assign({}, runtimeComponents, {
+    VList,
+    VToolbar,
+  })
+}
 export default {
   components: {
     EditCard,
@@ -201,6 +210,7 @@ export default {
     CopyText,
     RefreshButton,
     MobileWrap,
+    ...runtimeComponents,
   },
   props: {
     headers: {
