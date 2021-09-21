@@ -106,6 +106,9 @@
           <p v-else>{{ header.text }}: <br />{{ item[header.value] }}</p>
         </div>
       </template>
+      <template #item.id="{ item }">
+        {{ item.id }}
+      </template>
       <template #item.created="{ item }">
         {{ new Date(item.created).toLocaleString() }}
       </template>
@@ -116,7 +119,12 @@
         v-for="(slotNameCopy, key) in copiableSlotNames"
         #[slotNameCopy]="{ item }"
       >
-        <copy-text :key="slotNameCopy" :value="item[copiableNames[key]]" />
+        <copy-text
+          :key="slotNameCopy"
+          :value="item[copiableNames[key]]"
+          :error="copiableNames[key] == 'id' && item.error"
+          :error-text="errorText"
+        />
       </template>
       <template
         v-for="(slotName, key) in dropdownSlotNames"
@@ -314,6 +322,9 @@ export default {
     },
     tabbedSlotName() {
       return this.tabbedName ? "item." + this.tabbedName : undefined
+    },
+    errorText() {
+      return this.headers.find((x) => x.value === "id").errorText
     },
     noTabs() {
       return (

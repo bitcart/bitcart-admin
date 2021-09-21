@@ -15,7 +15,14 @@ export default {
   data() {
     return {
       headers: [
-        { text: "ID", value: "id", mode: "display", copy: true },
+        {
+          text: "ID",
+          value: "id",
+          mode: "display",
+          copy: true,
+          errorText:
+            "Error loading wallet. Either the currency of this wallet is no longer supported or it was disabled on the server. Check server logs for more information",
+        },
         { text: "Name", value: "name", rules: ["required"] },
         { text: "Balance", value: "balance", mode: "display" },
         {

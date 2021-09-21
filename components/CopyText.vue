@@ -9,6 +9,16 @@
         Copied
       </p>
       <p v-else key="value" class="ma-0 pa-0" style="user-select: all">
+        <span v-if="error" class="text-left">
+          <v-tooltip bottom>
+            <template #activator="{ on, attrs }">
+              <v-icon v-if="error" color="error" v-bind="attrs" v-on="on">
+                error
+              </v-icon>
+            </template>
+            <span>{{ errorText }}</span>
+          </v-tooltip>
+        </span>
         {{ $utils.truncate(value) }}
       </p>
     </v-fade-transition>
@@ -20,6 +30,14 @@ export default {
     value: {
       type: null,
       required: true,
+    },
+    error: {
+      type: Boolean,
+      default: false,
+    },
+    errorText: {
+      type: String,
+      default: "",
     },
   },
   data() {
