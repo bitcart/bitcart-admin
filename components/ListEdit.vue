@@ -1,33 +1,35 @@
 <template>
   <div>
-    <v-list class="mb-0 pb-0">
-      <v-row>
-        <v-list-item v-for="(item, index) in data" :key="index" class="pl-0">
-          <v-list-item-content>
-            <v-col cols="4">
-              <v-text-field
-                v-model="item.key"
-                label="Name"
-                :rules="[rules.required]"
-                @input="sendInput"
-              />
-            </v-col>
-            <v-col cols="4">
-              <v-text-field
-                v-model="item.value"
-                label="Value"
-                :rules="[rules.required]"
-                @input="sendInput"
-              />
-            </v-col>
-            <v-col cols="1">
-              <v-btn icon @click="deleteItem(index)">
-                <tooltip-icon icon="mdi-delete" text="Delete" />
-              </v-btn>
-            </v-col>
-          </v-list-item-content>
-        </v-list-item>
-      </v-row>
+    <v-list class="mb-5 mt-0 py-0">
+      <v-container class="py-0">
+        <v-row>
+          <v-list-item v-for="(item, index) in data" :key="index" class="pl-0">
+            <v-list-item-content>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="item.key"
+                  label="Name"
+                  :rules="[rules.required]"
+                  @input="sendInput"
+                />
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  v-model="item.value"
+                  label="Value"
+                  :rules="[rules.required]"
+                  @input="sendInput"
+                />
+              </v-col>
+              <v-col cols="1">
+                <v-btn icon @click="deleteItem(index)">
+                  <tooltip-icon icon="mdi-delete" text="Delete" />
+                </v-btn>
+              </v-col>
+            </v-list-item-content>
+          </v-list-item>
+        </v-row>
+      </v-container>
     </v-list>
     <v-btn color="primary" class="pt-0 mt-0" @click="addItem"> Add new </v-btn>
   </div>
