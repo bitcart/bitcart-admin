@@ -115,7 +115,9 @@ export default {
       if (!val) {
         limit = 5
       }
-      const url = `/${this.url}?limit=${limit}&query=${val}&multiple=${this.multiple}`
+      const url = `/${this.url}?limit=${limit}&query=${encodeURIComponent(
+        val
+      )}&multiple=${this.multiple}`
       this.$axios.get(url).then((resp) => {
         if (this.body) this.items = resp.data
         else this.items = resp.data.result

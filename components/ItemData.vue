@@ -159,20 +159,36 @@
         <v-btn color="primary" @click="showImage(item)"> Show </v-btn>
       </template>
       <template #item.action="{ item }">
-        <v-icon small class="mr-2" @click="copyText(item.id)">
-          mdi-content-copy
-        </v-icon>
-        <v-icon small class="mr-2" @click="editItem(item)"> edit </v-icon>
-        <v-icon
+        <tooltip-icon
+          small
+          icon="mdi-content-copy"
+          text="Copy"
+          class="mr-2"
+          @click="copyText(item.id)"
+        />
+        <tooltip-icon
+          small
+          icon="edit"
+          text="Edit"
+          class="mr-2"
+          @click="editItem(item)"
+        />
+        <tooltip-icon
           v-for="action in actions"
           :key="action.icon"
+          :icon="action.icon"
+          :text="action.text"
           small
           class="mr-2"
           @click="action.process(item, items.indexOf(item))"
-        >
-          {{ action.icon }}
-        </v-icon>
-        <v-icon small class="mr-2" @click="deleteItem(item)"> delete </v-icon>
+        />
+        <tooltip-icon
+          icon="delete"
+          text="Delete"
+          small
+          class="mr-2"
+          @click="deleteItem(item)"
+        />
       </template>
     </v-data-table>
     <div class="text-center pt-2">
@@ -193,6 +209,7 @@ import MenuDropdown from "@/components/MenuDropdown"
 import CopyText from "@/components/CopyText"
 import RefreshButton from "@/components/RefreshButton"
 import MobileWrap from "@/components/MobileWrap"
+import TooltipIcon from "@/components/TooltipIcon"
 let runtimeComponents = {}
 if (process.env.NODE_ENV === "production") {
   const VList = require("vuetify/lib/components/VList").VList
@@ -210,6 +227,7 @@ export default {
     CopyText,
     RefreshButton,
     MobileWrap,
+    TooltipIcon,
     ...runtimeComponents,
   },
   props: {
@@ -366,6 +384,7 @@ export default {
     searchProp(val) {
       this.$emit("update:search", val)
       this.triggerReload(true, false)
+      this.updateQueryString(val)
     },
     dialog(val) {
       this.$emit("update:dialogWatch", val)
@@ -382,12 +401,22 @@ export default {
       this.addItem(item)
     })
     this.getItems = debounce(this.getItemsNolimit, 250)
+    this.updateQueryString = debounce(this.updateQueryStringImpl, 250)
+    this.searchProp = this.$route.query.query || this.searchProp
   },
   beforeDestroy() {
     this.$bus.$off("updateitem")
     this.$bus.$off("additem")
   },
   methods: {
+    updateQueryStringImpl(val) {
+      if (!val) this.$router.push({ path: this.$route.path })
+      else
+        this.$router.push({
+          path: this.$route.path,
+          query: { ...this.$route.query, query: val },
+        })
+    },
     triggerReload(search = false, refreshStats = true) {
       const { sortBy, sortDesc, itemsPerPage } = this.options
       let page = this.options.page
@@ -427,7 +456,7 @@ export default {
       this.loading = true
       let url = `/${this.url}?offset=${
         (page - 1) * itemsPerPage
-      }&limit=${itemsPerPage}&query=${search}`
+      }&limit=${itemsPerPage}&query=${encodeURIComponent(search)}`
       if (sortBy.length === 1 && sortDesc.length === 1) {
         url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}`
       }

@@ -55,7 +55,11 @@ export default {
         { text: "Actions", value: "action", sortable: false },
       ],
       actions: [
-        { icon: "mdi-lightning-bolt", process: this.configureLightning },
+        {
+          icon: "mdi-lightning-bolt",
+          text: "Lightning management",
+          process: this.configureLightning,
+        },
       ],
       url: "wallets",
       title: "Wallet",

@@ -7,6 +7,26 @@
     :custom-batch-actions="batchActions"
   >
     <template #before-toolbar>
+      <v-dialog v-model="showDateDialog" max-width="500px">
+        <v-card>
+          <v-card-title>Filter invoices by custom date range </v-card-title>
+          <v-card-text>
+            <v-datetime-picker
+              ref="dateInput1"
+              v-model="startDate"
+              label="Start date"
+            />
+            <v-datetime-picker
+              ref="dateInput2"
+              v-model="endDate"
+              label="End date"
+            />
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn color="primary" @click="applyDateFilter">Apply</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <menu-dropdown
         :items="filterItems"
         :process="applyFilter"
@@ -32,6 +52,9 @@ export default {
   data() {
     return {
       search: "",
+      showDateDialog: false,
+      startDate: null,
+      endDate: null,
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
         { text: "Price", value: "price", readonly: true, rules: ["required"] },
@@ -105,6 +128,22 @@ export default {
           command: "invalid",
         },
         {
+          title: "Last 24 hours",
+          command: "start_date:-1d",
+        },
+        {
+          title: "Last week",
+          command: "start_date:-1w",
+        },
+        {
+          title: "Last month",
+          command: "start_date:-1m",
+        },
+        {
+          title: "Custom range",
+          command: { customRange: true },
+        },
+        {
           title: "Unfiltered",
           command: "",
         },
@@ -150,7 +189,25 @@ export default {
         })
     },
     applyFilter(filter) {
+      if (filter.customRange) {
+        if (this.$refs.dateInput1) {
+          this.$refs.dateInput1.clearHandler()
+        }
+        if (this.$refs.dateInput2) {
+          this.$refs.dateInput2.clearHandler()
+        }
+        this.showDateDialog = true
+        return
+      }
       this.search = filter
+    },
+    applyDateFilter() {
+      if (this.startDate && this.endDate) {
+        this.search = `start_date:${this.startDate.toISOString()} end_date:${this.endDate.toISOString()} ${
+          this.search
+        }`
+        this.showDateDialog = false
+      }
     },
   },
 }

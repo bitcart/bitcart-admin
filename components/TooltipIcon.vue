@@ -1,7 +1,11 @@
 <template>
   <v-tooltip bottom>
     <template #activator="{ on, attrs }">
-      <v-icon small v-bind="attrs" v-on="on" @click="$emit('click')">
+      <v-icon
+        v-bind="{ ...attrs, ...$attrs }"
+        v-on="on"
+        @click="$emit('click')"
+      >
         {{ icon }}
       </v-icon>
     </template>
@@ -11,6 +15,7 @@
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     icon: {
       type: String,

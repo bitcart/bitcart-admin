@@ -58,6 +58,7 @@ export default {
       actions: [
         {
           icon: "mdi-text-box",
+          text: "Configure templates",
           process: this.showTemplate,
         },
       ],

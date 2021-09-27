@@ -509,7 +509,9 @@ export default {
       const paramString = baseUrl.includes("?") ? "&" : "?"
       let url = `/${baseUrl}${paramString}offset=${
         (page - 1) * itemsPerPage
-      }&limit=${itemsPerPage}&query=${search}&multiple=${multiple}`
+      }&limit=${itemsPerPage}&query=${encodeURIComponent(
+        search
+      )}&multiple=${multiple}`
       if (sortBy.length === 1 && sortDesc.length === 1) {
         url += `&sort=${sortBy[0]}&desc=${sortDesc[0]}`
       }

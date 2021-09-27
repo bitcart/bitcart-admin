@@ -20,7 +20,7 @@
               </v-list-item-content>
               <v-list-item-action v-if="log !== $config.LOG_FILE_NAME">
                 <v-btn icon @click="deleteLog(log)">
-                  <v-icon> close </v-icon>
+                  <tooltip-icon icon="close" text="Delete" />
                 </v-btn>
               </v-list-item-action>
             </v-list-item>
@@ -52,7 +52,11 @@
 </template>
 
 <script>
+import TooltipIcon from "@/components/TooltipIcon"
 export default {
+  component: {
+    TooltipIcon,
+  },
   layout: "admin",
   middleware: "superuserOnly",
   data() {

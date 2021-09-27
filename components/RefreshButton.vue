@@ -1,12 +1,16 @@
 <template>
   <v-btn :color="btnColor" :icon="isDesktop" @click="func()">
-    <v-icon v-if="isDesktop"> mdi-reload </v-icon>
+    <tooltip-icon v-if="isDesktop" icon="mdi-reload" text="Refresh" />
     <div v-else>Refresh</div>
   </v-btn>
 </template>
 
 <script>
+import TooltipIcon from "@/components/TooltipIcon"
 export default {
+  components: {
+    TooltipIcon,
+  },
   props: {
     func: {
       type: Function,

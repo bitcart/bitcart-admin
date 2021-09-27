@@ -136,11 +136,13 @@
             <tooltip-icon
               icon="mdi-close"
               text="Close"
+              small
               @click="closeChannel(item)"
             />
             <tooltip-icon
               icon="mdi-close-thick"
               text="Force-Close"
+              small
               @click="closeChannel(item, true)"
             />
           </template>

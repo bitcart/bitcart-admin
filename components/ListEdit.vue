@@ -22,7 +22,7 @@
             </v-col>
             <v-col cols="1">
               <v-btn icon @click="deleteItem(index)">
-                <v-icon>mdi-delete</v-icon>
+                <tooltip-icon icon="mdi-delete" text="Delete" />
               </v-btn>
             </v-col>
           </v-list-item-content>
@@ -34,7 +34,11 @@
 </template>
 
 <script>
+import TooltipIcon from "@/components/TooltipIcon"
 export default {
+  components: {
+    TooltipIcon,
+  },
   props: {
     initialValue: {
       type: Array,

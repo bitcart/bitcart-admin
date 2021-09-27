@@ -101,15 +101,23 @@ export default {
       actions: [
         {
           icon: "mdi-email",
+          text: "Email settings",
           process: this.showEmail,
         },
         {
           icon: "mdi-cog-outline",
+          text: "Checkout settings",
           process: this.showSettings,
         },
         {
           icon: "mdi-text-box",
+          text: "Configure templates",
           process: this.showTemplate,
+        },
+        {
+          icon: "receipt_long",
+          text: "View invoices",
+          process: this.showInvoices,
         },
       ],
       emailPresets: [
@@ -266,6 +274,9 @@ export default {
     showTemplate(item, itemIndex) {
       this.showTemplates = true
       this.setup(item, itemIndex)
+    },
+    showInvoices(item, itemIndex) {
+      this.$router.push({ path: `/invoices?query=store_id:${item.id}` })
     },
     testping(item) {
       this.emailCheck = ""
