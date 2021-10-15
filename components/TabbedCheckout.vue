@@ -330,9 +330,6 @@ export default {
       this.$emit("closedialog")
       window.bitcart.showInvoice(this.invoice.id)
     },
-    isEmpty(obj) {
-      return Object.entries(obj).length === 0 && obj.constructor === Object
-    },
     checkout(id) {
       if (!id) {
         id = this.qrItem.id

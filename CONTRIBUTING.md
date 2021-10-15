@@ -31,6 +31,21 @@ yarn start
 
 From now on, development environment is ready.
 
+## Merchants API
+
+In order to develop the admin panel you need our [Merchants API](https://github.com/bitcartcc/bitcart) instance running.
+
+There are two possible ways:
+
+1. Use our demo (recommended for quick setup to try it out or small fixes, won't work when adding new features with api changes)
+
+```bash
+export BITCART_ADMIN_API_URL=https://api.bitcartcc.com
+yarn dev
+```
+
+2. Run merchants API locally (recommended to not depend on demo api, when adding new api features and for faster local development in the future). See [this guide](https://github.com/bitcartcc/bitcart/blob/master/CONTRIBUTING.md#setting-up-python-development-environment)
+
 Make sure to follow [our coding guidelines](https://github.com/bitcartcc/bitcart/blob/master/CODING_STANDARDS.md) when developing.
 
 # Thank You!

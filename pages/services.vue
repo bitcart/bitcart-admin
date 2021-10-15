@@ -50,10 +50,7 @@
 export default {
   computed: {
     noServices() {
-      return (
-        Object.keys(this.$store.state.services).length === 0 &&
-        this.$store.state.services.constructor === Object
-      )
+      return this.$utils.isEmpty(this.$store.state.services)
     },
   },
 }

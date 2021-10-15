@@ -355,10 +355,7 @@ export default {
       return this.headers.find((x) => x.value === "id").errorText
     },
     noTabs() {
-      return (
-        Object.entries(this.tabbedDialogItem).length === 0 &&
-        this.tabbedDialogItem.constructor === Object
-      )
+      return this.$utils.isEmpty(this.tabbedDialogItem)
     },
     imageName() {
       const header = this.headers.find((x) => x.input === "image")

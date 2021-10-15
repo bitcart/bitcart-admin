@@ -22,4 +22,14 @@ export default {
     if (str.length > length) return str.slice(0, length) + "..."
     else return str
   },
+  maybeEnableDarkTheme() {
+    const hours = new Date().getHours()
+    const isDayTime = hours > 6 && hours < 20
+    if (!isDayTime) {
+      this.$vuetify.theme.dark = true
+    }
+  },
+  isEmpty(obj) {
+    return Object.entries(obj).length === 0 && obj.constructor === Object
+  },
 }

@@ -204,11 +204,7 @@ export default {
     },
   },
   beforeCreate() {
-    const hours = new Date().getHours()
-    const isDayTime = hours > 6 && hours < 20
-    if (!isDayTime) {
-      this.$vuetify.theme.dark = true
-    }
+    this.$utils.maybeEnableDarkTheme.call(this)
   },
   methods: {
     changeTheme() {

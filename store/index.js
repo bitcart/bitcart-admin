@@ -15,6 +15,7 @@ export const state = () => ({
   onion: false,
   env: {},
   updatedata: {},
+  apiError: null,
 })
 
 export const mutations = {
@@ -39,16 +40,24 @@ export const mutations = {
   updatedata(state, value) {
     state.updatedata = value
   },
+  apiError(state, value) {
+    state.apiError = value
+  },
 }
 export const actions = {
   async nuxtServerInit({ commit, dispatch }, { req, $axios }) {
     await dispatch("loadEnv", { env: this.$config, req })
-    const { data } = await $axios.get("/manage/policies")
-    const { data: services } = await $axios.get("/tor/services")
-    const { data: updatedata } = await $axios.get("/update/check")
-    commit("policies", data)
-    commit("services", services)
-    commit("updatedata", updatedata)
+    try {
+      const { data } = await $axios.get("/manage/policies")
+      const { data: services } = await $axios.get("/tor/services")
+      const { data: updatedata } = await $axios.get("/update/check")
+      commit("policies", data)
+      commit("services", services)
+      commit("updatedata", updatedata)
+      commit("apiError", null) // reset error
+    } catch (e) {
+      commit("apiError", e)
+    }
   },
   loadEnv({ commit }, { env, req }) {
     commit("env", {
