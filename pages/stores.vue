@@ -36,8 +36,19 @@
       :item-index="itemIndex"
       :show-new="false"
       :edit-mode="true"
-      :get-edit-url="getEditURL"
+      :get-edit-url="(item) => getEditURL(item, 'checkout_settings')"
       title="store checkout settings"
+    />
+    <edit-card
+      :url="url"
+      :on.sync="showThemeDialog"
+      :headers="themeHeaders"
+      :item.sync="item.theme_settings"
+      :item-index="itemIndex"
+      :show-new="false"
+      :edit-mode="true"
+      :get-edit-url="(item) => getEditURL(item, 'theme_settings')"
+      title="store theme settings"
     />
     <template-edit
       name="store"
@@ -108,6 +119,11 @@ export default {
           icon: "mdi-cog-outline",
           text: "Checkout settings",
           process: this.showSettings,
+        },
+        {
+          icon: "mdi-palette",
+          text: "Theme settings",
+          process: this.showThemeSettings,
         },
         {
           icon: "mdi-text-box",
@@ -240,7 +256,20 @@ export default {
           help: "https://docs.bitcartcc.com/guides/templates#html-templates",
         },
       ],
+      themeHeaders: [
+        {
+          text: "Store theme css url",
+          value: "store_theme_url",
+          help: "https://docs.bitcartcc.com/guides/themes",
+        },
+        {
+          text: "Admin theme css url",
+          value: "admin_theme_url",
+          help: "https://docs.bitcartcc.com/guides/themes",
+        },
+      ],
       showDialog: false,
+      showThemeDialog: false,
       showSettingsDialog: false,
       showTemplates: false,
       url: "stores",
@@ -256,8 +285,8 @@ export default {
     this.$bus.$off("updateitem")
   },
   methods: {
-    getEditURL(item) {
-      return `/${this.url}/${this.item.id}/checkout_settings`
+    getEditURL(item, type) {
+      return `/${this.url}/${this.item.id}/${type}`
     },
     setup(item, itemIndex) {
       this.item = JSON.parse(JSON.stringify(item))
@@ -269,6 +298,10 @@ export default {
     },
     showSettings(item, itemIndex) {
       this.showSettingsDialog = true
+      this.setup(item, itemIndex)
+    },
+    showThemeSettings(item, itemIndex) {
+      this.showThemeDialog = true
       this.setup(item, itemIndex)
     },
     showTemplate(item, itemIndex) {
