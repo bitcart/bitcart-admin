@@ -93,7 +93,6 @@
                     :is="header.component || 'v-autocomplete'"
                     v-else-if="header.input === 'autocomplete'"
                     ref="autocomplete"
-                    v-model="item[header.value]"
                     :loading="loadingSearches[header.value]"
                     :items="searchItems[header.value]"
                     :search-input.sync="autosearches[header.value]"
@@ -106,6 +105,8 @@
                     color="#90a4ae"
                     item-text="name"
                     item-value="id"
+                    :value="item[header.value]"
+                    @change="handleAutocomplete(header.value, $event)"
                   >
                     <template v-if="header.multiple" #selection="data">
                       <v-chip
@@ -645,6 +646,14 @@ export default {
       if (index >= 0) {
         arr.splice(index, 1)
       }
+    },
+    handleAutocomplete(key, value) {
+      const oldval = this.item[key]
+      // TODO: find a more generic way of handling this
+      if (key === "provider" && value !== oldval) {
+        this.$set(this.item, "data", {})
+      }
+      this.$set(this.item, key, value)
     },
   },
 }
