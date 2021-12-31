@@ -16,6 +16,7 @@ export const state = () => ({
   env: {},
   updatedata: {},
   apiError: null,
+  showSnow: false,
 })
 
 export const mutations = {
@@ -42,6 +43,9 @@ export const mutations = {
   },
   apiError(state, value) {
     state.apiError = value
+  },
+  showSnow(state, value) {
+    state.showSnow = value
   },
 }
 export const actions = {
@@ -122,5 +126,8 @@ export const getters = {
   },
   apiURL({ onion, env }, { apiOnionURL }) {
     return onion && apiOnionURL ? apiOnionURL : env.URL
+  },
+  showSnow({ showSnow }) {
+    return showSnow
   },
 }

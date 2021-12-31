@@ -16,6 +16,11 @@ export default {
       items: [
         { text: "Profile", to: "/profile" },
         { text: "API Keys", to: "/profile/access" },
+        {
+          text: "Happy New Year!",
+          to: "/profile/happynewyear",
+          icon: "mdi-snowflake",
+        },
       ],
     }
   },

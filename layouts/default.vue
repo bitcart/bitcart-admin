@@ -65,6 +65,9 @@
         <Toolbar :items="availableItems" class="mb-3 hidden-sm-and-down" />
         <slot />
         <nuxt />
+        <div v-if="showSnow">
+          <div v-for="n in 50" :key="n" class="snowflake" />
+        </div>
       </v-container>
     </template>
     <template #footer>
@@ -181,7 +184,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["onionURL"]),
+    ...mapGetters(["onionURL", "showSnow"]),
     availableItems() {
       return this.$auth.loggedIn
         ? this.items
@@ -219,3 +222,39 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.snowflake {
+  --size: 1vw;
+  width: var(--size);
+  height: var(--size);
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: -5vh;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translate3d(var(--left-ini), 0, 0);
+  }
+  100% {
+    transform: translate3d(var(--left-end), 110vh, 0);
+  }
+}
+
+@for $i from 1 through 50 {
+  .snowflake:nth-child(#{$i}) {
+    --size: #{random(5) * 0.2}vw;
+    --left-ini: #{random(20) - 10}vw;
+    --left-end: #{random(20) - 10}vw;
+    left: #{random(100)}vw;
+    animation: snowfall #{5 + random(10)}s linear infinite;
+    animation-delay: -#{random(10)}s;
+  }
+}
+
+.snowflake:nth-child(6n) {
+  filter: blur(1px);
+}
+</style>
