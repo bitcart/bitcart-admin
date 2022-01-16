@@ -92,7 +92,7 @@
           </v-list-item-action>
         </v-list-item>
         <v-divider />
-        <v-list-item class="ma-0 pa-0">
+        <v-list-item v-if="!needEmail" class="ma-0 pa-0">
           <v-list-item-content class="ma-0 pa-0">
             <v-card class="ma-0 pa-0">
               <v-card-text class="ma-0 pa-0">
@@ -108,10 +108,7 @@
                     <v-tab>Copy</v-tab>
                   </v-tabs>
                   <v-divider />
-                  <v-tabs-items
-                    v-model="selectedAction"
-                    class="full-height-tab"
-                  >
+                  <v-tabs-items v-model="selectedAction" class="payment-box">
                     <v-tab-item>
                       <v-container fill-height>
                         <v-row align="center" justify="center">
@@ -190,6 +187,38 @@
             </v-card>
           </v-list-item-content>
         </v-list-item>
+        <div v-else class="payment-box pt-10">
+          <v-list-item class="ma-0 pa-0">
+            <v-list-item-content class="ma-0 pa-0">
+              <v-form ref="form" @submit.prevent="updateEmail">
+                <v-card flat>
+                  <v-card-text>
+                    <p class="d-flex justify-center text-h5">
+                      Contact & Refund Email
+                    </p>
+                    <p class="d-flex justify-center">
+                      Please provide an email address below. We will contact you
+                      at this address if there is an issue with your payment.
+                    </p>
+                    <v-text-field
+                      v-model="inputEmail"
+                      label="Your email"
+                      :rules="[rules.required, rules.email]"
+                    />
+                  </v-card-text>
+                  <v-card-actions class="d-flex justify-center">
+                    <v-btn
+                      color="primary"
+                      type="submit"
+                      :loading="emailUpdating"
+                      >Continue</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-form>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
       </v-list>
     </div>
   </v-container>
@@ -234,6 +263,9 @@ export default {
       endDate: new Date(),
       expirationPercentage: 0,
       timerText: "",
+      inputEmail: "",
+      rules: this.$utils.rules,
+      emailUpdating: false,
     }
   },
   computed: {
@@ -281,6 +313,13 @@ export default {
         this.store.checkout_settings &&
         this.store.checkout_settings.show_recommended_fee &&
         this.itemv.recommended_fee !== 0
+      )
+    },
+    needEmail() {
+      return (
+        this.store.checkout_settings &&
+        this.store.checkout_settings.email_required &&
+        !this.invoice.buyer_email
       )
     },
   },
@@ -336,12 +375,28 @@ export default {
       }
       this.$router.push({ path: `/i/${id}` })
     },
+    updateEmail() {
+      if (!this.$refs.form.validate()) return
+      this.emailUpdating = true
+      this.$axios
+        .patch(`/invoices/${this.invoice.id}`, {
+          buyer_email: this.inputEmail,
+        })
+        .then((r) => {
+          this.emailUpdating = false
+          this.$emit("update:invoice", {
+            ...this.invoice,
+            buyer_email: this.inputEmail,
+          })
+        })
+    },
   },
 }
 </script>
 
 <style scoped>
-.v-tabs-items.full-height-tab .v-window-item {
+.payment-box,
+.v-tabs-items.payment-box .v-window-item {
   height: 400px;
   overflow-y: auto;
 }

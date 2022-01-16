@@ -255,6 +255,12 @@ export default {
           input: "switch",
           help: "https://docs.bitcartcc.com/guides/templates#html-templates",
         },
+        {
+          text: "Require email on checkout",
+          value: "email_required",
+          input: "switch",
+          help: "https://docs.bitcartcc.com/guides/templates#TODO",
+        },
       ],
       themeHeaders: [
         {

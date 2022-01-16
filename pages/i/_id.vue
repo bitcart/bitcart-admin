@@ -25,7 +25,7 @@
           <TabbedCheckout
             v-if="status === 'pending'"
             :checkout-page="true"
-            :invoice="invoice"
+            :invoice.sync="invoice"
             :store="store"
             class="px-0 pb-0"
             @closedialog="closeDialog"
@@ -109,7 +109,6 @@ export default {
       .then((resp) => {
         this.invoice = resp.data
         this.status = resp.data.status
-        this.loading = false
         window.parent.postMessage("loaded", "*")
         this.$axios
           .get(`/stores/${resp.data.store_id}`)

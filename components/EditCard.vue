@@ -317,35 +317,7 @@ export default {
             )
           : {},
       showPassword: false,
-      rules: {
-        required: (value) =>
-          (typeof value !== "undefined" && !!value) || "Required.",
-        min: (v) =>
-          (typeof v !== "undefined" && v.length >= 8) || "Min 8 characters",
-        email: (value) => {
-          const pattern =
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          return (
-            typeof value === "undefined" ||
-            value === "" ||
-            value == null ||
-            pattern.test(value) ||
-            "Invalid e-mail."
-          )
-        },
-        int: (v) => isFinite(v) || "Integer required",
-        url: (value) => {
-          if (typeof value === "undefined" || value === "" || value == null) {
-            return true
-          }
-          try {
-            new URL(value) // eslint-disable-line no-new
-            return true
-          } catch (_) {
-            return "Invalid URL"
-          }
-        },
-      },
+      rules: this.$utils.rules,
     }
     dt.oldAutosearches = Object.assign({}, dt.autosearches)
     return dt

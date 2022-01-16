@@ -28,7 +28,7 @@
         >
           <TabbedCheckout
             :show-prop="showTabDialog"
-            :invoice="tabbedDialogItem"
+            :invoice.sync="tabbedDialogItem"
             class="pa-0"
             @closedialog="showTabDialog = false"
           />
