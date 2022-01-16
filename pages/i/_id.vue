@@ -30,7 +30,7 @@
             class="px-0 pb-0"
             @closedialog="closeDialog"
           />
-          <div v-else>
+          <div v-else class="no-overflow">
             <close-button @closedialog="closeDialog" />
             <div
               :class="colorClass(texts[status].icon)"
@@ -249,5 +249,8 @@ export default {
 }
 .success-icon {
   animation: checkbounce 750ms linear both;
+}
+.no-overflow {
+  overflow: hidden;
 }
 </style>
