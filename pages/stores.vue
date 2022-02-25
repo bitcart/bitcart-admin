@@ -259,7 +259,11 @@ export default {
           text: "Require email on checkout",
           value: "email_required",
           input: "switch",
-          help: "https://docs.bitcartcc.com/guides/templates#TODO",
+        },
+        {
+          text: "Ask for shipping address on checkout",
+          value: "ask_address",
+          input: "switch",
         },
       ],
       themeHeaders: [

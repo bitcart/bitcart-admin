@@ -92,7 +92,7 @@
           </v-list-item-action>
         </v-list-item>
         <v-divider />
-        <v-list-item v-if="!needEmail" class="ma-0 pa-0">
+        <v-list-item v-if="!needEmail && !needAddress" class="ma-0 pa-0">
           <v-list-item-content class="ma-0 pa-0">
             <v-card class="ma-0 pa-0">
               <v-card-text class="ma-0 pa-0">
@@ -187,10 +187,10 @@
             </v-card>
           </v-list-item-content>
         </v-list-item>
-        <div v-else class="payment-box pt-10">
+        <div v-if="needEmail" class="payment-box pt-10">
           <v-list-item class="ma-0 pa-0">
             <v-list-item-content class="ma-0 pa-0">
-              <v-form ref="form" @submit.prevent="updateEmail">
+              <v-form ref="emailForm" @submit.prevent="updateEmail">
                 <v-card flat>
                   <v-card-text>
                     <p class="d-flex justify-center text-h5">
@@ -211,6 +211,39 @@
                       color="primary"
                       type="submit"
                       :loading="emailUpdating"
+                      >Continue</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-form>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+        <div v-else-if="needAddress" class="payment-box pt-10">
+          <v-list-item class="ma-0 pa-0">
+            <v-list-item-content class="ma-0 pa-0">
+              <v-form ref="additionalForm" @submit.prevent="updateAdditional">
+                <v-card flat>
+                  <v-card-text>
+                    <p class="d-flex justify-center text-h5">
+                      Shipping address & notes
+                    </p>
+                    <p class="d-flex justify-center">
+                      Please provide your shipping address below. You may leave
+                      additional notes regarding your order.
+                    </p>
+                    <v-text-field
+                      v-model="inputAddress"
+                      label="Shipping address"
+                      :rules="[rules.required]"
+                    />
+                    <v-text-field v-model="inputNotes" label="Notes" />
+                  </v-card-text>
+                  <v-card-actions class="d-flex justify-center">
+                    <v-btn
+                      color="primary"
+                      type="submit"
+                      :loading="additionalUpdating"
                       >Continue</v-btn
                     >
                   </v-card-actions>
@@ -264,8 +297,11 @@ export default {
       expirationPercentage: 0,
       timerText: "",
       inputEmail: "",
+      inputAddress: "",
+      inputNotes: "",
       rules: this.$utils.rules,
       emailUpdating: false,
+      additionalUpdating: false,
     }
   },
   computed: {
@@ -322,6 +358,13 @@ export default {
         !this.invoice.buyer_email
       )
     },
+    needAddress() {
+      return (
+        this.store.checkout_settings &&
+        this.store.checkout_settings.ask_address &&
+        !this.invoice.shipping_address
+      )
+    },
   },
   watch: {
     showProp(val) {
@@ -376,10 +419,10 @@ export default {
       this.$router.push({ path: `/i/${id}` })
     },
     updateEmail() {
-      if (!this.$refs.form.validate()) return
+      if (!this.$refs.emailForm.validate()) return
       this.emailUpdating = true
       this.$axios
-        .patch(`/invoices/${this.invoice.id}`, {
+        .patch(`/invoices/${this.invoice.id}/customer`, {
           buyer_email: this.inputEmail,
         })
         .then((r) => {
@@ -387,6 +430,23 @@ export default {
           this.$emit("update:invoice", {
             ...this.invoice,
             buyer_email: this.inputEmail,
+          })
+        })
+    },
+    updateAdditional() {
+      if (!this.$refs.additionalForm.validate()) return
+      this.additionalUpdating = true
+      this.$axios
+        .patch(`/invoices/${this.invoice.id}/customer`, {
+          notes: this.inputNotes,
+          shipping_address: this.inputAddress,
+        })
+        .then((r) => {
+          this.additionalUpdating = false
+          this.$emit("update:invoice", {
+            ...this.invoice,
+            notes: this.inputNotes,
+            shipping_address: this.inputAddress,
           })
         })
     },

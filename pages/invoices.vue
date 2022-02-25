@@ -96,6 +96,8 @@ export default {
         { text: "Order", value: "order_id", copy: true },
         { text: "Discount", value: "discount", mode: "edit", copy: true },
         { text: "Status", value: "status", mode: "edit" },
+        { text: "Shipping address", value: "shipping_address", expand: true },
+        { text: "Notes", value: "notes", expand: true },
         { text: "Created date", value: "created", mode: "display" },
         {
           text: "Payment methods",
