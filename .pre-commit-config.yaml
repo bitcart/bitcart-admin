@@ -1,0 +1,40 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-merge-conflict
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+      - id: file-contents-sorter
+        files: >-
+          ^.gitignore$
+      - id: check-case-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: check-symlinks
+      - id: debug-statements
+      - id: fix-byte-order-marker
+      - id: fix-encoding-pragma
+        args: ["--remove"]
+      - id: detect-private-key
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint
+        language: system
+        entry: yarn lintfix:precommit
+        files: '\.(js|vue)$'
+        require_serial: true
+      - id: prettier
+        name: prettier
+        language: system
+        entry: yarn prettier
+        types: [text]
+        exclude: '\.(js|vue)$'
+        require_serial: true
