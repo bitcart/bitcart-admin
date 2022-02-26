@@ -30,9 +30,11 @@ repos:
         language: system
         entry: yarn lintfix:precommit
         files: '\.(js|vue)$'
+        require_serial: true
       - id: prettier
         name: prettier
         language: system
         entry: yarn prettier
         types: [text]
         exclude: '\.(js|vue)$'
+        require_serial: true
