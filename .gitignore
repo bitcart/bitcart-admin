@@ -6,7 +6,6 @@
 *.tgz
 .DS_Store
 .cache
-.editorconfig
 .env
 .eslintcache
 .grunt
