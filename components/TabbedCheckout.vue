@@ -143,7 +143,7 @@
                       <v-card flat class="pa-0 ma-0">
                         <v-card-text>
                           <p class="d-flex justify-center">Amount</p>
-                          <p class="text-h4 d-flex justify-center">
+                          <p class="text-h5 d-flex justify-center">
                             {{ itemv.amount }}
                             {{ itemv.currency.toUpperCase() }}
                           </p>
