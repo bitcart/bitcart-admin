@@ -41,6 +41,14 @@ export default {
           errors: { "Wallet key invalid": "Invalid xpub" },
         },
         {
+          text: "Contracts",
+          value: "contracts",
+          input: "autocomplete",
+          url: "cryptos/tokens/eth", // TODO: dynamic currency
+          multiple: true,
+          component: "v-combobox",
+        },
+        {
           text: "Label",
           value: "label",
           help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-change-my-payment-methods-name",

@@ -118,7 +118,7 @@
                           removeMultiple(item[header.value], data.item)
                         "
                       >
-                        {{ data.item.name }}
+                        {{ data.item.name ? data.item.name : data.item }}
                       </v-chip>
                     </template>
                     <template #item="data">

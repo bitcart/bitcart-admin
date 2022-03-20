@@ -66,6 +66,7 @@ export default {
           body: true,
         },
         { text: "Paid Currency", value: "paid_currency", mode: "display" },
+        { text: "Paid Contract", value: "paid_contract", mode: "display" },
         {
           text: "Store",
           value: "store_id",
