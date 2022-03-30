@@ -41,11 +41,10 @@ export default {
           errors: { "Wallet key invalid": "Invalid xpub" },
         },
         {
-          text: "Contracts",
-          value: "contracts",
+          text: "Contract",
+          value: "contract",
           input: "autocomplete",
           url: "cryptos/tokens/eth", // TODO: dynamic currency
-          multiple: true,
           component: "v-combobox",
         },
         {
