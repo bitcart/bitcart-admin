@@ -81,12 +81,12 @@
             <v-list-item-title
               class="text-subtitle-1 font-weight-regular align-right"
               >{{ itemv.amount }}
-              {{ itemv.currency.toUpperCase() }}</v-list-item-title
+              {{ itemv.symbol.toUpperCase() }}</v-list-item-title
             >
             <v-list-item-title
               class="text-caption font-weight-regular align-right"
             >
-              1 {{ itemv.currency.toUpperCase() }} =
+              1 {{ itemv.symbol.toUpperCase() }} =
               {{ itemv.rate_str }}
             </v-list-item-title>
           </v-list-item-action>
@@ -145,7 +145,7 @@
                           <p class="d-flex justify-center">Amount</p>
                           <p class="text-h5 d-flex justify-center">
                             {{ itemv.amount }}
-                            {{ itemv.currency.toUpperCase() }}
+                            {{ itemv.symbol.toUpperCase() }}
                           </p>
                           <v-divider />
                           <display-field
