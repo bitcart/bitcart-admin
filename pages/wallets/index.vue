@@ -44,7 +44,7 @@ export default {
           text: "Contract",
           value: "contract",
           input: "autocomplete",
-          url: "cryptos/tokens/eth", // TODO: dynamic currency
+          url: (item) => `cryptos/tokens/${item.currency}`,
           component: "v-combobox",
         },
         {

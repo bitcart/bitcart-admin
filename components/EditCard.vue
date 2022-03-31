@@ -96,7 +96,7 @@
                     :loading="loadingSearches[header.value]"
                     :items="searchItems[header.value]"
                     :search-input.sync="autosearches[header.value]"
-                    cache-items
+                    :cache-items="header.multiple"
                     :multiple="header.multiple"
                     :chips="header.multiple"
                     :rules="header.rules"
@@ -305,6 +305,7 @@ export default {
       searchItems: {},
       autosearches: autosearchA.length > 0 ? Object.assign(...autosearchA) : {},
       errors: {},
+      dynamicAutocompletes: false,
       fields: dsearchA.length > 0 ? Object.assign(...dsearchA) : {},
       defaultItem:
         this.headers.length > 0
@@ -378,12 +379,16 @@ export default {
         this.close()
       }
     },
+    item(val) {
+      if (this.dynamicAutocompletes) this.fetchAutocompletes()
+    },
     autosearches: {
       handler(val) {
         const vm = this
         const key = Object.keys(val).filter(function (p) {
           return val[p] !== vm.oldAutosearches[p]
         })[0]
+        if (typeof key === "undefined") return // card closed
         val = val[key]
         this.oldAutosearches[key] = val
         if (val === null || typeof val === "undefined") {
@@ -413,28 +418,32 @@ export default {
   },
   beforeMount() {
     this.getItems = debounce(this.getItemsNolimit, 250)
-    for (const urlObj of this.headers.filter(
-      (x) => x.input === "autocomplete"
-    )) {
-      this.getItemsNolimit(
-        urlObj.value,
-        urlObj.value,
-        urlObj.url,
-        [],
-        [],
-        1,
-        -1,
-        "",
-        false,
-        true,
-        urlObj.body
-      )
-    }
+    this.fetchAutocompletes()
     for (const field of this.headers.filter((x) => x.input === "dynamic")) {
       this.fetchField(field)
     }
   },
   methods: {
+    fetchAutocompletes() {
+      for (const urlObj of this.headers.filter(
+        (x) => x.input === "autocomplete"
+      )) {
+        if (typeof urlObj.url === "function") this.dynamicAutocompletes = true
+        this.getItemsNolimit(
+          urlObj.value,
+          urlObj.value,
+          urlObj.url,
+          [],
+          [],
+          1,
+          -1,
+          "",
+          false,
+          true,
+          urlObj.body
+        )
+      }
+    },
     getProperties(header, item) {
       return this.fields[header.value][item[header.choice]]
     },
@@ -473,6 +482,7 @@ export default {
       autosearch,
       getBody
     ) {
+      if (typeof baseUrl === "function") baseUrl = baseUrl(this.item)
       multiple = multiple || false
       if (autosearch) {
         this.loadingSearches[loadingVal] = true
