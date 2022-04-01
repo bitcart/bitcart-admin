@@ -379,8 +379,11 @@ export default {
         this.close()
       }
     },
-    item(val) {
-      if (this.dynamicAutocompletes) this.fetchAutocompletes()
+    item: {
+      handler(val) {
+        if (this.dynamicAutocompletes) this.fetchAutocompletes()
+      },
+      deep: true,
     },
     autosearches: {
       handler(val) {
