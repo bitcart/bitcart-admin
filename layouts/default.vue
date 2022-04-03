@@ -65,6 +65,45 @@
         <Toolbar :items="availableItems" class="mb-3 hidden-sm-and-down" />
         <slot />
         <nuxt />
+        <div v-if="$auth.loggedIn && $auth.user.is_superuser">
+          <v-snackbar
+            v-for="(item, index) in unsyncedInfo"
+            :key="item.currency"
+            :value="!hideSyncData[item.currency]"
+            :timeout="-1"
+            bottom
+            right
+            color="warning"
+            origin="center center"
+            :style="`bottom: ${index * 120}px`"
+          >
+            <v-row no-gutters>
+              <v-col cols="1">
+                <v-icon>warning</v-icon>
+              </v-col>
+              <v-col class="d-flex justify-center">
+                <p>
+                  {{ item.currency }} node
+                  {{ !item.running ? "not running" : "unsynchronized" }}
+                </p>
+              </v-col>
+              <v-col cols="1">
+                <v-btn icon @click="$set(hideSyncData, item.currency, true)"
+                  ><v-icon>close</v-icon></v-btn
+                >
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <p class="mb-0">
+                Connected to
+                {{ item.spv_nodes || 0 }} nodes, current height:
+                {{ item.blockchain_height || 0 }}
+                <br />
+                Some functions may not work properly
+              </p></v-row
+            >
+          </v-snackbar>
+        </div>
         <div v-if="showSnow">
           <div v-for="n in 50" :key="n" class="snowflake" />
         </div>
@@ -111,6 +150,7 @@ export default {
       toolbar: false,
       dark: true,
       drawer: false,
+      hideSyncData: {},
       guestItems: [
         {
           icon: "mdi-cog",
@@ -184,7 +224,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["onionURL", "showSnow"]),
+    ...mapGetters(["onionURL", "showSnow", "syncInfo"]),
     availableItems() {
       return this.$auth.loggedIn
         ? this.items
@@ -194,6 +234,9 @@ export default {
               (x.configurator &&
                 this.$store.state.policies.allow_anonymous_configurator)
           )
+    },
+    unsyncedInfo() {
+      return this.syncInfo.filter((x) => !x.synchronized)
     },
     availableProfileItems() {
       return this.$auth.loggedIn

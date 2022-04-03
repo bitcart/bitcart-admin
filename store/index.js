@@ -9,6 +9,7 @@ export const state = () => ({
     invoices: 0,
     balance: 0.0,
   },
+  syncInfo: [],
   policies: {},
   services: {},
   path: "/",
@@ -28,6 +29,9 @@ export const mutations = {
   },
   setStats(state, value) {
     state.stats = value
+  },
+  setSyncInfo(state, value) {
+    state.syncInfo = value
   },
   onion(state, value) {
     state.onion = value
@@ -80,6 +84,11 @@ export const actions = {
       this.$axios
         .get("/users/stats")
         .then((resp) => commit("setStats", resp.data))
+      if (this.state.auth.user.is_superuser) {
+        this.$axios
+          .get("/manage/syncinfo")
+          .then((resp) => commit("setSyncInfo", resp.data))
+      }
     }
     if (alwaysRun) {
       setTimeout(() => {
@@ -129,5 +138,8 @@ export const getters = {
   },
   showSnow({ showSnow }) {
     return showSnow
+  },
+  syncInfo({ syncInfo }) {
+    return syncInfo
   },
 }
