@@ -384,7 +384,7 @@ export default {
       handler(val) {
         if (this.dynamicAutocompletes && val.currency !== this.oldItem.currency)
           this.fetchAutocompletes()
-        this.oldItem = val
+        this.oldItem = Object.assign({}, val)
       },
       deep: true,
     },
