@@ -319,6 +319,7 @@ export default {
           : {},
       showPassword: false,
       rules: this.$utils.rules,
+      oldItem: Object.assign({}, this.item),
     }
     dt.oldAutosearches = Object.assign({}, dt.autosearches)
     return dt
@@ -381,7 +382,9 @@ export default {
     },
     item: {
       handler(val) {
-        if (this.dynamicAutocompletes) this.fetchAutocompletes()
+        if (this.dynamicAutocompletes && val.currency !== this.oldItem.currency)
+          this.fetchAutocompletes()
+        this.oldItem = val
       },
       deep: true,
     },
