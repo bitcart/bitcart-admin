@@ -143,7 +143,14 @@
                       <v-card flat class="pa-0 ma-0">
                         <v-card-text>
                           <p class="d-flex justify-center">Amount</p>
-                          <p class="text-h5 d-flex justify-center">
+                          <p
+                            class="d-flex justify-center"
+                            :class="
+                              getAmountClass(
+                                itemv.amount.length + itemv.symbol.length + 1
+                              )
+                            "
+                          >
                             {{ itemv.amount }}
                             {{ itemv.symbol.toUpperCase() }}
                           </p>
@@ -449,6 +456,10 @@ export default {
             shipping_address: this.inputAddress,
           })
         })
+    },
+    getAmountClass(textLen) {
+      if (textLen <= 25) return { "text-h5": true }
+      else return { "text-h6": true, "font-weight-regular": true }
     },
   },
 }
