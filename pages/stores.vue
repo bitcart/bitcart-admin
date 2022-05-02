@@ -50,12 +50,37 @@
       :get-edit-url="(item) => getEditURL(item, 'theme_settings')"
       title="store theme settings"
     />
+    <edit-card
+      :url="url"
+      :on.sync="showShopifyDialog"
+      :headers="shopifyHeaders"
+      :item="item.plugin_settings ? item.plugin_settings.shopify : {}"
+      :item-index="itemIndex"
+      :show-new="false"
+      :edit-mode="true"
+      :get-edit-url="(item) => getEditURL(item, 'plugin_settings')"
+      title="store shopify integration"
+      :postprocess="saveShopifySettings"
+      @input="item.plugin_settings.shopify = $event"
+    >
+      <template #dialog>
+        <v-col :cols="6">
+          <v-btn color="primary" @click.prevent="copyShopifyScript"
+            >Copy script</v-btn
+          >
+        </v-col>
+      </template>
+    </edit-card>
     <template-edit
       name="store"
       :item.sync="item"
       :item-index="itemIndex"
       :show.sync="showTemplates"
     />
+    <v-snackbar v-model="displayCopied" :timeout="2500" color="success" bottom>
+      <v-icon>mdi-content-copy</v-icon>
+      Successfully copied {{ whatToCopy }} to clipboard!
+    </v-snackbar>
   </div>
 </template>
 <script>
@@ -78,6 +103,8 @@ export default {
       emailCheck: "",
       emailStatus: "",
       itemIndex: -1,
+      displayCopied: false,
+      whatToCopy: "",
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
         { text: "Name", value: "name", rules: ["required"] },
@@ -124,6 +151,11 @@ export default {
           icon: "mdi-palette",
           text: "Theme settings",
           process: this.showThemeSettings,
+        },
+        {
+          icon: "mdi-store",
+          text: "Shopify integration",
+          process: this.showShopifySettings,
         },
         {
           icon: "mdi-text-box",
@@ -278,9 +310,24 @@ export default {
           help: "https://docs.bitcartcc.com/guides/themes",
         },
       ],
+      shopifyHeaders: [
+        {
+          text: "Shop name",
+          value: "shop_name",
+        },
+        {
+          text: "API key",
+          value: "api_key",
+        },
+        {
+          text: "API secret",
+          value: "api_secret",
+        },
+      ],
       showDialog: false,
       showThemeDialog: false,
       showSettingsDialog: false,
+      showShopifyDialog: false,
       showTemplates: false,
       url: "stores",
       title: "Store",
@@ -313,6 +360,21 @@ export default {
     showThemeSettings(item, itemIndex) {
       this.showThemeDialog = true
       this.setup(item, itemIndex)
+    },
+    showShopifySettings(item, itemIndex) {
+      this.showShopifyDialog = true
+      this.setup(item, itemIndex)
+    },
+    saveShopifySettings(data) {
+      return { shopify: data }
+    },
+    copyShopifyScript() {
+      const rootURL =
+        window.location.origin + this.$config.ROOTPATH.replace(/\/+$/, "")
+      this.$utils.copyToClipboard(`<script src="${rootURL}/stores/${this.item.id}/integrations/shopify/shopify.js"><\/script>`) // eslint-disable-line
+      this.whatToCopy = "shopify script"
+      this.displayCopied = true
+      setTimeout(() => (this.displayCopied = false), 1000)
     },
     showTemplate(item, itemIndex) {
       this.showTemplates = true

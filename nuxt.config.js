@@ -124,4 +124,7 @@ export default {
      */
     extend(config, ctx) {},
   },
+  serverMiddleware: [
+    { path: "/stores/", handler: "~/server-middleware/shopify.js" },
+  ],
 }
