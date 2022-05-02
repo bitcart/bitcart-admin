@@ -37,9 +37,17 @@
     // Strip /modal/bitcart.js part
     origin = thisScript.substr(0, thisScript.length - scriptMatch[0].length)
   }
+  // urlPrefix should be site root without trailing slash
+  function setAdminUrlPrefix(urlPrefix) {
+    origin = stripTrailingSlashes(urlPrefix)
+  }
+  function stripTrailingSlashes(site) {
+    return site.replace(/\/+$/, "")
+  }
 
   let onModalWillEnterMethod = function () {}
   let onModalWillLeaveMethod = function () {}
+  let onModalReceiveMessageMethod = function (event) {}
 
   function showFrame() {
     if (window.document.getElementsByName("bitcart").length === 0) {
@@ -62,7 +70,13 @@
     onModalWillLeaveMethod = customOnModalWillLeave
   }
 
+  function onModalReceiveMessage(customOnModalReceiveMessage) {
+    onModalReceiveMessageMethod = customOnModalReceiveMessage
+  }
+
   function receiveMessage(event) {
+    let uri
+
     if (!origin.startsWith(event.origin) || !showingInvoice) {
       return
     }
@@ -71,7 +85,15 @@
       hideFrame()
     } else if (event.data === "loaded") {
       showFrame()
+    } else if (event.data && event.data.open) {
+      uri = event.data.open
+    } else if (event.data && event.data.mailto) {
+      uri = event.data.mailto
+      if (uri.indexOf("mailto:") === 0) {
+        window.location = uri
+      }
     }
+    onModalReceiveMessageMethod(event)
   }
 
   function showInvoice(invoiceId) {
@@ -93,5 +115,7 @@
     showInvoice,
     onModalWillEnter,
     onModalWillLeave,
+    setAdminUrlPrefix,
+    onModalReceiveMessage,
   }
 })()

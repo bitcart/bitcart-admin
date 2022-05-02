@@ -18,6 +18,7 @@
     "@chenfengyuan/vue-qrcode": "^1.0.1",
     "@nuxtjs/auth": "^4.9.0",
     "@nuxtjs/axios": "^5.12.5",
+    "express": "^4.18.1",
     "nuxt-start": "^2.15.1",
     "socks-proxy-agent": "^6.0.0"
   },
