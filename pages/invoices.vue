@@ -1,5 +1,6 @@
 <template>
   <item-data
+    ref="itemdata"
     :search.sync="search"
     :headers="headers"
     :url="url"
@@ -14,11 +15,13 @@
             <v-datetime-picker
               ref="dateInput1"
               v-model="startDate"
+              :time-picker-props="{ format: '24hr' }"
               label="Start date"
             />
             <v-datetime-picker
               ref="dateInput2"
               v-model="endDate"
+              :time-picker-props="{ format: '24hr' }"
               label="End date"
             />
           </v-card-text>
@@ -32,11 +35,49 @@
         :process="applyFilter"
         title="Filters"
       />
-      <menu-dropdown
-        :items="exportItems"
-        :process="exportInvoices"
-        title="Export"
-      />
+      <v-dialog v-model="showExportDialog" max-width="500px">
+        <v-card>
+          <v-card-title>Export invoices</v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="6">
+                  <v-select
+                    v-model="exportSettings.format"
+                    label="Export format"
+                    :items="exportItems"
+                  ></v-select>
+                </v-col>
+                <v-col cols="6">
+                  <v-switch
+                    v-model="exportSettings.query"
+                    label="Use current query"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-switch
+                    v-model="exportSettings.payments"
+                    label="Include payments"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-switch
+                    v-model="exportSettings.allUsers"
+                    label="All users"
+                    :disabled="!$auth.user.is_superuser"
+                  />
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions class="justify-center pb-5">
+            <v-btn color="primary" @click="exportInvoices">Export</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-btn color="primary" class="mr-2" @click="openExportDialog">
+        Export
+      </v-btn>
     </template>
   </item-data>
 </template>
@@ -50,9 +91,17 @@ export default {
   },
   layout: "dashboard",
   data() {
-    return {
+    const dt = {
       search: "",
       showDateDialog: false,
+      showExportDialog: false,
+      defaultExportSettings: {
+        format: "CSV",
+        query: false,
+        payments: false,
+        allUsers: false,
+      },
+      exportSettings: {},
       startDate: null,
       endDate: null,
       headers: [
@@ -110,16 +159,7 @@ export default {
       ],
       url: "invoices",
       title: "Invoice",
-      exportItems: [
-        {
-          title: "JSON",
-          command: "json",
-        },
-        {
-          title: "CSV",
-          command: "csv",
-        },
-      ],
+      exportItems: ["CSV", "JSON"],
       filterItems: [
         {
           title: "Paid invoices",
@@ -161,6 +201,8 @@ export default {
         },
       ],
     }
+    dt.exportSettings = Object.assign({}, dt.defaultExportSettings)
+    return dt
   },
   head() {
     return {
@@ -168,9 +210,25 @@ export default {
     }
   },
   methods: {
-    exportInvoices(format) {
+    openExportDialog() {
+      this.exportSettings = Object.assign({}, this.defaultExportSettings)
+      this.showExportDialog = true
+    },
+    exportInvoices() {
+      this.showExportDialog = false
+      let finalURL = `/invoices/export?export_format=${this.exportSettings.format.toLowerCase()}&add_payments=${
+        this.exportSettings.payments
+      }&all_users=${this.exportSettings.allUsers}`
+      if (this.exportSettings.query) {
+        const { sortBy, sortDesc } = this.$refs.itemdata.options
+        finalURL += `&query=${encodeURIComponent(
+          this.$refs.itemdata.searchProp
+        )}`
+        if (sortBy.length === 1 && sortDesc.length === 1)
+          finalURL += `&sort=${sortBy[0]}&desc=${sortDesc[0]}`
+      }
       this.$axios
-        .get(`/invoices/export?export_format=${format}`, {
+        .get(finalURL, {
           responseType: "blob",
         })
         .then((response) => {

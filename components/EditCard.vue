@@ -149,6 +149,7 @@
                     v-else-if="header.input === 'datetime'"
                     ref="dateInput"
                     v-model="item[header.value]"
+                    :time-picker-props="{ format: '24hr' }"
                     :text-field-props="{ rules: header.rules }"
                     :label="header.text"
                     date-format="dd.MM.yyyy"
