@@ -33,7 +33,7 @@ export default {
           default: "btc",
         },
         {
-          text: "Xpub",
+          text: "Xpub (BTC) / Wallet (ETH)",
           value: "xpub",
           expand: true,
           rules: ["required"],
