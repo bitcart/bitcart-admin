@@ -137,6 +137,12 @@
                         <v-row v-if="showRecommendedFee" justify="center">
                           Recommended fee: {{ itemv.recommended_fee }} sat/byte
                         </v-row>
+                        <v-row v-if="isEthPaymentMethod" justify="center">
+                          Please send the exact amount specified!
+                        </v-row>
+                        <v-row v-if="itemv.hint" justify="center">
+                          {{ itemv.hint }}
+                        </v-row>
                       </v-container>
                     </v-tab-item>
                     <v-tab-item>
@@ -357,6 +363,9 @@ export default {
         this.store.checkout_settings.show_recommended_fee &&
         this.itemv.recommended_fee !== 0
       )
+    },
+    isEthPaymentMethod() {
+      return this.itemv.payment_url.startsWith("ethereum:")
     },
     needEmail() {
       return (

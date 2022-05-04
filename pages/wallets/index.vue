@@ -53,6 +53,12 @@ export default {
           help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-change-my-payment-methods-name",
         },
         {
+          text: "Hint",
+          value: "hint",
+          expand: true,
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-display-a-checkout-hint-for-customers",
+        },
+        {
           text: "Lightning",
           value: "lightning_enabled",
           input: "switch",
