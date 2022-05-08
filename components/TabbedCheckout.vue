@@ -130,9 +130,14 @@
                           />
                         </v-row>
                         <v-row justify="center">
-                          <v-btn color="primary" :href="paymentURL"
+                          <v-btn v-if="false" color="primary" :href="paymentURL"
                             >Open in wallet</v-btn
                           >
+                          <metamask-button
+                            v-else
+                            :abi="abiCache"
+                            :method="itemv"
+                          />
                         </v-row>
                         <v-row v-if="showRecommendedFee" justify="center">
                           Recommended fee: {{ itemv.recommended_fee }} sat/byte
@@ -273,10 +278,12 @@
 <script>
 import CloseButton from "@/components/CloseButton"
 import DisplayField from "@/components/DisplayField"
+import MetamaskButton from "@/components/MetamaskButton"
 export default {
   components: {
     CloseButton,
     DisplayField,
+    MetamaskButton,
   },
   props: {
     showProp: {
@@ -315,11 +322,27 @@ export default {
       rules: this.$utils.rules,
       emailUpdating: false,
       additionalUpdating: false,
+      abiCache: {},
+    }
+  },
+  head() {
+    return {
+      script: [
+        {
+          src: `https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js`,
+        },
+        {
+          src: `https://unpkg.com/web3@latest/dist/web3.min.js`,
+        },
+      ],
     }
   },
   computed: {
     itemv() {
       return this.invoice.payments[this.selectedCurrency]
+    },
+    currentCurrency() {
+      return this.itemv.currency
     },
     qrValue() {
       return this.itemv.lightning && this.selectedToCopy === 1
@@ -393,15 +416,27 @@ export default {
     selectedCurrency(val) {
       this.selectedAction = null
       this.selectedToCopy = null
+      this.fetchTokenABI()
     },
   },
   mounted() {
+    this.fetchTokenABI()
     const date = new Date()
     date.setSeconds(date.getSeconds() + this.invoice.time_left)
     this.endDate = date
     this.startProgressTimer()
   },
   methods: {
+    fetchTokenABI() {
+      if (!(this.currentCurrency in this.abiCache)) {
+        this.$axios
+          .get(`/cryptos/tokens/${this.currentCurrency}/abi`)
+          .then((res) => {
+            this.abiCache[this.currentCurrency] = res.data
+            console.log(this.abiCache)
+          })
+      }
+    },
     startProgressTimer() {
       const timeLeftS = this.endDate
         ? (this.endDate.getTime() - new Date().getTime()) / 1000
