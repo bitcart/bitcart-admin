@@ -130,14 +130,14 @@
                           />
                         </v-row>
                         <v-row justify="center">
-                          <v-btn v-if="false" color="primary" :href="paymentURL"
-                            >Open in wallet</v-btn
-                          >
                           <metamask-button
-                            v-else
+                            v-if="$device.isDesktop && isEthPaymentMethod"
                             :abi="abiCache"
                             :method="itemv"
                           />
+                          <v-btn v-else color="primary" :href="paymentURL"
+                            >Open in wallet</v-btn
+                          >
                         </v-row>
                         <v-row v-if="showRecommendedFee" justify="center">
                           Recommended fee: {{ itemv.recommended_fee }} sat/byte
@@ -325,18 +325,6 @@ export default {
       abiCache: {},
     }
   },
-  head() {
-    return {
-      script: [
-        {
-          src: `https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js`,
-        },
-        {
-          src: `https://unpkg.com/web3@latest/dist/web3.min.js`,
-        },
-      ],
-    }
-  },
   computed: {
     itemv() {
       return this.invoice.payments[this.selectedCurrency]
@@ -433,7 +421,6 @@ export default {
           .get(`/cryptos/tokens/${this.currentCurrency}/abi`)
           .then((res) => {
             this.abiCache[this.currentCurrency] = res.data
-            console.log(this.abiCache)
           })
       }
     },

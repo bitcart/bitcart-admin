@@ -54,6 +54,7 @@ export default {
     "@nuxtjs/eslint-module",
     "@nuxtjs/vuetify",
     "@nuxtjs/pwa",
+    "@nuxtjs/device",
   ],
   /*
    ** Runtime config

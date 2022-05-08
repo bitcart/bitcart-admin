@@ -58,7 +58,6 @@ export default {
       let headers = null
       if (this.file) {
         data = new FormData()
-        console.log(this.fileToUpload)
         if (!this.fileToUpload) {
           this.done = true
           this.error = true

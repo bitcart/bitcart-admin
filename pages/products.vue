@@ -29,7 +29,7 @@ export default {
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
         { text: "Name", value: "name", rules: ["required"] },
-        { text: "Price", value: "price", rules: ["required"] },
+        { text: "Price", value: "price", rules: ["required", "positive"] },
         { text: "Quantity", value: "quantity", rules: ["required"] },
         { text: "Category", value: "category" },
         {
