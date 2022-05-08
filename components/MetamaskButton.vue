@@ -1,0 +1,153 @@
+<template>
+  <div>
+    <v-btn
+      color="primary"
+      :disabled="insufficientBalance"
+      :loading="loading"
+      @click="connectToMetamask"
+    >
+      <template v-if="insufficientBalance">Insuficient Balance</template>
+      <template v-else-if="showPayButton"
+        ><v-img src="/metamask.svg" height="40" width="40" /> Pay with metamask
+      </template>
+      <template v-else>
+        <v-img src="/metamask.svg" height="40" width="40" />Connect to MetaMask
+      </template>
+    </v-btn>
+    <v-snackbar v-model="showSnackbar" :timeout="2500" color="error" bottom>
+      {{ snackbarText }}
+    </v-snackbar>
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    abi: {
+      type: Object,
+      required: true,
+    },
+    method: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      showSnackbar: false,
+      snackbarText: "",
+      loading: false,
+      insufficientBalance: false,
+      showPayButton: false,
+    }
+  },
+  head() {
+    return {
+      script: [
+        {
+          src: `https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js`,
+        },
+        {
+          src: `https://unpkg.com/web3@latest/dist/web3.min.js`,
+        },
+      ],
+    }
+  },
+  watch: {
+    method(v) {
+      this.showPayButton = false
+      this.insufficientBalance = false
+      this.loading = false
+    },
+  },
+  methods: {
+    showError(text) {
+      this.loading = false
+      this.snackbarText = text
+      this.showSnackbar = true
+    },
+    async connectToMetamask() {
+      if (this.showPayButton) return await this.payWithMetamask()
+      this.loading = true
+      if (window.ethereum) {
+        this.web3 = new window.Web3(window.ethereum)
+        const chainid = await this.web3.eth.getChainId()
+        if (chainid !== this.method.chain_id)
+          return this.showError(
+            `Please change your network in metamask to work on the ${this.method.currency.toUpperCase()} network (chain id ${
+              this.method.chain_id
+            })`
+          )
+        try {
+          await window.ethereum.request({ method: "eth_requestAccounts" })
+        } catch (error) {
+          return this.showError(error.message)
+        }
+        let balance = 0
+        try {
+          if (!this.method.contract)
+            balance = this.web3.utils.toBN(
+              await this.web3.eth.getBalance(window.ethereum.selectedAddress)
+            )
+          else
+            balance = this.web3.utils.toBN(
+              await new this.web3.eth.Contract(
+                this.abi[this.method.currency],
+                this.method.contract
+              ).methods
+                .balanceOf(window.ethereum.selectedAddress)
+                .call()
+            )
+        } catch (error) {
+          return this.showError(error.message)
+        }
+        const requiredAmount = this.web3.utils.toBN(
+          this.toWei(this.method.amount, this.method.divisibility)
+        )
+        this.loading = false
+        if (balance.lt(requiredAmount)) this.insufficientBalance = true
+        else this.showPayButton = true
+      } else {
+        window.location.href = "https://metamask.io/download"
+      }
+    },
+    async payWithMetamask() {
+      this.loading = true
+      const requiredAmount = this.toWei(
+        this.method.amount,
+        this.method.divisibility
+      )
+      try {
+        if (!this.method.contract) {
+          // usual tx
+          await this.web3.eth.sendTransaction({
+            to: this.method.payment_address,
+            from: window.ethereum.selectedAddress,
+            value: requiredAmount,
+          })
+        } else {
+          // contract payment
+          const contract = new this.web3.eth.Contract(
+            this.abi[this.method.currency],
+            this.method.contract
+          )
+          await contract.methods
+            .transfer(this.method.payment_address, requiredAmount)
+            .send({ from: window.ethereum.selectedAddress })
+        }
+      } catch (error) {
+        this.showError(error.message)
+      }
+    },
+    toWei(ether, unit) {
+      const base = new this.web3.utils.BN(10).pow(new this.web3.utils.BN(unit))
+      let [whole, fraction] = ether.split(".")
+      if (!whole) whole = "0"
+      if (!fraction) fraction = "0"
+      whole = new this.web3.utils.BN(whole)
+      fraction = new this.web3.utils.BN(fraction)
+      const wei = whole.mul(base).add(fraction)
+      return wei.toString(10)
+    },
+  },
+}
+</script>

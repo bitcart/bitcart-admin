@@ -130,7 +130,12 @@
                           />
                         </v-row>
                         <v-row justify="center">
-                          <v-btn color="primary" :href="paymentURL"
+                          <metamask-button
+                            v-if="$device.isDesktop && isEthPaymentMethod"
+                            :abi="abiCache"
+                            :method="itemv"
+                          />
+                          <v-btn v-else color="primary" :href="paymentURL"
                             >Open in wallet</v-btn
                           >
                         </v-row>
@@ -273,10 +278,12 @@
 <script>
 import CloseButton from "@/components/CloseButton"
 import DisplayField from "@/components/DisplayField"
+import MetamaskButton from "@/components/MetamaskButton"
 export default {
   components: {
     CloseButton,
     DisplayField,
+    MetamaskButton,
   },
   props: {
     showProp: {
@@ -315,11 +322,15 @@ export default {
       rules: this.$utils.rules,
       emailUpdating: false,
       additionalUpdating: false,
+      abiCache: {},
     }
   },
   computed: {
     itemv() {
       return this.invoice.payments[this.selectedCurrency]
+    },
+    currentCurrency() {
+      return this.itemv.currency
     },
     qrValue() {
       return this.itemv.lightning && this.selectedToCopy === 1
@@ -393,15 +404,26 @@ export default {
     selectedCurrency(val) {
       this.selectedAction = null
       this.selectedToCopy = null
+      this.fetchTokenABI()
     },
   },
   mounted() {
+    this.fetchTokenABI()
     const date = new Date()
     date.setSeconds(date.getSeconds() + this.invoice.time_left)
     this.endDate = date
     this.startProgressTimer()
   },
   methods: {
+    fetchTokenABI() {
+      if (!(this.currentCurrency in this.abiCache)) {
+        this.$axios
+          .get(`/cryptos/tokens/${this.currentCurrency}/abi`)
+          .then((res) => {
+            this.abiCache[this.currentCurrency] = res.data
+          })
+      }
+    },
     startProgressTimer() {
       const timeLeftS = this.endDate
         ? (this.endDate.getTime() - new Date().getTime()) / 1000

@@ -60,5 +60,6 @@ export default {
         return "Invalid URL"
       }
     },
+    positive: (v) => v > 0 || "Must be positive",
   },
 }

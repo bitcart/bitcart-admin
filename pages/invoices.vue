@@ -106,7 +106,12 @@ export default {
       endDate: null,
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
-        { text: "Price", value: "price", readonly: true, rules: ["required"] },
+        {
+          text: "Price",
+          value: "price",
+          readonly: true,
+          rules: ["required", "positive"],
+        },
         {
           text: "Currency",
           value: "currency",
