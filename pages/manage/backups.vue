@@ -107,7 +107,9 @@ export default {
     downloadBackup(data) {
       if (data.file_id) {
         this.$axios
-          .get(`/manage/backups/download/${data.file_id}`)
+          .get(`/manage/backups/download/${data.file_id}`, {
+            responseType: "blob",
+          })
           .then((resp) => {
             this.$utils.downloadFile(resp)
           })
