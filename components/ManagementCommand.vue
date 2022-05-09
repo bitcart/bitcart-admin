@@ -44,6 +44,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    postprocess: {
+      type: Function,
+      default: (data) => {},
+    },
   },
   data() {
     return {
@@ -81,6 +85,7 @@ export default {
           this.done = true
           this.error = resp.data.status === "error"
           this.detail = resp.data.message
+          this.postprocess(resp.data)
         })
         .catch((err) => {
           this.done = true

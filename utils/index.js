@@ -62,4 +62,21 @@ export default {
     },
     positive: (v) => v > 0 || "Must be positive",
   },
+  downloadFile(resp) {
+    const url = window.URL.createObjectURL(new Blob([resp.data]))
+    const link = document.createElement("a")
+    link.href = url
+    const contentDisposition = resp.headers["content-disposition"]
+    let filename = "unknown"
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename=(.+)/)
+      if (fileNameMatch.length === 2) {
+        filename = fileNameMatch[1]
+      }
+    }
+    link.setAttribute("download", filename)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  },
 }

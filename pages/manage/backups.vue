@@ -6,6 +6,7 @@
       details="Performs a backup using existing settings without waiting for schedule"
       btn-text="Start backup process"
       what="backups/backup"
+      :postprocess="downloadBackup"
       class="pb-3"
     />
     <p class="text-h4">Restore backup</p>
@@ -101,6 +102,17 @@ export default {
       }))
       this.policies = policies
     })
+  },
+  methods: {
+    downloadBackup(data) {
+      if (data.file_id) {
+        this.$axios
+          .get(`/manage/backups/download/${data.file_id}`)
+          .then((resp) => {
+            this.$utils.downloadFile(resp)
+          })
+      }
+    },
   },
 }
 </script>
