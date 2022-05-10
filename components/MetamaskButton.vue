@@ -7,11 +7,16 @@
       @click="connectToMetamask"
     >
       <template v-if="insufficientBalance">Insuficient Balance</template>
-      <template v-else-if="showPayButton"
-        ><v-img src="/metamask.svg" height="40" width="40" /> Pay with metamask
+      <template v-else-if="showPayButton">
+        <v-img :src="`${STATIC_PATH}/metamask.svg`" height="40" width="40" />
+        Pay with metamask
       </template>
       <template v-else>
-        <v-img src="/metamask.svg" height="40" width="40" />Connect to MetaMask
+        <v-img
+          :src="`${STATIC_PATH}/metamask.svg`"
+          height="40"
+          width="40"
+        />Connect to MetaMask
       </template>
     </v-btn>
     <v-snackbar v-model="showSnackbar" :timeout="2500" color="error" bottom>
