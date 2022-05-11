@@ -30,7 +30,7 @@
             class="px-0 pb-0"
             @closedialog="closeDialog"
           />
-          <div v-else class="no-overflow">
+          <div v-else class="no-overflow v-card__text">
             <close-button @closedialog="closeDialog" />
             <div
               :class="colorClass(texts[status].icon)"
@@ -43,8 +43,8 @@
                 {{ texts[status].icon }}
               </v-icon>
             </div>
-            <div class="d-flex justify-center">
-              {{ texts[status].text }}
+            <div class="d-flex justify-center pt-4">
+              <h3>{{ texts[status].text }}</h3>
             </div>
           </div>
         </div>
@@ -161,8 +161,8 @@ export default {
     },
     colorClass(icon) {
       return {
-        "green-color": icon === "mdi-check",
-        "red-color": icon !== "mdi-check",
+        "green--text": icon === "mdi-check",
+        "red--text": icon !== "mdi-check",
       }
     },
     copyText(text) {
