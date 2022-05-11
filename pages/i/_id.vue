@@ -30,7 +30,7 @@
             class="px-0 pb-0"
             @closedialog="closeDialog"
           />
-          <div v-else class="no-overflow v-card__text">
+          <v-card-text v-else class="no-overflow">
             <close-button @closedialog="closeDialog" />
             <div
               :class="colorClass(texts[status].icon)"
@@ -44,9 +44,11 @@
               </v-icon>
             </div>
             <div class="d-flex justify-center pt-4">
-              <h3>{{ texts[status].text }}</h3>
+              <div class="text-subtitle-1 font-weight-bold">
+                {{ texts[status].text }}
+              </div>
             </div>
-          </div>
+          </v-card-text>
         </div>
       </v-card>
     </v-dialog>
