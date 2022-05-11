@@ -31,7 +31,7 @@
             @closedialog="closeDialog"
           />
           <v-card-text v-else class="no-overflow py-12">
-            <close-button @closedialog="closeDialog" />
+            <close-button class="mt-n8" @closedialog="closeDialog" />
             <div
               :class="colorClass(texts[status].icon)"
               class="d-flex justify-center success-circle success-icon"
