@@ -30,7 +30,7 @@
             class="px-0 pb-0"
             @closedialog="closeDialog"
           />
-          <v-card-text v-else class="no-overflow">
+          <v-card-text v-else class="no-overflow py-12">
             <close-button @closedialog="closeDialog" />
             <div
               :class="colorClass(texts[status].icon)"
