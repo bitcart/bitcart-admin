@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      color="primary"
+      :color="showPayButton ? 'success' : 'primary'"
       :disabled="insufficientBalance"
       :loading="loading"
       @click="connectToMetamask"
