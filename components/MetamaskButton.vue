@@ -19,7 +19,12 @@
         />Connect to MetaMask
       </template>
     </v-btn>
-    <v-snackbar v-model="showSnackbar" :timeout="2500" color="error" bottom>
+    <v-snackbar
+      v-model="showSnackbar"
+      :timeout="2500"
+      :color="snackbarColor"
+      bottom
+    >
       {{ snackbarText }}
     </v-snackbar>
   </div>
@@ -40,6 +45,7 @@ export default {
     return {
       showSnackbar: false,
       snackbarText: "",
+      snackbarColor: "error",
       loading: false,
       insufficientBalance: false,
       showPayButton: false,
@@ -65,10 +71,14 @@ export default {
     },
   },
   methods: {
-    showError(text) {
+    showMessage(ok, text) {
       this.loading = false
       this.snackbarText = text
+      this.snackbarColor = ok ? "success" : "error"
       this.showSnackbar = true
+    },
+    showError(text) {
+      this.showMessage(false, text)
     },
     async connectToMetamask() {
       if (this.showPayButton) return await this.payWithMetamask()
@@ -110,7 +120,10 @@ export default {
         )
         this.loading = false
         if (balance.lt(requiredAmount)) this.insufficientBalance = true
-        else this.showPayButton = true
+        else {
+          this.showMessage(true, "Connected to metamask!")
+          this.showPayButton = true
+        }
       } else {
         window.location.href = "https://metamask.io/download"
       }
