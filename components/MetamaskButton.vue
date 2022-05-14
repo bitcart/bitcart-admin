@@ -7,16 +7,9 @@
       @click="connectToMetamask"
     >
       <template v-if="insufficientBalance">Insuficient Balance</template>
-      <template v-else-if="showPayButton">
-        <v-img :src="`${STATIC_PATH}/metamask.svg`" height="40" width="40" />
-        Pay with metamask
-      </template>
       <template v-else>
-        <v-img
-          :src="`${STATIC_PATH}/metamask.svg`"
-          height="40"
-          width="40"
-        />Connect to MetaMask
+        <v-img :src="`${STATIC_PATH}/metamask.svg`" height="40" width="40" />Pay
+        with MetaMask
       </template>
     </v-btn>
     <v-snackbar
@@ -48,7 +41,6 @@ export default {
       snackbarColor: "error",
       loading: false,
       insufficientBalance: false,
-      showPayButton: false,
     }
   },
   head() {
@@ -65,7 +57,6 @@ export default {
   },
   watch: {
     method(v) {
-      this.showPayButton = false
       this.insufficientBalance = false
       this.loading = false
     },
@@ -81,7 +72,6 @@ export default {
       this.showMessage(false, text)
     },
     async connectToMetamask() {
-      if (this.showPayButton) return await this.payWithMetamask()
       this.loading = true
       if (window.ethereum) {
         this.web3 = new window.Web3(window.ethereum)
@@ -122,7 +112,7 @@ export default {
         if (balance.lt(requiredAmount)) this.insufficientBalance = true
         else {
           this.showMessage(true, "Connected to metamask!")
-          this.showPayButton = true
+          await this.payWithMetamask()
         }
       } else {
         window.location.href = "https://metamask.io/download"
