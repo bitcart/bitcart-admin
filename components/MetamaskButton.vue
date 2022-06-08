@@ -88,25 +88,29 @@ export default {
           return this.showError(error.message)
         }
         let balance = 0
+        let divisibility = 18 // for all EVM-based blockchains
         try {
           if (!this.method.contract)
             balance = this.web3.utils.toBN(
               await this.web3.eth.getBalance(window.ethereum.selectedAddress)
             )
-          else
+          else {
+            const contract = new this.web3.eth.Contract(
+              this.abi[this.method.currency],
+              this.method.contract
+            )
             balance = this.web3.utils.toBN(
-              await new this.web3.eth.Contract(
-                this.abi[this.method.currency],
-                this.method.contract
-              ).methods
+              await contract.methods
                 .balanceOf(window.ethereum.selectedAddress)
                 .call()
             )
+            divisibility = await contract.methods.decimals().call()
+          }
         } catch (error) {
           return this.showError(error.message)
         }
         const requiredAmount = this.web3.utils.toBN(
-          this.toWei(this.method.amount, this.method.divisibility)
+          this.toWei(this.method.amount, divisibility)
         )
         this.loading = false
         if (balance.lt(requiredAmount)) this.insufficientBalance = true
@@ -120,10 +124,16 @@ export default {
     },
     async payWithMetamask() {
       this.loading = true
-      const requiredAmount = this.toWei(
-        this.method.amount,
-        this.method.divisibility
-      )
+      let divisibility = 18
+      let contract = null
+      if (this.method.contract) {
+        contract = new this.web3.eth.Contract(
+          this.abi[this.method.currency],
+          this.method.contract
+        )
+        divisibility = await contract.methods.decimals().call()
+      }
+      const requiredAmount = this.toWei(this.method.amount, divisibility)
       try {
         if (!this.method.contract) {
           // usual tx
@@ -134,10 +144,6 @@ export default {
           })
         } else {
           // contract payment
-          const contract = new this.web3.eth.Contract(
-            this.abi[this.method.currency],
-            this.method.contract
-          )
           await contract.methods
             .transfer(this.method.payment_address, requiredAmount)
             .send({ from: window.ethereum.selectedAddress })
@@ -151,6 +157,7 @@ export default {
       let [whole, fraction] = ether.split(".")
       if (!whole) whole = "0"
       if (!fraction) fraction = "0"
+      while (fraction.length < unit) fraction += "0"
       whole = new this.web3.utils.BN(whole)
       fraction = new this.web3.utils.BN(fraction)
       const wei = whole.mul(base).add(fraction)
