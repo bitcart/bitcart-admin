@@ -20,7 +20,7 @@
     "@nuxtjs/axios": "^5.12.5",
     "express": "^4.18.1",
     "nuxt-start": "^2.15.1",
-    "socks-proxy-agent": "^6.0.0"
+    "socks-proxy-agent": "^7.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.5",
