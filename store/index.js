@@ -67,10 +67,20 @@ export const actions = {
       commit("apiError", e)
     }
   },
-  loadEnv({ commit }, { env, req }) {
+  async loadEnv({ commit }, { env, req }) {
+    const fs = require("fs").promises
+    let onionURL = null
+    try {
+      onionURL =
+        "http://" +
+        (await fs.readFile(
+          "/var/lib/tor/hidden_services/BitcartCC-Merchants-API/hostname"
+        ))
+    } catch {}
     commit("env", {
       URL: env.URL,
       SOCKS_PROXY: env.SOCKS_PROXY,
+      onionURL: onionURL ? onionURL.trim() : null,
     })
     if (req) {
       commit("onion", req.headers.host.toLowerCase().endsWith(".onion"))
@@ -130,6 +140,9 @@ export const getters = {
     return service ? service.hostname + path : ""
   },
   apiOnionURL({ services, env }) {
+    if (env.onionURL) {
+      return env.onionURL
+    }
     const service = services["BitcartCC Merchants API"]
     return service ? service.hostname : ""
   },

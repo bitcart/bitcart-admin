@@ -123,7 +123,11 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {},
+    extend(config, ctx) {
+      if (ctx.isClient) {
+        config.externals = ["fs"]
+      }
+    },
   },
   serverMiddleware: [
     { path: "/stores/", handler: "~/server-middleware/shopify.js" },
