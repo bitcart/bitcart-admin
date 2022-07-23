@@ -38,6 +38,5 @@ ENV NUXT_HOST 0.0.0.0
 ENV NUXT_PORT 4000
 
 EXPOSE ${NUXT_PORT}
-USER node
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["sh"]
