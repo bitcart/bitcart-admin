@@ -112,6 +112,21 @@ export default {
           ],
           link: "/invoices",
         },
+        {
+          texts: [
+            {
+              header: "Total payouts",
+              key: "payouts",
+              value: "",
+            },
+            {
+              header: "Total payouts created:",
+              key: "payouts",
+              value: "payouts in stores",
+            },
+          ],
+          link: "/payouts",
+        },
       ],
     }
   },
