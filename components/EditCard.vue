@@ -389,6 +389,10 @@ export default {
       },
       deep: true,
     },
+    on(val) {
+      // clever trick: load when user closed to hide loading times
+      if (val === false) this.performInit()
+    },
     autosearches: {
       handler(val) {
         const vm = this
@@ -425,12 +429,15 @@ export default {
   },
   beforeMount() {
     this.getItems = debounce(this.getItemsNolimit, 250)
-    this.fetchAutocompletes()
-    for (const field of this.headers.filter((x) => x.input === "dynamic")) {
-      this.fetchField(field)
-    }
+    this.performInit()
   },
   methods: {
+    performInit() {
+      this.fetchAutocompletes()
+      for (const field of this.headers.filter((x) => x.input === "dynamic")) {
+        this.fetchField(field)
+      }
+    },
     fetchAutocompletes() {
       for (const urlObj of this.headers.filter(
         (x) => x.input === "autocomplete"

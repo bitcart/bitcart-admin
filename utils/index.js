@@ -1,3 +1,7 @@
+function isNull(v) {
+  return typeof v === "undefined" || v === "" || v == null
+}
+
 export default {
   copyToClipboard(text) {
     const el = document.createElement("textarea")
@@ -33,34 +37,26 @@ export default {
     return Object.entries(obj).length === 0 && obj.constructor === Object
   },
   rules: {
-    required: (value) =>
-      (typeof value !== "undefined" && !!value) || "Required.",
-    min: (v) =>
-      (typeof v !== "undefined" && v.length >= 8) || "Min 8 characters",
-    email: (value) => {
+    required: (v) => !isNull(v) || "Required.",
+    min: (v) => (!isNull(v) && v.length >= 8) || "Min 8 characters",
+    email: (v) => {
       const pattern =
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      return (
-        typeof value === "undefined" ||
-        value === "" ||
-        value == null ||
-        pattern.test(value) ||
-        "Invalid e-mail."
-      )
+      return isNull(v) || pattern.test(v) || "Invalid e-mail."
     },
     int: (v) => isFinite(v) || "Integer required",
-    url: (value) => {
-      if (typeof value === "undefined" || value === "" || value == null) {
+    url: (v) => {
+      if (isNull(v)) {
         return true
       }
       try {
-        new URL(value) // eslint-disable-line no-new
+        new URL(v) // eslint-disable-line no-new
         return true
       } catch (_) {
         return "Invalid URL"
       }
     },
-    positive: (v) => v > 0 || "Must be positive",
+    positive: (v) => isNull(v) || v > 0 || "Must be positive",
   },
   downloadFile(resp) {
     const url = window.URL.createObjectURL(new Blob([resp.data]))

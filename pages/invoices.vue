@@ -8,92 +8,74 @@
     :custom-batch-actions="batchActions"
   >
     <template #before-toolbar>
-      <v-dialog v-model="showDateDialog" max-width="500px">
-        <v-card>
-          <v-card-title>Filter invoices by custom date range </v-card-title>
-          <v-card-text>
-            <v-datetime-picker
-              ref="dateInput1"
-              v-model="startDate"
-              :time-picker-props="{ format: '24hr' }"
-              label="Start date"
-            />
-            <v-datetime-picker
-              ref="dateInput2"
-              v-model="endDate"
-              :time-picker-props="{ format: '24hr' }"
-              label="End date"
-            />
-          </v-card-text>
-          <v-card-actions class="justify-center">
-            <v-btn color="primary" @click="applyDateFilter">Apply</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <menu-dropdown
-        :items="filterItems"
-        :process="applyFilter"
-        title="Filters"
-      />
-      <v-dialog v-model="showExportDialog" max-width="500px">
-        <v-card>
-          <v-card-title>Export invoices</v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="6">
-                  <v-select
-                    v-model="exportSettings.format"
-                    label="Export format"
-                    :items="exportItems"
-                  ></v-select>
-                </v-col>
-                <v-col cols="6">
-                  <v-switch
-                    v-model="exportSettings.query"
-                    label="Use current query"
-                  />
-                </v-col>
-                <v-col cols="6">
-                  <v-switch
-                    v-model="exportSettings.payments"
-                    label="Include payments"
-                  />
-                </v-col>
-                <v-col cols="6">
-                  <v-switch
-                    v-model="exportSettings.allUsers"
-                    label="All users"
-                    :disabled="!$auth.user.is_superuser"
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions class="justify-center pb-5">
-            <v-btn color="primary" @click="exportInvoices">Export</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-btn color="primary" class="mr-2" @click="openExportDialog">
-        Export
-      </v-btn>
+      <v-row>
+        <v-col class="pr-0">
+          <search-filters
+            :search.sync="search"
+            :custom-filters="customFilters"
+          />
+        </v-col>
+        <v-col class="pl-0">
+          <v-dialog v-model="showExportDialog" max-width="500px">
+            <v-card>
+              <v-card-title>Export invoices</v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="6">
+                      <v-select
+                        v-model="exportSettings.format"
+                        label="Export format"
+                        :items="exportItems"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="6">
+                      <v-switch
+                        v-model="exportSettings.query"
+                        label="Use current query"
+                      />
+                    </v-col>
+                    <v-col cols="6">
+                      <v-switch
+                        v-model="exportSettings.payments"
+                        label="Include payments"
+                      />
+                    </v-col>
+                    <v-col cols="6">
+                      <v-switch
+                        v-model="exportSettings.allUsers"
+                        label="All users"
+                        :disabled="!$auth.user.is_superuser"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions class="justify-center pb-5">
+                <v-btn color="primary" @click="exportInvoices">Export</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+          <v-btn color="primary" class="mr-2" @click="openExportDialog">
+            Export
+          </v-btn>
+        </v-col>
+      </v-row>
     </template>
   </item-data>
 </template>
 <script>
 import ItemData from "@/components/ItemData.vue"
-import MenuDropdown from "@/components/MenuDropdown"
+import SearchFilters from "@/components/SearchFilters.vue"
 export default {
   components: {
     ItemData,
-    MenuDropdown,
+    SearchFilters,
   },
   layout: "dashboard",
   data() {
     const dt = {
       search: "",
-      showDateDialog: false,
       showExportDialog: false,
       defaultExportSettings: {
         format: "CSV",
@@ -102,8 +84,6 @@ export default {
         allUsers: false,
       },
       exportSettings: {},
-      startDate: null,
-      endDate: null,
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
         {
@@ -165,7 +145,7 @@ export default {
       url: "invoices",
       title: "Invoice",
       exportItems: ["CSV", "JSON"],
-      filterItems: [
+      customFilters: [
         {
           title: "Paid invoices",
           command: "paid|confirmed|complete",
@@ -173,26 +153,6 @@ export default {
         {
           title: "Invalid invoices",
           command: "invalid",
-        },
-        {
-          title: "Last 24 hours",
-          command: "start_date:-1d",
-        },
-        {
-          title: "Last week",
-          command: "start_date:-1w",
-        },
-        {
-          title: "Last month",
-          command: "start_date:-1m",
-        },
-        {
-          title: "Custom range",
-          command: { customRange: true },
-        },
-        {
-          title: "Unfiltered",
-          command: "",
         },
       ],
       batchActions: [
@@ -239,27 +199,6 @@ export default {
         .then((resp) => {
           this.$utils.downloadFile(resp)
         })
-    },
-    applyFilter(filter) {
-      if (filter.customRange) {
-        if (this.$refs.dateInput1) {
-          this.$refs.dateInput1.clearHandler()
-        }
-        if (this.$refs.dateInput2) {
-          this.$refs.dateInput2.clearHandler()
-        }
-        this.showDateDialog = true
-        return
-      }
-      this.search = filter
-    },
-    applyDateFilter() {
-      if (this.startDate && this.endDate) {
-        this.search = `start_date:${this.startDate.toISOString()} end_date:${this.endDate.toISOString()} ${
-          this.search
-        }`
-        this.showDateDialog = false
-      }
     },
   },
 }

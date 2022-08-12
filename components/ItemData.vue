@@ -283,6 +283,12 @@ export default {
       type: Function,
       default: () => {},
     },
+    processbatch: {
+      type: Function,
+      default: (command) => {
+        return {}
+      },
+    },
   },
   data() {
     return {
@@ -424,10 +430,13 @@ export default {
       if (refreshStats) this.$store.dispatch("syncStats", false)
     },
     processBatchCommand(command) {
+      const data = this.processbatch(command)
+      if (data === null) return
       this.$axios
         .post(`/${this.url}/batch`, {
           ids: this.selected.map((x) => x.id),
           command,
+          ...data,
         })
         .then((r) => {
           this.triggerReload()

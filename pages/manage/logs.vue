@@ -52,8 +52,12 @@
 </template>
 
 <script>
-import TooltipIcon from "@/components/TooltipIcon"
+import TooltipIcon from "@/components/TooltipIcon.vue"
+
 export default {
+  components: {
+    TooltipIcon,
+  },
   component: {
     TooltipIcon,
   },
