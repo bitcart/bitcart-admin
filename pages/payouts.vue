@@ -86,6 +86,9 @@ export default {
           text: "Destination",
           value: "destination",
           rules: ["required"],
+          errors: {
+            "Invalid destination address": "Invalid destination address",
+          },
         },
         {
           text: "Amount",
