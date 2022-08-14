@@ -61,7 +61,9 @@ export default {
    */
   publicRuntimeConfig: {
     URL: process.env.BITCART_ADMIN_API_URL || "http://localhost:8000",
-    SOCKS_PROXY: process.env.BITCART_ADMIN_SOCKS_PROXY,
+    SOCKS_PROXY: process.env.BITCART_ADMIN_SOCKS_PROXY || "",
+    ONION_API_URL: process.env.BITCART_ADMIN_ONION_API_URL || "",
+    ONION_HOST: process.env.BITCART_ADMIN_ONION_HOST || "",
     ROOTPATH: process.env.BITCART_ADMIN_ROOTPATH || "/",
     LOG_FILE_NAME: process.env.BITCART_ADMIN_LOG_FILE || "bitcart.log",
   },

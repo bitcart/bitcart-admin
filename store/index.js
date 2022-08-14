@@ -79,7 +79,8 @@ export const actions = {
     commit("env", {
       URL: env.URL,
       SOCKS_PROXY: env.SOCKS_PROXY,
-      onionURL: onionURL ? onionURL.trim() : null,
+      onionURL: env.ONION_API_URL || (onionURL ? onionURL.trim() : null),
+      onionHost: env.ONION_HOST,
     })
     if (req) {
       commit("onion", req.headers.host.toLowerCase().endsWith(".onion"))
@@ -134,14 +135,13 @@ export const actions = {
 }
 
 export const getters = {
-  onionURL({ services, path }) {
+  onionURL({ services, path, env }) {
+    if (env.onionHost) return env.onionHost
     const service = services["BitcartCC Admin Panel"]
     return service ? service.hostname + path : ""
   },
   apiOnionURL({ services, env }) {
-    if (env.onionURL) {
-      return env.onionURL
-    }
+    if (env.onionURL) return env.onionURL
     const service = services["BitcartCC Merchants API"]
     return service ? service.hostname : ""
   },
