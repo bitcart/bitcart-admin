@@ -81,6 +81,7 @@ export const actions = {
       SOCKS_PROXY: env.SOCKS_PROXY,
       onionURL: env.ONION_API_URL || (onionURL ? onionURL.trim() : null),
       onionHost: env.ONION_HOST,
+      rootPath: env.ROOTPATH,
     })
     if (req) {
       commit("onion", req.headers.host.toLowerCase().endsWith(".onion"))
@@ -135,10 +136,14 @@ export const actions = {
 }
 
 export const getters = {
-  onionURL({ services, path, env }) {
-    if (env.onionHost) return env.onionHost + path
+  onionHost({ services, env }) {
+    if (env.onionHost) return env.onionHost
     const service = services["BitcartCC Admin Panel"]
-    return service ? service.hostname + path : ""
+    return service ? service.hostname : ""
+  },
+  onionURL({ env, path }, { onionHost }) {
+    const rootPath = env.rootPath === "/" ? "" : env.rootPath
+    return onionHost ? onionHost + rootPath + path : ""
   },
   apiOnionURL({ services, env }) {
     if (env.onionURL) return env.onionURL
