@@ -136,7 +136,7 @@ export const actions = {
 
 export const getters = {
   onionURL({ services, path, env }) {
-    if (env.onionHost) return env.onionHost
+    if (env.onionHost) return env.onionHost + path
     const service = services["BitcartCC Admin Panel"]
     return service ? service.hostname + path : ""
   },
