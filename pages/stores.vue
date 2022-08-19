@@ -297,6 +297,12 @@ export default {
           value: "ask_address",
           input: "switch",
         },
+        {
+          text: "Randomize same currency wallet selection",
+          value: "randomize_wallet_selection",
+          input: "switch",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-randomize-wallets-used-distribute-funds-across-multiple-wallets",
+        },
       ],
       themeHeaders: [
         {
