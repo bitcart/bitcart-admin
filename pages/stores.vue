@@ -301,7 +301,7 @@ export default {
           text: "Randomize same currency wallet selection",
           value: "randomize_wallet_selection",
           input: "switch",
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-the-use-dark-mode-setting", // TODO: update
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-randomize-wallets-used-distribute-funds-across-multiple-wallets",
         },
       ],
       themeHeaders: [
