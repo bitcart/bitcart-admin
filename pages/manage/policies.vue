@@ -4,6 +4,7 @@
       v-for="(value, policy) in policies"
       :key="policy"
       :title="titles[policy]"
+      :type="types[policy] || 'checkbox'"
       :what="policy"
       :initial-value="value"
     />
@@ -26,7 +27,9 @@ export default {
         check_updates: "Check for updates once a day",
         allow_anonymous_configurator:
           "Allow access to configurator for unauthorized users",
+        explorer_urls: "Block explorer URLs",
       },
+      types: { explorer_urls: "exploreredit" },
     }
   },
   beforeMount() {

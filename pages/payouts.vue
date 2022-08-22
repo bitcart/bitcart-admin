@@ -8,6 +8,17 @@
     :custom-batch-actions="batchActions"
     :processbatch="processbatch"
   >
+    <template #item.tx_hash="{ item }">
+      <a
+        v-if="getTxURL(item)"
+        :href="`${getTxURL(item)}`"
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+      >
+        {{ item.tx_hash }}
+      </a>
+      <template v-else>{{ item.tx_hash }}</template>
+    </template>
     <template #before-toolbar>
       <search-filters :search.sync="search" :custom-filters="customFilters" />
       <v-dialog v-model="showSendDialog" max-width="700px">
@@ -190,6 +201,13 @@ export default {
     },
     sendBatchCommand() {
       this.$refs.itemdata.processBatchCommand("send", this.wallets)
+    },
+    getTxURL(payout) {
+      if (!payout.tx_hash) return
+      const explorerURL =
+        this.$store.state.policies.explorer_urls[payout.wallet_currency]
+      if (!explorerURL) return
+      return explorerURL.replace(/{}/g, payout.tx_hash)
     },
   },
 }

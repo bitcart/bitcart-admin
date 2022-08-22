@@ -96,14 +96,22 @@
         <div
           v-for="header in toExpand"
           :key="header.text"
-          style="white-space: pre"
+          style="white-space: nowrap"
         >
           <component
             :is="header.component"
             v-if="header.component"
             :data="item[header.value]"
           />
-          <p v-else>{{ header.text }}: <br />{{ item[header.value] }}</p>
+          <p v-else>
+            {{ header.text }}: <br /><span
+              ><slot
+                v-if="`item.${header.value}` in $scopedSlots"
+                :name="`item.${header.value}`"
+                v-bind="{ item }"
+              /><template v-else>{{ item[header.value] }}</template></span
+            >
+          </p>
         </div>
       </template>
       <template #item.id="{ item }">

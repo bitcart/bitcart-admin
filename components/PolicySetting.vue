@@ -21,6 +21,11 @@
       :initial-value="data"
       @input="updateListEdit"
     />
+    <explorer-edit
+      v-else-if="type === 'exploreredit'"
+      :initial-value="data"
+      @input="updatePolicy"
+    />
     <v-text-field
       v-else
       v-model="data"
@@ -33,10 +38,12 @@
 <script>
 import AutoComplete from "@/components/AutoComplete"
 import ListEdit from "@/components/ListEdit"
+import ExplorerEdit from "@/components/ExplorerEdit"
 export default {
   components: {
     AutoComplete,
     ListEdit,
+    ExplorerEdit,
   },
   props: {
     title: {
