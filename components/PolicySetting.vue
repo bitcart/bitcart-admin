@@ -78,7 +78,9 @@ export default {
   },
   methods: {
     updatePolicy(value) {
-      this.$axios.post(this.policyUrl, { [this.what]: value })
+      this.$axios
+        .post(this.policyUrl, { [this.what]: value })
+        .then((r) => this.$emit("updated"))
     },
     updateListEdit(value) {
       const obj = Object.fromEntries(

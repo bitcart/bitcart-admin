@@ -8,8 +8,8 @@ export const state = () => ({
     products: 0,
     invoices: 0,
     payouts: 0,
-    balance: 0.0,
   },
+  balance: 0.0,
   syncInfo: [],
   policies: {},
   services: {},
@@ -29,6 +29,9 @@ export const mutations = {
   },
   setStats(state, value) {
     state.stats = value
+  },
+  setBalance(state, value) {
+    state.balance = value
   },
   setSyncInfo(state, value) {
     state.syncInfo = value
@@ -95,6 +98,11 @@ export const actions = {
       this.$axios
         .get("/users/stats")
         .then((resp) => commit("setStats", resp.data))
+      if (this.state.auth.user.settings.fetch_balance) {
+        this.$axios
+          .get("/wallets/balance")
+          .then((resp) => commit("setBalance", resp.data))
+      }
       if (this.state.auth.user.is_superuser) {
         this.$axios
           .get("/manage/syncinfo")

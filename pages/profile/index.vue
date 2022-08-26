@@ -1,32 +1,41 @@
 <template>
   <div>
-    <auto-complete
-      :value="$auth.user.settings.balance_currency"
-      url="cryptos/fiatlist"
-      label="Currency used for balance stats"
-      :body="true"
-      @input="updateUser('balance_currency', $event)"
+    <PolicySetting
+      v-for="(value, policy) in $auth.user.settings"
+      :key="policy"
+      :title="titles[policy]"
+      :type="types[policy] || 'checkbox'"
+      :what="policy"
+      :initial-value="value"
+      :url="autocomplete_urls[policy] || ''"
+      policy-url="/users/me/settings"
+      @updated="updateUser"
     />
   </div>
 </template>
 <script>
-import AutoComplete from "~/components/AutoComplete.vue"
+import PolicySetting from "~/components/PolicySetting.vue"
 export default {
   components: {
-    AutoComplete,
+    PolicySetting,
   },
   layout: "profile",
   data() {
     return {
       policyURL: "/users/me/settings",
+      titles: {
+        balance_currency: "Currency used for balance stats",
+        fetch_balance: "Fetch and display total balance in admin panel",
+      },
+      types: { balance_currency: "autocomplete" },
+      autocomplete_urls: { balance_currency: "cryptos/fiatlist" },
     }
   },
   methods: {
-    updateUser(key, value) {
-      this.$axios.patch(this.policyURL, { [key]: value }).then((r) => {
-        this.$auth.fetchUser()
-        this.$store.dispatch("syncStats", false)
-      })
+    updateUser() {
+      this.$auth
+        .fetchUser()
+        .then((r) => this.$store.dispatch("syncStats", false))
     },
   },
 }

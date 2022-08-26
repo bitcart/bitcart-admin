@@ -135,7 +135,10 @@ export default {
       return [
         {
           header: "Wallets Balance",
-          key: "balance",
+          customText: this.$auth.user.settings.fetch_balance
+            ? null
+            : "Disabled in settings",
+          mainValue: this.$store.state.balance || 0,
           value: this.$auth.user
             ? this.$auth.user.settings.balance_currency
             : 0,
