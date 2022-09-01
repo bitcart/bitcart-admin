@@ -84,12 +84,8 @@ export default {
       provider.on("accountsChanged", (accounts) => {
         this.address = accounts[0]
       })
-
       //  Enable session (triggers QR Code modal)
       await provider.enable()
-      provider
-        .request({ method: "eth_requestAccounts" })
-        .then((r) => console.log(r))
       //  Create Web3
       this.web3 = new window.Web3(provider)
       this.loading = true
@@ -100,10 +96,8 @@ export default {
             this.method.chain_id
           })`
         )
-      console.log(await this.web3.eth.getAccounts())
       let balance = 0
       let divisibility = 18 // for all EVM-based blockchains
-      console.log(this.address)
       try {
         if (!this.method.contract)
           balance = this.web3.utils.toBN(
