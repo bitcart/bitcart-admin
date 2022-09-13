@@ -4,12 +4,16 @@
       color="primary"
       :disabled="insufficientBalance"
       :loading="loading"
-      @click="connectToMetamask"
+      @click="connect"
     >
       <template v-if="insufficientBalance">Insuficient Balance</template>
       <template v-else>
-        <v-img :src="`${STATIC_PATH}/metamask.svg`" height="40" width="40" />Pay
-        with MetaMask
+        <v-img
+          :src="`${STATIC_PATH}/walletconnect.svg`"
+          height="30"
+          width="30"
+          class="mr-2"
+        />Pay with WalletConnect
       </template>
     </v-btn>
     <v-snackbar
@@ -41,13 +45,14 @@ export default {
       snackbarColor: "error",
       loading: false,
       insufficientBalance: false,
+      address: "",
     }
   },
   head() {
     return {
       script: [
         {
-          src: `https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js`,
+          src: `https://unpkg.com/@walletconnect/web3-provider`,
         },
         {
           src: `https://unpkg.com/web3@latest/dist/web3.min.js`,
@@ -71,17 +76,32 @@ export default {
     showError(text) {
       this.showMessage(false, text)
     },
-    async connectToMetamask() {
-      if (window.ethereum) {
-        this.web3 = new window.Web3(window.ethereum)
-        await this.$utils.connectToWallet.call(
-          this,
-          "metamask",
-          () => window.ethereum.selectedAddress
-        )
-      } else {
-        window.location.href = "https://metamask.io/download"
+    async connect() {
+      // eslint-disable-next-line
+      const provider = new window.WalletConnectProvider.default({
+        rpc: {},
+      })
+      provider.on("accountsChanged", (accounts) => {
+        this.address = accounts[0]
+      })
+      //  Enable session (triggers QR Code modal)
+      window?.localStorage?.removeItem("walletconnect")
+      try {
+        await provider.enable()
+        await provider.updateState({
+          rpcUrl: this.$store.state.policies.rpc_urls[this.method.currency],
+        })
+      } catch (error) {
+        return this.showError(error.message)
       }
+      //  Create Web3
+      this.web3 = new window.Web3(provider)
+
+      await this.$utils.connectToWallet.call(
+        this,
+        "walletconnect",
+        () => this.address
+      )
     },
   },
 }

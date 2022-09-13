@@ -161,6 +161,13 @@
                             :abi="abiCache"
                             :method="itemv"
                           />
+                        </v-row>
+                        <v-row justify="center">
+                          <wallet-connect-button
+                            v-if="$device.isDesktop && isEthPaymentMethod"
+                            :method="itemv"
+                            :abi="abiCache"
+                          />
                           <v-btn v-else color="primary" :href="paymentURL"
                             >Open in wallet</v-btn
                           >
@@ -305,11 +312,13 @@
 import CloseButton from "@/components/CloseButton"
 import DisplayField from "@/components/DisplayField"
 import MetamaskButton from "@/components/MetamaskButton"
+import WalletConnectButton from "@/components/WalletConnectButton"
 export default {
   components: {
     CloseButton,
     DisplayField,
     MetamaskButton,
+    WalletConnectButton,
   },
   props: {
     showProp: {
