@@ -6,6 +6,7 @@
       :title="titles[policy]"
       :type="types[policy] || 'checkbox'"
       :what="policy"
+      :url="urls[policy] || ''"
       :initial-value="value"
     />
   </div>
@@ -28,8 +29,13 @@ export default {
         allow_anonymous_configurator:
           "Allow access to configurator for unauthorized users",
         explorer_urls: "Block explorer URLs",
+        rpc_urls: "WalletConnect RPC URLs",
       },
-      types: { explorer_urls: "exploreredit" },
+      types: { explorer_urls: "exploreredit", rpc_urls: "exploreredit" },
+      urls: {
+        explorer_urls: "/cryptos/explorer",
+        rpc_urls: "/cryptos/rpc",
+      },
     }
   },
   beforeMount() {

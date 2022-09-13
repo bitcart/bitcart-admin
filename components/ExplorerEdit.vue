@@ -36,8 +36,12 @@ export default {
   },
   props: {
     initialValue: {
-      type: Array,
+      type: [Array, Object],
       default: () => [],
+    },
+    url: {
+      type: String,
+      required: true,
     },
   },
   data() {
@@ -50,7 +54,7 @@ export default {
       this.$emit("input", this.data)
     },
     resetItem(key) {
-      this.$axios.get(`/cryptos/explorer/${key}`).then((r) => {
+      this.$axios.get(`${this.url}/${key}`).then((r) => {
         this.data[key] = r.data
         this.sendInput()
       })

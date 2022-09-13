@@ -24,6 +24,7 @@
     <explorer-edit
       v-else-if="type === 'exploreredit'"
       :initial-value="data"
+      :url="url"
       @input="updatePolicy"
     />
     <v-text-field
