@@ -79,7 +79,11 @@ export default {
     async connect() {
       // eslint-disable-next-line
       const provider = new window.WalletConnectProvider.default({
-        rpc: {},
+        rpc: {
+          [this.method.chain_id]:
+            this.$store.state.policies.rpc_urls[this.method.currency],
+        },
+        chainId: this.method.chain_id,
       })
       provider.on("accountsChanged", (accounts) => {
         this.address = accounts[0]
@@ -88,9 +92,6 @@ export default {
       window?.localStorage?.removeItem("walletconnect")
       try {
         await provider.enable()
-        await provider.updateState({
-          rpcUrl: this.$store.state.policies.rpc_urls[this.method.currency],
-        })
       } catch (error) {
         return this.showError(error.message)
       }

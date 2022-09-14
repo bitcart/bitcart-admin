@@ -84,10 +84,12 @@ export default {
           this.method.chain_id
         })`
       )
-    try {
-      await window.ethereum.request({ method: "eth_requestAccounts" })
-    } catch (error) {
-      return this.showError(error.message)
+    if (wallet === "metamask") {
+      try {
+        await window.ethereum.request({ method: "eth_requestAccounts" })
+      } catch (error) {
+        return this.showError(error.message)
+      }
     }
     let balance = 0
     let divisibility = 18 // for all EVM-based blockchains
