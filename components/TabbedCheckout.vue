@@ -175,7 +175,10 @@
                         <v-row v-if="showRecommendedFee" justify="center">
                           Recommended fee: {{ itemv.recommended_fee }} sat/byte
                         </v-row>
-                        <v-row v-if="isEthPaymentMethod" justify="center">
+                        <v-row
+                          v-if="isEthPaymentMethod || itemv.currency === 'trx'"
+                          justify="center"
+                        >
                           Please send the exact amount specified!
                         </v-row>
                         <v-row v-if="itemv.hint" justify="center">
