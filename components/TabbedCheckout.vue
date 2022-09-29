@@ -455,6 +455,7 @@ export default {
   },
   methods: {
     fetchTokenABI() {
+      if (!this.itemv) return
       if (!(this.currentCurrency in this.abiCache)) {
         this.$axios
           .get(`/cryptos/tokens/${this.currentCurrency}/abi`)
