@@ -28,10 +28,18 @@ export default {
         check_updates: "Check for updates once a day",
         allow_anonymous_configurator:
           "Allow access to configurator for unauthorized users",
+        captcha_sitekey: "HCaptcha site key",
+        captcha_secretkey: "HCaptcha secret key",
+        enable_captcha: "Enable captcha on login page",
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
       },
-      types: { explorer_urls: "exploreredit", rpc_urls: "exploreredit" },
+      types: {
+        captcha_sitekey: "string",
+        captcha_secretkey: "string",
+        explorer_urls: "exploreredit",
+        rpc_urls: "exploreredit",
+      },
       urls: {
         explorer_urls: "/cryptos/explorer",
         rpc_urls: "/cryptos/rpc",

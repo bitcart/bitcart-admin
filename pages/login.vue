@@ -29,6 +29,12 @@
               prepend-icon="lock"
               type="password"
             />
+            <vue-hcaptcha
+              v-if="$store.state.policies.enable_captcha"
+              :sitekey="$store.state.policies.captcha_sitekey"
+              :theme="$vuetify.theme.dark ? 'dark' : 'light'"
+              @verify="processCaptcha"
+            ></vue-hcaptcha>
             <div v-if="!$store.state.policies.disable_registration">
               Don't have an account?
               <NuxtLink to="/register"> Sign up here </NuxtLink>
@@ -46,11 +52,13 @@
 </template>
 
 <script>
+import VueHcaptcha from "@hcaptcha/vue-hcaptcha"
 import OnionTextField from "@/components/OnionTextField"
 export default {
   auth: "guest",
   components: {
     OnionTextField,
+    VueHcaptcha,
   },
   data() {
     return {
@@ -60,9 +68,13 @@ export default {
       rules: this.$utils.rules,
       usernameErrors: [],
       passwordErrors: [],
+      captchaCode: "",
     }
   },
   methods: {
+    processCaptcha(token, ekey) {
+      this.captchaCode = token
+    },
     login() {
       if (this.$refs.form.validate()) {
         this.$auth
@@ -71,6 +83,7 @@ export default {
               email: this.email,
               password: this.password,
               permissions: ["full_control"],
+              captcha_code: this.captchaCode,
               strict: false,
             },
           })
@@ -86,7 +99,8 @@ export default {
                 this.usernameErrors = ["That user does not exist"]
               } else if (status === 401) {
                 this.passwordErrors = ["Invalid password"]
-              }
+              } else if (status === 403)
+                this.usernameErrors = ["Failed captcha"]
             }
           })
       }

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.1",
+    "@hcaptcha/vue-hcaptcha": "^0.3.2",
     "@nuxtjs/auth": "^4.9.0",
     "@nuxtjs/axios": "^5.12.5",
     "express": "^4.18.1",

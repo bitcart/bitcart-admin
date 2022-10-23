@@ -132,12 +132,15 @@ export default {
   },
   computed: {
     walletTexts() {
+      const fetchBalanceText = this.$auth.user
+        ? this.$auth.user.settings.fetch_balance
+          ? null
+          : "Disabled in settings"
+        : null
       return [
         {
           header: "Wallets Balance",
-          customText: this.$auth.user.settings.fetch_balance
-            ? null
-            : "Disabled in settings",
+          customText: fetchBalanceText,
           mainValue: this.$store.state.balance || 0,
           value: this.$auth.user
             ? this.$auth.user.settings.balance_currency
