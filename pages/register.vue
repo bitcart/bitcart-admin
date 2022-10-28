@@ -37,6 +37,12 @@
               prepend-icon="lock"
               type="password"
             />
+            <vue-hcaptcha
+              v-if="$store.state.policies.enable_captcha"
+              :sitekey="$store.state.policies.captcha_sitekey"
+              :theme="$vuetify.theme.dark ? 'dark' : 'light'"
+              @verify="processCaptcha"
+            ></vue-hcaptcha>
             <div>
               Already have an account ?
               <NuxtLink to="/login"> Sign in </NuxtLink> instead
@@ -53,10 +59,12 @@
   </v-row>
 </template>
 <script>
+import VueHcaptcha from "@hcaptcha/vue-hcaptcha"
 import OnionTextField from "@/components/OnionTextField"
 export default {
   components: {
     OnionTextField,
+    VueHcaptcha,
   },
   middleware: "registeroff",
   data() {
@@ -64,6 +72,7 @@ export default {
       email: "",
       password: "",
       repeat_password: "",
+      captchaCode: "",
       errors: [],
       rules: {
         ...this.$utils.rules,
@@ -74,31 +83,33 @@ export default {
   },
   auth: "guest",
   methods: {
+    processCaptcha(token, ekey) {
+      this.captchaCode = token
+    },
     register() {
       if (this.$refs.form.validate()) {
         this.$axios
           .post("users", {
             email: this.email,
             password: this.password,
+            captcha_code: this.captchaCode,
           })
           .then((r) => {
-            this.$auth
-              .loginWith("local", {
-                data: {
-                  email: this.email,
-                  password: this.password,
-                  permissions: ["full_control"],
-                  strict: false,
-                },
-              })
-              .then((resp) => {
-                this.$store.dispatch("fetchServices")
-              })
+            this.$auth.setUserToken(r.data.token)
+            this.$auth.fetchUser().then((r) => {
+              this.$store.dispatch("fetchServices")
+            })
           })
           .catch((err) => {
             if (err.response) {
-              if (err.response.data.detail.includes("users_email")) {
+              const detail = err.response.data.detail
+              if (
+                typeof detail === "string" &&
+                detail.includes("users_email")
+              ) {
                 this.errors = ["That username is already taken"]
+              } else if (detail.status === 403) {
+                this.errors = ["Failed captcha"]
               }
             }
           })
