@@ -172,4 +172,10 @@ export default {
       .map((w) => w[0].toUpperCase() + w.substring(1))
       .join(" ")
   },
+  getTxURL(txHash, currency) {
+    if (!txHash) return
+    const explorerURL = this.$store.state.policies.explorer_urls[currency]
+    if (!explorerURL) return
+    return explorerURL.replace(/{}/g, txHash)
+  },
 }

@@ -203,11 +203,11 @@ export default {
       this.$refs.itemdata.processBatchCommand("send", this.wallets)
     },
     getTxURL(payout) {
-      if (!payout.tx_hash) return
-      const explorerURL =
-        this.$store.state.policies.explorer_urls[payout.wallet_currency]
-      if (!explorerURL) return
-      return explorerURL.replace(/{}/g, payout.tx_hash)
+      return this.$utils.getTxURL.call(
+        this,
+        payout.tx_hash,
+        payout.wallet_currency
+      )
     },
   },
 }
