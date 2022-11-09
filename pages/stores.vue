@@ -303,6 +303,12 @@ export default {
           input: "switch",
           help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-randomize-wallets-used-distribute-funds-across-multiple-wallets",
         },
+        {
+          text: "Allow anonymous invoice creation",
+          value: "allow_anonymous_invoice_creation",
+          input: "switch",
+          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#why-could-anyone-create-an-invoice-without-authorization-how-to-disallow-that",
+        },
       ],
       themeHeaders: [
         {
