@@ -56,7 +56,10 @@
                   :class="currencySelectClass"
                   v-bind="attrs"
                   v-on="on"
-                  >{{ itemv.name }}</v-list-item-title
+                  >{{ itemv.name }}
+                  <v-icon v-if="invoice.payments.length > 1" small
+                    >expand_more</v-icon
+                  ></v-list-item-title
                 >
               </template>
               <v-list>
