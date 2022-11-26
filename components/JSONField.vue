@@ -1,6 +1,8 @@
 <template>
   <div>
-    <template v-for="(value, key) in data"> {{ key }}: {{ value }} </template>
+    <template v-for="(value, key) in data">
+      {{ $utils.toTitleCase(key) }}: {{ value }}
+    </template>
   </div>
 </template>
 

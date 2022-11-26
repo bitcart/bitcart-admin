@@ -7,6 +7,8 @@
 </template>
 <script>
 import ItemData from "@/components/ItemData.vue"
+import JSONField from "@/components/JSONField.vue"
+
 export default {
   components: {
     ItemData,
@@ -57,6 +59,18 @@ export default {
           value: "hint",
           expand: true,
           help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-display-a-checkout-hint-for-customers",
+        },
+        {
+          text: "Additional xpub data",
+          value: "additional_xpub_data",
+          input: "dynamic",
+          url: "/wallets/schema",
+          choice: "currency",
+          default: {},
+          expand: true,
+          component: JSONField,
+          requiredKey: "required",
+          propertiesKey: "properties",
         },
         {
           text: "Lightning",

@@ -166,4 +166,10 @@ export default {
     const wei = whole.mul(base).add(fraction)
     return wei.toString(10)
   },
+  toTitleCase(str) {
+    return str
+      .split(" ")
+      .map((w) => w[0].toUpperCase() + w.substring(1))
+      .join(" ")
+  },
 }

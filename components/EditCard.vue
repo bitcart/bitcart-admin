@@ -19,7 +19,7 @@
             <v-container>
               <v-row>
                 <component
-                  :is="header.input !== 'dynamic' ? 'v-col' : 'div'"
+                  :is="header.input !== 'dynamic' ? 'v-col' : 'v-container'"
                   v-for="header in dialogData"
                   :key="header.value"
                   :cols="['image', 'textarea'].includes(header.input) ? 12 : 6"
@@ -60,25 +60,23 @@
                     </template>
                   </v-textarea>
                   <template v-else-if="header.input === 'dynamic'">
-                    <v-container>
-                      <v-row>
-                        <v-col
-                          v-for="field in getFields(header, item)"
-                          :key="field"
-                          :cols="6"
-                        >
-                          <v-text-field
-                            v-model="item[header.value][field]"
-                            :label="field"
-                            :rules="
-                              isRequiredField(header, item, field)
-                                ? [rules.required]
-                                : []
-                            "
-                          />
-                        </v-col>
-                      </v-row>
-                    </v-container>
+                    <v-row>
+                      <v-col
+                        v-for="field in getFields(header, item)"
+                        :key="field"
+                        :cols="6"
+                      >
+                        <v-text-field
+                          v-model="item[header.value][field]"
+                          :label="$utils.toTitleCase(field)"
+                          :rules="
+                            isRequiredField(header, item, field)
+                              ? [rules.required]
+                              : []
+                          "
+                        />
+                      </v-col>
+                    </v-row>
                   </template>
                   <v-switch
                     v-else-if="header.input === 'switch'"
