@@ -58,7 +58,7 @@
                   v-on="on"
                   >{{ itemv.name }}
                   <v-icon v-if="invoice.payments.length > 1" small
-                    >expand_more</v-icon
+                    >mdi-chevron-down</v-icon
                   ></v-list-item-title
                 >
               </template>
@@ -558,6 +558,7 @@ export default {
   border-width: 1px;
   border-style: solid;
   padding: 6px;
+  overflow: auto !important;
 }
 .v-application.theme--light .multipleCurrency {
   border-color: rgba(0, 0, 0, 0.12);
