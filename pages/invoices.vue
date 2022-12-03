@@ -62,6 +62,19 @@
         </v-col>
       </v-row>
     </template>
+    <template #item.tx_hashes="{ item }">
+      <div v-for="tx_hash of item.tx_hashes" :key="tx_hash">
+        <a
+          v-if="getTxURL(tx_hash, item)"
+          :href="`${getTxURL(tx_hash, item)}`"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+        >
+          {{ tx_hash }}
+        </a>
+        <template v-else>{{ tx_hash }}</template>
+      </div>
+    </template>
   </item-data>
 </template>
 <script>
@@ -130,6 +143,7 @@ export default {
         { text: "Order", value: "order_id", copy: true },
         { text: "Discount", value: "discount", mode: "edit", copy: true },
         { text: "Status", value: "status", mode: "edit" },
+        { text: "Tx hashes", value: "tx_hashes", expand: true },
         { text: "Shipping address", value: "shipping_address", expand: true },
         { text: "Notes", value: "notes", expand: true },
         { text: "Created date", value: "created", mode: "display" },
@@ -199,6 +213,18 @@ export default {
         .then((resp) => {
           this.$utils.downloadFile(resp)
         })
+    },
+    getTxURL(txHash, item) {
+      let matchedPayment = item.payments.find((payment) => {
+        return payment.name === item.paid_currency
+      })
+      // if we didn't match via label, match via name (startsWith because of index)
+      if (!matchedPayment) {
+        matchedPayment = item.payments.find((payment) => {
+          return payment.name.startsWith(item.paid_currency)
+        })
+      }
+      return this.$utils.getTxURL.call(this, txHash, matchedPayment.currency)
     },
   },
 }
