@@ -75,7 +75,8 @@ export default {
     link.click()
     document.body.removeChild(link)
   },
-  async connectToWallet(wallet, addressfunc) {
+  async connectToWallet(wallet, addressfunc, updateAddress) {
+    await updateAddress(addressfunc())
     this.loading = true
     const chainid = await this.web3.eth.getChainId()
     if (chainid !== this.method.chain_id)
