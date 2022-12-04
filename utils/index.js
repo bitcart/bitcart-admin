@@ -76,7 +76,6 @@ export default {
     document.body.removeChild(link)
   },
   async connectToWallet(wallet, addressfunc, updateAddress) {
-    await updateAddress(addressfunc())
     this.loading = true
     const chainid = await this.web3.eth.getChainId()
     if (chainid !== this.method.chain_id)
@@ -119,6 +118,7 @@ export default {
     if (balance.lt(requiredAmount)) this.insufficientBalance = true
     else {
       this.showMessage(true, `Connected to ${wallet}!`)
+      await updateAddress(addressfunc())
       await this.$utils.payWithMetamask.call(this, addressfunc)
     }
   },
