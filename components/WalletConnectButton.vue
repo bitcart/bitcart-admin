@@ -33,6 +33,10 @@ export default {
       type: Object,
       required: true,
     },
+    updateAddress: {
+      type: Function,
+      required: true,
+    },
     method: {
       type: Object,
       required: true,
@@ -101,7 +105,8 @@ export default {
       await this.$utils.connectToWallet.call(
         this,
         "walletconnect",
-        () => this.address
+        () => this.address,
+        this.updateAddress
       )
     },
   },

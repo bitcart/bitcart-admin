@@ -29,6 +29,10 @@ export default {
       type: Object,
       required: true,
     },
+    updateAddress: {
+      type: Function,
+      required: true,
+    },
     method: {
       type: Object,
       required: true,
@@ -77,7 +81,8 @@ export default {
         await this.$utils.connectToWallet.call(
           this,
           "metamask",
-          () => window.ethereum.selectedAddress
+          () => window.ethereum.selectedAddress,
+          this.updateAddress
         )
       } else {
         window.location.href = "https://metamask.io/download"

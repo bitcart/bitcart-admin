@@ -122,11 +122,70 @@
         </v-list-item>
         <v-divider />
         <v-list-item v-if="!needEmail && !needAddress" class="ma-0 pa-0">
+          <v-list-item
+            v-if="
+              checkoutPage &&
+              (isEthPaymentMethod || itemv.currency === 'trx') &&
+              !itemv.user_address
+            "
+            class="ma-0 pa-0"
+          >
+            <v-list-item-content class="ma-0 pa-0">
+              <v-form
+                ref="paymentSelectionForm"
+                @submit.prevent="updatePaymentDetails()"
+              >
+                <v-card flat>
+                  <v-card-text>
+                    <p class="d-flex justify-center text-h5">
+                      Choose the way to pay
+                    </p>
+                    <p class="d-flex justify-center">
+                      Enter the address you will send from
+                    </p>
+                    <v-text-field
+                      v-model="inputPaymentAddress"
+                      label="Your address"
+                      :error-messages="paymentAddressErrors"
+                      :rules="[rules.required]"
+                    />
+                  </v-card-text>
+                  <v-container>
+                    <v-row justify="center" class="py-1">
+                      <v-btn
+                        color="primary"
+                        type="submit"
+                        :loading="addressUpdating"
+                        >Continue with address</v-btn
+                      >
+                    </v-row>
+                    <v-row justify="center" class="py-1">
+                      <metamask-button
+                        v-if="$device.isDesktop && isEthPaymentMethod"
+                        :abi="abiCache"
+                        :update-address="updatePaymentDetails"
+                        :method="itemv"
+                      />
+                    </v-row>
+                    <v-row justify="center" class="py-1">
+                      <wallet-connect-button
+                        v-if="$device.isDesktop && isEthPaymentMethod"
+                        :method="itemv"
+                        :update-address="updatePaymentDetails"
+                        :abi="abiCache"
+                      />
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-form>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item-content class="ma-0 pa-0">
             <v-card class="ma-0 pa-0">
               <v-card-text class="ma-0 pa-0">
                 <v-container class="ma-0 pa-0">
                   <v-tabs
+                    ref="tabs"
                     v-model="selectedAction"
                     centered
                     grow
@@ -162,6 +221,7 @@
                           <metamask-button
                             v-if="$device.isDesktop && isEthPaymentMethod"
                             :abi="abiCache"
+                            :update-address="updatePaymentDetails"
                             :method="itemv"
                           />
                         </v-row>
@@ -169,6 +229,7 @@
                           <wallet-connect-button
                             v-if="$device.isDesktop && isEthPaymentMethod"
                             :method="itemv"
+                            :update-address="updatePaymentDetails"
                             :abi="abiCache"
                           />
                           <v-btn v-else color="primary" :href="paymentURL"
@@ -177,12 +238,6 @@
                         </v-row>
                         <v-row v-if="showRecommendedFee" justify="center">
                           Recommended fee: {{ itemv.recommended_fee }} sat/byte
-                        </v-row>
-                        <v-row
-                          v-if="isEthPaymentMethod || itemv.currency === 'trx'"
-                          justify="center"
-                        >
-                          Please send the exact amount specified!
                         </v-row>
                         <v-row v-if="itemv.hint" justify="center">
                           {{ itemv.hint }}
@@ -361,6 +416,9 @@ export default {
       inputEmail: "",
       inputAddress: "",
       inputNotes: "",
+      inputPaymentAddress: "",
+      addressUpdating: false,
+      paymentAddressErrors: [],
       rules: this.$utils.rules,
       emailUpdating: false,
       additionalUpdating: false,
@@ -446,6 +504,8 @@ export default {
     selectedCurrency(val) {
       this.selectedAction = null
       this.selectedToCopy = null
+      this.inputPaymentAddress = ""
+      this.paymentAddressErrors = []
       this.fetchTokenABI()
     },
   },
@@ -529,6 +589,33 @@ export default {
             notes: this.inputNotes,
             shipping_address: this.inputAddress,
           })
+        })
+    },
+    updatePaymentDetails(address) {
+      if (typeof address === "undefined") {
+        if (!this.$refs.paymentSelectionForm.validate()) return
+        address = this.inputPaymentAddress
+      }
+      this.addressUpdating = true
+      this.$axios
+        .patch(`/invoices/${this.invoice.id}/details`, {
+          id: this.itemv.id,
+          address,
+        })
+        .then((r) => {
+          this.addressUpdating = false
+          this.paymentAddressErrors = []
+          const payments = this.invoice.payments
+          payments[this.selectedCurrency].user_address = address
+          this.$emit("update:invoice", { ...this.invoice, payments })
+          // NOTE: a nasty hack to fix vuetify tabs not detecting movements
+          setTimeout(() => this.$refs.tabs.onResize(), 100)
+        })
+        .catch((err) => {
+          this.addressUpdating = false
+          if (err.response && err.response.data.detail === "Invalid address") {
+            this.paymentAddressErrors = ["Invalid address"]
+          }
         })
     },
     getAmountClass(textLen) {
