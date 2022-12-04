@@ -123,7 +123,11 @@
         <v-divider />
         <v-list-item v-if="!needEmail && !needAddress" class="ma-0 pa-0">
           <v-list-item
-            v-if="checkoutPage && isEthPaymentMethod && !itemv.user_address"
+            v-if="
+              checkoutPage &&
+              (isEthPaymentMethod || itemv.currency === 'trx') &&
+              !itemv.user_address
+            "
             class="ma-0 pa-0"
           >
             <v-list-item-content class="ma-0 pa-0">
@@ -170,9 +174,6 @@
                         :update-address="updatePaymentDetails"
                         :abi="abiCache"
                       />
-                      <v-btn v-else color="primary" :href="paymentURL"
-                        >Open in wallet</v-btn
-                      >
                     </v-row>
                   </v-container>
                 </v-card>
