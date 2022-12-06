@@ -143,6 +143,29 @@
                     <p class="d-flex justify-center">
                       Enter the address you will send from
                     </p>
+                    <v-tooltip bottom class="ma-0 pa-0">
+                      <template #activator="{ on, attrs }">
+                        <p
+                          class="d-flex justify-center blue--text text-decoration-underline"
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Why are we asking for your wallet address?
+                        </p>
+                      </template>
+                      <p class="ma-0 pa-0">
+                        Because we want to guarantee a smooth refund process in
+                        case you want to get your money back. <br />
+                        We do not accept money from binance and other exchanges,
+                        so you need to send your funds to your own wallet
+                        first.<br />
+                        Asking for your wallet address helps to prevent careless
+                        users sending us money from exchanges which often
+                        results in failed expired payments. <br />
+                        Only funds sent from the specified wallet address will
+                        be taken into account for your invoice.
+                      </p>
+                    </v-tooltip>
                     <v-text-field
                       v-model="inputPaymentAddress"
                       label="Your address"
