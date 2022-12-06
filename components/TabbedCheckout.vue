@@ -146,8 +146,9 @@
                     <v-tooltip bottom class="ma-0 pa-0">
                       <template #activator="{ on, attrs }">
                         <p
-                          class="d-flex justify-center blue--text text-decoration-underline"
+                          class="d-flex justify-center blue--text"
                           v-bind="attrs"
+                          style="text-decoration: dashed underline !important"
                           v-on="on"
                         >
                           Why are we asking for your wallet address?
@@ -156,7 +157,7 @@
                       <p class="ma-0 pa-0">
                         Because we want to guarantee a smooth refund process in
                         case you want to get your money back. <br />
-                        We do not accept money from binance and other exchanges,
+                        We do not accept money from Binance and other exchanges,
                         so you need to send your funds to your own wallet
                         first.<br />
                         Asking for your wallet address helps to prevent careless
