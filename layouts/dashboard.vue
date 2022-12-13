@@ -7,6 +7,14 @@
       <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
         <InfoCard :texts="card.texts" :link="card.link" />
       </v-col>
+      <v-col
+        v-for="(component, index) in extenededComponents"
+        :key="index"
+        md="3"
+        cols="12"
+      >
+        <component :is="component.component" v-bind="component.props" />
+      </v-col>
     </v-row>
     <slot />
   </Default>
@@ -131,6 +139,9 @@ export default {
     }
   },
   computed: {
+    extenededComponents() {
+      return this.$getExtendSlot("INFO_CARD")
+    },
     walletTexts() {
       const fetchBalanceText = this.$auth.user
         ? this.$auth.user.settings.fetch_balance
