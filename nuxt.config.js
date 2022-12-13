@@ -1,3 +1,5 @@
+import modulesConfig from "./modules.config.js"
+
 export default {
   /*
    ** Headers of the page
@@ -55,6 +57,8 @@ export default {
     "@nuxtjs/vuetify",
     "@nuxtjs/pwa",
     "@nuxtjs/device",
+    "@ergonode/vuems",
+    "@nuxtjs/router",
   ],
   /*
    ** Runtime config
@@ -89,6 +93,16 @@ export default {
   router: {
     middleware: ["onion", "auth"],
     base: process.env.BITCART_ADMIN_ROOTPATH || "/",
+  },
+  modulesDir: ["node_modules", "modules"],
+  vuems: {
+    required: [],
+    modules: modulesConfig,
+    vuex: true,
+    isDev: process.env.NODE_ENV !== "production",
+  },
+  routerModule: {
+    keepDefaultRouter: true,
   },
   auth: {
     localStorage: false,
