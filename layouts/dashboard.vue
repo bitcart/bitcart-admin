@@ -1,20 +1,29 @@
 <template>
   <Default>
     <v-row>
-      <v-col md="3" cols="12">
-        <info-card link="/wallets" :texts="walletTexts" />
-      </v-col>
-      <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
-        <InfoCard :texts="card.texts" :link="card.link" />
-      </v-col>
-      <v-col
-        v-for="(component, index) in extenededComponents"
-        :key="index"
-        md="3"
-        cols="12"
-      >
-        <component :is="component.component" v-bind="component.props" />
-      </v-col>
+      <template v-for="(component, index) in extendedDashboard">
+        <component
+          :is="component.component"
+          v-bind="component.props"
+          :key="index"
+        />
+      </template>
+      <template v-if="!extendedDashboard.length">
+        <v-col md="3" cols="12">
+          <info-card link="/wallets" :texts="walletTexts" />
+        </v-col>
+        <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
+          <InfoCard :texts="card.texts" :link="card.link" />
+        </v-col>
+        <v-col
+          v-for="(component, index) in extendedComponents"
+          :key="index"
+          md="3"
+          cols="12"
+        >
+          <component :is="component.component" v-bind="component.props" />
+        </v-col>
+      </template>
     </v-row>
     <slot />
   </Default>
@@ -139,8 +148,11 @@ export default {
     }
   },
   computed: {
-    extenededComponents() {
+    extendedComponents() {
       return this.$getExtendSlot("INFO_CARD")
+    },
+    extendedDashboard() {
+      return this.$getExtendSlot("DASHBOARD")
     },
     walletTexts() {
       const fetchBalanceText = this.$auth.user

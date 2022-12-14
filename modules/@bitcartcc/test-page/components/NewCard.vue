@@ -1,29 +1,34 @@
 <template>
-  <InfoCard :texts="card.texts" :link="card.link" />
+  <Bar :data="data" :options="options" />
 </template>
 
 <script>
-import InfoCard from "@/components/InfoCard"
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js"
+import { Bar } from "vue-chartjs"
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+
 export default {
+  name: "App",
   components: {
-    InfoCard,
+    Bar,
   },
   data() {
     return {
-      card: {
-        texts: [
-          {
-            header: "New page",
-            key: "notifications",
-            value: "",
-          },
-          {
-            header: "Total stat:",
-            key: "notifications",
-            value: "stats created",
-          },
-        ],
-        link: "/notifications",
+      data: {
+        labels: ["January", "February", "March"],
+        datasets: [{ data: [40, 20, 12] }],
+      },
+      options: {
+        responsive: true,
       },
     }
   },

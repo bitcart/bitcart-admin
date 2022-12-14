@@ -1,0 +1,9 @@
+{
+  "name": "@bitcartcc/test-page",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "chart.js": "^4.0.1",
+    "vue-chartjs": "^5.0.1"
+  }
+}
