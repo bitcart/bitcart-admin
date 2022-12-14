@@ -1,4 +1,16 @@
+import path from "path"
+import globby from "globby"
 import modulesConfig from "./modules.config.js"
+
+const transpileDeps = globby
+  .sync(["modules/*/package.json", "modules/*/*/package.json"])
+  .map((dir) => {
+    const pkg = require(path.join(__dirname, dir))
+    return Object.keys(pkg.dependencies || {}).concat(
+      Object.keys(pkg.devDependencies || {})
+    )
+  })
+  .flat()
 
 export default {
   /*
@@ -144,6 +156,7 @@ export default {
         config.externals = ["fs"]
       }
     },
+    transpile: transpileDeps,
   },
   serverMiddleware: [
     { path: "/stores/", handler: "~/server-middleware/shopify.js" },
