@@ -46,7 +46,7 @@
                   </v-text-field>
                   <v-textarea
                     v-else-if="header.input === 'textarea'"
-                    :rows="10"
+                    :rows="header.rows || 10"
                     :rules="header.rules"
                     :error-messages="errors[header.text]"
                     :label="header.text"

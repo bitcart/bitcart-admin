@@ -439,7 +439,7 @@
               </v-list-item>
             </UIExtensionSlot>
           </div>
-          <div v-else-if="needAddress" class="payment-box pt-10">
+          <div v-else-if="needAddress" class="payment-box pt-2 address-form">
             <UIExtensionSlot
               name="checkout_address_form"
               :update-additional="updateAdditional"
@@ -465,12 +465,19 @@
                           Please provide your shipping address below. You may
                           leave additional notes regarding your order.
                         </p>
-                        <v-text-field
+                        <v-textarea
                           v-model="inputAddress"
                           label="Shipping address"
                           :rules="[rules.required]"
+                          :rows="3"
+                          no-resize
                         />
-                        <v-text-field v-model="inputNotes" label="Notes" />
+                        <v-textarea
+                          v-model="inputNotes"
+                          label="Notes"
+                          :rows="3"
+                          no-resize
+                        />
                       </v-card-text>
                       <v-card-actions class="d-flex justify-center">
                         <v-btn
@@ -761,6 +768,11 @@ export default {
 </script>
 
 <style scoped>
+.address-form,
+.v-tabs-items.payment-box .v-window-item {
+  height: 450px !important;
+  overflow-y: auto;
+}
 .payment-box,
 .v-tabs-items.payment-box .v-window-item {
   height: 400px;

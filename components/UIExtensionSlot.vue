@@ -25,7 +25,7 @@ export default {
     },
   },
   render(h) {
-    if (this.$utils.isEmpty(this.actualProps)) {
+    if (this.$utils.isEmpty(this.actualProps) || !this.actualProps.map) {
       return h("div", { style: "display:contents" }, this.$slots.default)
     }
     let defaults = { style: "display:contents" }
