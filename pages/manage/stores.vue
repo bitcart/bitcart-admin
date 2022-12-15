@@ -22,16 +22,16 @@ export default {
   data() {
     return {
       policies: {},
-      descriptions: Object.assign(
-        {},
+      descriptions: this.$utils.getExtendSetting.call(
+        this,
+        "store_policy_descriptions",
         {
           pos_id: { title: "ID of the store to enable on POS", type: "string" },
           email_required: {
             title: "Require email on POS checkout",
             type: "checkbox",
           },
-        },
-        this.$store.state.dictionaries.store_policy_descriptions || {}
+        }
       ),
     }
   },

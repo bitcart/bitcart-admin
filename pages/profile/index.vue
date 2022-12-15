@@ -23,23 +23,21 @@ export default {
   data() {
     return {
       policyURL: "/users/me/settings",
-      titles: Object.assign(
-        {},
+      titles: this.$utils.getExtendSetting.call(
+        this,
+        "user_policy_descriptions",
         {
           balance_currency: "Currency used for balance stats",
           fetch_balance: "Fetch and display total balance in admin panel",
-        },
-        this.$store.state.dictionaries.user_policy_descriptions || {}
+        }
       ),
-      types: Object.assign(
-        {},
-        { balance_currency: "autocomplete" },
-        this.$store.state.dictionaries.user_policy_types || {}
-      ),
-      autocomplete_urls: Object.assign(
-        {},
-        { balance_currency: "cryptos/fiatlist" },
-        this.$store.state.dictionaries.user_policy_autocomplete_urls || {}
+      types: this.$utils.getExtendSetting.call(this, "user_policy_types", {
+        balance_currency: "autocomplete",
+      }),
+      autocomplete_urls: this.$utils.getExtendSetting.call(
+        this,
+        "user_policy_autocomplete_urls",
+        { balance_currency: "cryptos/fiatlist" }
       ),
     }
   },

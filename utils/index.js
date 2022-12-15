@@ -182,4 +182,9 @@ export default {
     if (!explorerURL) return
     return explorerURL.replace(/{}/g, txHash)
   },
+  getExtendSetting(name, defaults) {
+    const extended = this.$store.state.dictionaries[name]
+    if (Array.isArray(defaults)) return [...defaults, ...(extended || [])]
+    else return Object.assign({}, defaults, extended || {})
+  },
 }

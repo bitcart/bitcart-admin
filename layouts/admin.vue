@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       drawer: true,
-      items: [
+      items: this.$utils.getExtendSetting.call(this, "server_management_nav", [
         { text: "User management", to: "/manage" },
         { text: "Server logs", to: "/manage/logs" },
         { text: "Maintenance commands", to: "/manage/maintenance" },
@@ -25,8 +25,7 @@ export default {
         { text: "Policies", to: "/manage/policies" },
         { text: "Store Policies", to: "/manage/stores" },
         { text: "Daemons management", to: "/manage/daemons" },
-        ...(this.$store.state.dictionaries.server_management_nav || []),
-      ],
+      ]),
     }
   },
 }

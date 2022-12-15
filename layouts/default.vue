@@ -237,29 +237,33 @@ export default {
   computed: {
     ...mapGetters(["onionURL", "showSnow", "syncInfo"]),
     availableItems() {
-      const result = this.$auth.loggedIn
-        ? this.items
-        : this.guestItems.filter(
-            (x) =>
-              !x.configurator ||
-              (x.configurator &&
-                this.$store.state.policies.allow_anonymous_configurator)
-          )
-      return [...result, ...(this.$store.state.dictionaries.nav_items || [])]
+      return this.$utils.getExtendSetting.call(
+        this,
+        "nav_items",
+        this.$auth.loggedIn
+          ? this.items
+          : this.guestItems.filter(
+              (x) =>
+                !x.configurator ||
+                (x.configurator &&
+                  this.$store.state.policies.allow_anonymous_configurator)
+            )
+      )
     },
     unsyncedInfo() {
       return this.syncInfo.filter((x) => !x.synchronized)
     },
     availableProfileItems() {
-      const result = this.$auth.loggedIn
-        ? this.profileItems.filter(
-            (x) => !x.superuser || (x.superuser && this.$auth.user.is_superuser)
-          )
-        : this.guestProfileItems
-      return [
-        ...result,
-        ...(this.$store.state.dictionaries.profile_items || []),
-      ]
+      return this.$utils.getExtendSetting.call(
+        this,
+        "profile_items",
+        this.$auth.loggedIn
+          ? this.profileItems.filter(
+              (x) =>
+                !x.superuser || (x.superuser && this.$auth.user.is_superuser)
+            )
+          : this.guestProfileItems
+      )
     },
     logoStyle() {
       return this.$vuetify.theme.dark ? "filter: invert(1)" : ""

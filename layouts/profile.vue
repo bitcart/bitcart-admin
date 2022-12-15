@@ -16,11 +16,10 @@ export default {
   },
   data() {
     return {
-      items: [
+      items: this.$utils.getExtendSetting.call(this, "profile_nav", [
         { text: "Profile", to: "/profile" },
         { text: "API Keys", to: "/profile/access" },
-        ...(this.$store.state.dictionaries.profile_nav || []),
-      ],
+      ]),
     }
   },
 }
