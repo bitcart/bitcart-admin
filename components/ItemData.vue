@@ -109,8 +109,13 @@
                 v-if="`item.${header.value}` in $scopedSlots"
                 :name="`item.${header.value}`"
                 v-bind="{ item }"
-              /><template v-else>{{ item[header.value] }}</template></span
-            >
+              />
+              <div
+                v-else
+                style="white-space: pre-wrap"
+                v-text="item[header.value]"
+              />
+            </span>
           </p>
         </div>
       </template>

@@ -16,9 +16,11 @@
   },
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.1",
+    "@ergonode/vuems": "^1.1.0",
     "@hcaptcha/vue-hcaptcha": "^0.3.2",
     "@nuxtjs/auth": "^4.9.0",
     "@nuxtjs/axios": "^5.12.5",
+    "@nuxtjs/router": "^1.7.0",
     "express": "^4.18.1",
     "nuxt-start": "^2.15.1",
     "socks-proxy-agent": "^7.0.0"

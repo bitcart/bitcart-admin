@@ -1,12 +1,23 @@
 <template>
   <Default>
     <v-row>
-      <v-col md="3" cols="12">
-        <info-card link="/wallets" :texts="walletTexts" />
-      </v-col>
-      <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
-        <InfoCard :texts="card.texts" :link="card.link" />
-      </v-col>
+      <UIExtensionSlot
+        name="dashboard"
+        :cards="cards"
+        :wallet-texts="walletTexts"
+      >
+        <v-col md="3" cols="12">
+          <info-card link="/wallets" :texts="walletTexts" />
+        </v-col>
+        <v-col v-for="card in cards" :key="card.id" md="3" cols="12">
+          <InfoCard :texts="card.texts" :link="card.link" />
+        </v-col>
+        <UIExtensionSlot
+          name="info_card"
+          component="v-col"
+          class="col-md-3 col-12"
+        />
+      </UIExtensionSlot>
     </v-row>
     <slot />
   </Default>
@@ -14,10 +25,12 @@
 <script>
 import Default from "@/layouts/default"
 import InfoCard from "@/components/InfoCard"
+import UIExtensionSlot from "@/components/UIExtensionSlot"
 export default {
   components: {
     Default,
     InfoCard,
+    UIExtensionSlot,
   },
   data() {
     return {

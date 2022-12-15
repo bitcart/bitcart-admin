@@ -23,12 +23,22 @@ export default {
   data() {
     return {
       policyURL: "/users/me/settings",
-      titles: {
-        balance_currency: "Currency used for balance stats",
-        fetch_balance: "Fetch and display total balance in admin panel",
-      },
-      types: { balance_currency: "autocomplete" },
-      autocomplete_urls: { balance_currency: "cryptos/fiatlist" },
+      titles: this.$utils.getExtendSetting.call(
+        this,
+        "user_policy_descriptions",
+        {
+          balance_currency: "Currency used for balance stats",
+          fetch_balance: "Fetch and display total balance in admin panel",
+        }
+      ),
+      types: this.$utils.getExtendSetting.call(this, "user_policy_types", {
+        balance_currency: "autocomplete",
+      }),
+      autocomplete_urls: this.$utils.getExtendSetting.call(
+        this,
+        "user_policy_autocomplete_urls",
+        { balance_currency: "cryptos/fiatlist" }
+      ),
     }
   },
   methods: {

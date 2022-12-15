@@ -1,3 +1,4 @@
+!modules/.gitkeep
 *.log
 *.pid
 *.pid.lock
@@ -26,6 +27,7 @@ dist
 jspm_packages/
 lib-cov
 logs
+modules/*
 node_modules/
 npm-debug.log*
 pids

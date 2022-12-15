@@ -22,41 +22,46 @@ export default {
   middleware: "superuserOnly",
   data() {
     return {
-      commands: [
-        {
-          title: "Update the server",
-          details:
-            "Updating your BitcartCC instance will make it unavailable for some time. When clicked, page won't automatically reload on successful update.",
-          btnText: "Start update process",
-          what: "update",
-        },
-        {
-          title: "Restart the server",
-          details:
-            "Restarting your BitcartCC instance will make it unavailable for some time. It might fix some issues you are experiencing",
-          btnText: "Start restart process",
-          what: "restart",
-        },
-        {
-          title: "Cleanup the server",
-          details:
-            "Free up server disk space by deleting unused docker images and logs of BitcartCC",
-          btnText: "Start cleanup process",
-          what: "cleanup",
-        },
-        {
-          title: "Cleanup unused images",
-          details: "Free up server disk space by deleting unused docker images",
-          btnText: "Start cleanup process",
-          what: "cleanup/images",
-        },
-        {
-          title: "Cleanup logs",
-          details: "Free up server disk space by deleting logs of BitcartCC",
-          btnText: "Start cleanup process",
-          what: "cleanup/logs",
-        },
-      ],
+      commands: this.$utils.getExtendSetting.call(
+        this,
+        "maintenance_commands",
+        [
+          {
+            title: "Update the server",
+            details:
+              "Updating your BitcartCC instance will make it unavailable for some time. When clicked, page won't automatically reload on successful update.",
+            btnText: "Start update process",
+            what: "update",
+          },
+          {
+            title: "Restart the server",
+            details:
+              "Restarting your BitcartCC instance will make it unavailable for some time. It might fix some issues you are experiencing",
+            btnText: "Start restart process",
+            what: "restart",
+          },
+          {
+            title: "Cleanup the server",
+            details:
+              "Free up server disk space by deleting unused docker images and logs of BitcartCC",
+            btnText: "Start cleanup process",
+            what: "cleanup",
+          },
+          {
+            title: "Cleanup unused images",
+            details:
+              "Free up server disk space by deleting unused docker images",
+            btnText: "Start cleanup process",
+            what: "cleanup/images",
+          },
+          {
+            title: "Cleanup logs",
+            details: "Free up server disk space by deleting logs of BitcartCC",
+            btnText: "Start cleanup process",
+            what: "cleanup/logs",
+          },
+        ]
+      ),
     }
   },
 }

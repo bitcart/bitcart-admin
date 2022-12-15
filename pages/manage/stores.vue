@@ -22,13 +22,17 @@ export default {
   data() {
     return {
       policies: {},
-      descriptions: {
-        pos_id: { title: "ID of the store to enable on POS", type: "string" },
-        email_required: {
-          title: "Require email on POS checkout",
-          type: "checkbox",
-        },
-      },
+      descriptions: this.$utils.getExtendSetting.call(
+        this,
+        "store_policy_descriptions",
+        {
+          pos_id: { title: "ID of the store to enable on POS", type: "string" },
+          email_required: {
+            title: "Require email on POS checkout",
+            type: "checkbox",
+          },
+        }
+      ),
     }
   },
   beforeMount() {

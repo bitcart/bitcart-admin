@@ -34,7 +34,10 @@ export default {
     }
   },
   isEmpty(obj) {
-    return Object.entries(obj).length === 0 && obj.constructor === Object
+    return (
+      obj.length === 0 ||
+      (Object.entries(obj).length === 0 && obj.constructor === Object)
+    )
   },
   rules: {
     required: (v) => !isNull(v) || "Required.",
@@ -178,5 +181,10 @@ export default {
     const explorerURL = this.$store.state.policies.explorer_urls[currency]
     if (!explorerURL) return
     return explorerURL.replace(/{}/g, txHash)
+  },
+  getExtendSetting(name, defaults) {
+    const extended = this.$store.state.dictionaries[name]
+    if (Array.isArray(defaults)) return [...defaults, ...(extended || [])]
+    else return Object.assign({}, defaults, extended || {})
   },
 }

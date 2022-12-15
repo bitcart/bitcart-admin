@@ -1,3 +1,32 @@
+import path from "path"
+import globby from "globby"
+
+const packages = globby
+  .sync(["modules/*/package.json", "modules/*/*/package.json"])
+  .map((dir) => {
+    return dir.replace("modules/", "").replace("/package.json", "")
+  })
+
+const transpileDeps = [
+  ...new Set(
+    packages
+      .map((name) => {
+        const pkg = require(path.join(
+          __dirname,
+          "modules",
+          name,
+          "package.json"
+        ))
+        return Object.keys(pkg.dependencies || {}).concat(
+          Object.keys(pkg.devDependencies || {})
+        )
+      })
+      .flat()
+  ),
+]
+console.log("Modules", packages)
+console.log("Transpiling dependencies", transpileDeps)
+
 export default {
   /*
    ** Headers of the page
@@ -55,6 +84,8 @@ export default {
     "@nuxtjs/vuetify",
     "@nuxtjs/pwa",
     "@nuxtjs/device",
+    "@ergonode/vuems",
+    "@nuxtjs/router",
   ],
   /*
    ** Runtime config
@@ -89,6 +120,16 @@ export default {
   router: {
     middleware: ["onion", "auth"],
     base: process.env.BITCART_ADMIN_ROOTPATH || "/",
+  },
+  modulesDir: ["node_modules", "modules"],
+  vuems: {
+    required: [],
+    modules: { local: packages },
+    vuex: true,
+    isDev: process.env.NODE_ENV !== "production",
+  },
+  routerModule: {
+    keepDefaultRouter: true,
   },
   auth: {
     localStorage: false,
@@ -130,6 +171,7 @@ export default {
         config.externals = ["fs"]
       }
     },
+    transpile: transpileDeps,
   },
   serverMiddleware: [
     { path: "/stores/", handler: "~/server-middleware/shopify.js" },

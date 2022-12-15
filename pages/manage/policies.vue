@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       policies: {},
-      titles: {
+      titles: this.$utils.getExtendSetting.call(this, "policy_descriptions", {
         disable_registration: "Disable user registration",
         discourage_index: "Discourage search engines from indexing this site",
         check_updates: "Check for updates once a day",
@@ -33,17 +33,17 @@ export default {
         enable_captcha: "Enable captcha on login page",
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
-      },
-      types: {
+      }),
+      types: this.$utils.getExtendSetting.call(this, "policy_types", {
         captcha_sitekey: "string",
         captcha_secretkey: "string",
         explorer_urls: "exploreredit",
         rpc_urls: "exploreredit",
-      },
-      urls: {
+      }),
+      urls: this.$utils.getExtendSetting.call(this, "policy_urls", {
         explorer_urls: "/cryptos/explorer",
         rpc_urls: "/cryptos/rpc",
-      },
+      }),
     }
   },
   beforeMount() {
