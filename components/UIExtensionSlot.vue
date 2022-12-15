@@ -24,10 +24,17 @@ export default {
     },
   },
   render(h) {
+    if (this.$utils.isEmpty(this.actualProps)) {
+      return h("div", { style: "display:contents" }, this.$slots.default)
+    }
     return h(
       this.component,
       this.$attrs,
-      this.actualProps.map((props) => h(props.component, props.props, []))
+      this.actualProps.map((props) => {
+        return props.component
+          ? h(props.component, props.props, [])
+          : h(props, {}, [])
+      })
     )
   },
 }

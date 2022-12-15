@@ -34,7 +34,10 @@ export default {
     }
   },
   isEmpty(obj) {
-    return Object.entries(obj).length === 0 && obj.constructor === Object
+    return (
+      obj.length === 0 ||
+      (Object.entries(obj).length === 0 && obj.constructor === Object)
+    )
   },
   rules: {
     required: (v) => !isNull(v) || "Required.",

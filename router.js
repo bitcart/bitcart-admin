@@ -1,11 +1,7 @@
 import Vue from "vue"
 import Router from "vue-router"
 
-import {
-  extendRoutes,
-  scrollBehavior,
-  setLocalMiddlewares,
-} from "~/.nuxt/routerHelper.modules"
+import { extendRoutes, setLocalMiddlewares } from "~/.nuxt/routerHelper.modules"
 
 Vue.use(Router)
 
@@ -20,7 +16,6 @@ export function createRouter(
     routerOptions || createDefaultRouter(ssrContext, config).options
   const router = new Router({
     ...options,
-    scrollBehavior,
     routes: [...options.routes, ...extendRoutes()],
   })
   router.beforeEach((to, from, next) =>

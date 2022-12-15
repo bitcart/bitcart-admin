@@ -1,8 +1,7 @@
 <template>
   <Default>
     <v-row>
-      <UIExtensionSlot :props="extendedDashboard" />
-      <template v-if="!extendedDashboard.length">
+      <UIExtensionSlot name="dashboard">
         <v-col md="3" cols="12">
           <info-card link="/wallets" :texts="walletTexts" />
         </v-col>
@@ -14,7 +13,7 @@
           component="v-col"
           class="col-md-3 col-12"
         />
-      </template>
+      </UIExtensionSlot>
     </v-row>
     <slot />
   </Default>
@@ -141,9 +140,6 @@ export default {
     }
   },
   computed: {
-    extendedDashboard() {
-      return this.$getExtendSlot("dashboard")
-    },
     walletTexts() {
       const fetchBalanceText = this.$auth.user
         ? this.$auth.user.settings.fetch_balance

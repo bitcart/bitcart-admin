@@ -56,6 +56,7 @@ export default {
           btnText: "Start cleanup process",
           what: "cleanup/logs",
         },
+        ...(this.$store.state.dictionaries.maintenance_commands || []),
       ],
     }
   },

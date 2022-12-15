@@ -1,21 +1,28 @@
 <template>
   <v-app dark :style="customStyle">
-    <slot name="header" />
+    <UIExtensionSlot name="base_header">
+      <slot name="header" />
+    </UIExtensionSlot>
     <v-main>
       <div v-if="adminUnconfigured">
         <troubleshooting-guide :title="unconfiguredTitle" />
       </div>
-      <slot v-else />
+      <slot v-if="!adminUnconfigured" />
+      <UIExtensionSlot v-if="!adminUnconfigured" name="app" />
     </v-main>
-    <slot name="footer" />
+    <UIExtensionSlot name="base_footer">
+      <slot name="footer" />
+    </UIExtensionSlot>
   </v-app>
 </template>
 
 <script>
 import TroubleshootingGuide from "@/components/TroubleshootingGuide.vue"
+import UIExtensionSlot from "~/components/UIExtensionSlot.vue"
 export default {
   components: {
     TroubleshootingGuide,
+    UIExtensionSlot,
   },
   data() {
     return {
