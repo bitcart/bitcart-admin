@@ -1,16 +1,31 @@
 import path from "path"
 import globby from "globby"
-import modulesConfig from "./modules.config.js"
 
-const transpileDeps = globby
+const packages = globby
   .sync(["modules/*/package.json", "modules/*/*/package.json"])
   .map((dir) => {
-    const pkg = require(path.join(__dirname, dir))
-    return Object.keys(pkg.dependencies || {}).concat(
-      Object.keys(pkg.devDependencies || {})
-    )
+    return dir.replace("modules/", "").replace("/package.json", "")
   })
-  .flat()
+
+const transpileDeps = [
+  ...new Set(
+    packages
+      .map((name) => {
+        const pkg = require(path.join(
+          __dirname,
+          "modules",
+          name,
+          "package.json"
+        ))
+        return Object.keys(pkg.dependencies || {}).concat(
+          Object.keys(pkg.devDependencies || {})
+        )
+      })
+      .flat()
+  ),
+]
+console.log("Modules", packages)
+console.log("Transpiling dependencies", transpileDeps)
 
 export default {
   /*
@@ -109,7 +124,7 @@ export default {
   modulesDir: ["node_modules", "modules"],
   vuems: {
     required: [],
-    modules: modulesConfig,
+    modules: { local: packages },
     vuex: true,
     isDev: process.env.NODE_ENV !== "production",
   },
