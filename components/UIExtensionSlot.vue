@@ -25,21 +25,22 @@ export default {
     },
   },
   render(h) {
-    console.log(this.$attrs)
     if (this.$utils.isEmpty(this.actualProps)) {
       return h("div", { style: "display:contents" }, this.$slots.default)
     }
-    console.log(this.$attrs)
     let defaults = { style: "display:contents" }
     if (this.component !== "div") defaults = {}
-    console.log(this.component, defaults)
     return h(
       this.component,
       { ...defaults, ...this.$attrs },
       this.actualProps.map((props) => {
         return props.component
-          ? h(props.component, { ...props.props, ...this.$attrs }, [])
-          : h(props, { props: this.$attrs }, [])
+          ? h(
+              props.component,
+              { ...props.props, props: this.$attrs, on: this.$listeners },
+              []
+            )
+          : h(props, { props: this.$attrs, on: this.$listeners }, [])
       })
     )
   },

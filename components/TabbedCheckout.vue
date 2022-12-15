@@ -5,6 +5,8 @@
       :invoice="invoice"
       :store="store"
       :checkout-page="checkoutPage"
+      @closedialog="$emit('closedialog')"
+      @update:invoice="$emit('update:invoice', $event)"
     >
       <close-button
         :show="$vuetify.breakpoint.mobile && !checkoutPage"
@@ -28,6 +30,8 @@
             :expiring-soon="expiringSoon"
             :main-progress-color="mainProgressColor"
             :background-progress-color="backgroundProgressColor"
+            :timer-text="timerText"
+            @closedialog="$emit('closedialog')"
           >
             <v-img contain max-height="40" :src="logoURL" class="mb-2">
               <close-button @closedialog="$emit('closedialog')" />
@@ -64,8 +68,10 @@
           <UIExtensionSlot
             name="checkout_payment_method_selection"
             :invoice="invoice"
+            :itemv="itemv"
             :currency-select-class="currencySelectClass"
             :selected-currency="selectedCurrency"
+            @update:selectedCurrency="selectedCurrency = $event"
           >
             <v-list-item>
               <v-list-item-content>
@@ -159,8 +165,14 @@
               :itemv="itemv"
               :update-payment-details="updatePaymentDetails"
               :address-updating="addressUpdating"
+              :payment-address-errors="paymentAddressErrors"
               :abi-cache="abiCache"
               :invoice="invoice"
+              :store="store"
+              :input-payment-address="inputPaymentAddress"
+              @update:paymentSelectionFormRef="paymentSelectionFormRef = $event"
+              @update:tabsRef="tabsRef = $event"
+              @update:inputPaymentAddress="inputPaymentAddress = $event"
             >
               <v-list-item
                 v-if="
@@ -269,6 +281,9 @@
                         <UIExtensionSlot
                           name="checkout_payment"
                           :itemv="itemv"
+                          :store="store"
+                          :update-payment-details="updatePaymentDetails"
+                          :abi-cache="abiCache"
                           :checkout-page="checkoutPage"
                         >
                           <v-tab-item>
@@ -387,6 +402,9 @@
               name="checkout_email_form"
               :update-email="updateEmail"
               :email-updating="emailUpdating"
+              :input-email="inputEmail"
+              @update:inputEmail="inputEmail = $event"
+              @update:emailFormRef="emailFormRef = $event"
             >
               <v-list-item class="ma-0 pa-0">
                 <v-list-item-content class="ma-0 pa-0">
@@ -426,6 +444,11 @@
               name="checkout_address_form"
               :update-additional="updateAdditional"
               :additional-updating="additionalUpdating"
+              :input-notes="inputNotes"
+              :input-address="inputAddress"
+              @update:inputAddress="inputAddress = $event"
+              @update:inputNotes="inputNotes = $event"
+              @update:additionalFormRef="additionalFormRef = $event"
             >
               <v-list-item class="ma-0 pa-0">
                 <v-list-item-content class="ma-0 pa-0">
@@ -525,6 +548,10 @@ export default {
       emailUpdating: false,
       additionalUpdating: false,
       abiCache: {},
+      paymentSelectionFormRef: null,
+      tabsRef: null,
+      emailFormRef: null,
+      additionalFormRef: null,
     }
   },
   computed: {
@@ -662,7 +689,8 @@ export default {
       this.$router.push({ path: `/i/${id}` })
     },
     updateEmail() {
-      if (!this.$refs.emailForm.validate()) return
+      const ref = this.emailFormRef || this.$refs.emailForm
+      if (!ref.validate()) return
       this.emailUpdating = true
       this.$axios
         .patch(`/invoices/${this.invoice.id}/customer`, {
@@ -677,7 +705,8 @@ export default {
         })
     },
     updateAdditional() {
-      if (!this.$refs.additionalForm.validate()) return
+      const ref = this.additionalFormRef || this.$refs.additionalForm
+      if (!ref.validate()) return
       this.additionalUpdating = true
       this.$axios
         .patch(`/invoices/${this.invoice.id}/customer`, {
@@ -695,7 +724,9 @@ export default {
     },
     updatePaymentDetails(address) {
       if (typeof address === "undefined") {
-        if (!this.$refs.paymentSelectionForm.validate()) return
+        const ref =
+          this.paymentSelectionFormRef || this.$refs.paymentSelectionForm
+        if (!ref.validate()) return
         address = this.inputPaymentAddress
       }
       this.addressUpdating = true
@@ -711,7 +742,8 @@ export default {
           payments[this.selectedCurrency].user_address = address
           this.$emit("update:invoice", { ...this.invoice, payments })
           // NOTE: a nasty hack to fix vuetify tabs not detecting movements
-          setTimeout(() => this.$refs.tabs.onResize(), 100)
+          const ref = this.tabsRef || this.$refs.tabs
+          setTimeout(() => ref.onResize(), 100)
         })
         .catch((err) => {
           this.addressUpdating = false
