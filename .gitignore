@@ -1,3 +1,4 @@
+!modules/.gitkeep
 *.log
 *.pid
 *.pid.lock
