@@ -1,6 +1,11 @@
 <template>
   <v-container v-if="showProp">
-    <UIExtensionSlot name="checkout_page">
+    <UIExtensionSlot
+      name="checkout_page"
+      :invoice="invoice"
+      :store="store"
+      :checkout-page="checkoutPage"
+    >
       <close-button
         :show="$vuetify.breakpoint.mobile && !checkoutPage"
         style="background-color: #ffffff"
@@ -16,7 +21,14 @@
       </v-card>
       <div v-else>
         <div v-if="checkoutPage">
-          <UIExtensionSlot name="checkout_header">
+          <UIExtensionSlot
+            name="checkout_header"
+            :logo-url="logoURL"
+            :expiration-percentage="expirationPercentage"
+            :expiring-soon="expiringSoon"
+            :main-progress-color="mainProgressColor"
+            :background-progress-color="backgroundProgressColor"
+          >
             <v-img contain max-height="40" :src="logoURL" class="mb-2">
               <close-button @closedialog="$emit('closedialog')" />
             </v-img>
@@ -49,7 +61,12 @@
           </UIExtensionSlot>
         </div>
         <v-list class="py-0" dense>
-          <UIExtensionSlot name="checkout_payment_method_selection">
+          <UIExtensionSlot
+            name="checkout_payment_method_selection"
+            :invoice="invoice"
+            :currency-select-class="currencySelectClass"
+            :selected-currency="selectedCurrency"
+          >
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>Pay with</v-list-item-title>
@@ -83,7 +100,12 @@
             </v-list-item>
           </UIExtensionSlot>
           <v-divider />
-          <UIExtensionSlot name="checkout_invoice_details">
+          <UIExtensionSlot
+            name="checkout_invoice_details"
+            :store="store"
+            :itemv="itemv"
+            :invoice="invoice"
+          >
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>{{ store.name }}</v-list-item-title>
@@ -131,7 +153,15 @@
           </UIExtensionSlot>
           <v-divider />
           <v-list-item v-if="!needEmail && !needAddress" class="ma-0 pa-0">
-            <UIExtensionSlot name="checkout_main">
+            <UIExtensionSlot
+              name="checkout_main"
+              :checkout-page="checkoutPage"
+              :itemv="itemv"
+              :update-payment-details="updatePaymentDetails"
+              :address-updating="addressUpdating"
+              :abi-cache="abiCache"
+              :invoice="invoice"
+            >
               <v-list-item
                 v-if="
                   checkoutPage &&
@@ -236,7 +266,11 @@
                         v-model="selectedAction"
                         class="payment-box"
                       >
-                        <UIExtensionSlot name="checkout_payment">
+                        <UIExtensionSlot
+                          name="checkout_payment"
+                          :itemv="itemv"
+                          :checkout-page="checkoutPage"
+                        >
                           <v-tab-item>
                             <v-container fill-height>
                               <v-row align="center" justify="center">
@@ -349,7 +383,11 @@
             </UIExtensionSlot>
           </v-list-item>
           <div v-if="needEmail" class="payment-box pt-10">
-            <UIExtensionSlot name="checkout_email_form">
+            <UIExtensionSlot
+              name="checkout_email_form"
+              :update-email="updateEmail"
+              :email-updating="emailUpdating"
+            >
               <v-list-item class="ma-0 pa-0">
                 <v-list-item-content class="ma-0 pa-0">
                   <v-form ref="emailForm" @submit.prevent="updateEmail">
@@ -384,7 +422,11 @@
             </UIExtensionSlot>
           </div>
           <div v-else-if="needAddress" class="payment-box pt-10">
-            <UIExtensionSlot name="checkout_address_form">
+            <UIExtensionSlot
+              name="checkout_address_form"
+              :update-additional="updateAdditional"
+              :additional-updating="additionalUpdating"
+            >
               <v-list-item class="ma-0 pa-0">
                 <v-list-item-content class="ma-0 pa-0">
                   <v-form

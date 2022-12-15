@@ -1,7 +1,8 @@
 <template>
   <Dashboard>
-    <nav-toolbar :items="items" />
-    <UIExtensionSlot name="server_management_nav" />
+    <UIExtensionSlot name="server_management_nav" :items="items">
+      <nav-toolbar :items="items" />
+    </UIExtensionSlot>
   </Dashboard>
 </template>
 <script>

@@ -1,5 +1,6 @@
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     component: {
       type: String,
@@ -24,16 +25,21 @@ export default {
     },
   },
   render(h) {
+    console.log(this.$attrs)
     if (this.$utils.isEmpty(this.actualProps)) {
       return h("div", { style: "display:contents" }, this.$slots.default)
     }
+    console.log(this.$attrs)
+    let defaults = { style: "display:contents" }
+    if (this.component !== "div") defaults = {}
+    console.log(this.component, defaults)
     return h(
       this.component,
-      this.$attrs,
+      { ...defaults, ...this.$attrs },
       this.actualProps.map((props) => {
         return props.component
-          ? h(props.component, props.props, [])
-          : h(props, {}, [])
+          ? h(props.component, { ...props.props, ...this.$attrs }, [])
+          : h(props, { props: this.$attrs }, [])
       })
     )
   },

@@ -1,8 +1,16 @@
 <template>
   <BaseLayout>
     <template #header>
-      <UIExtensionSlot name="header">
-        <UIExtensionSlot name="mobile_nav">
+      <UIExtensionSlot
+        name="header"
+        :items="availableItems"
+        :profile-items="availableProfileItems"
+      >
+        <UIExtensionSlot
+          name="mobile_nav"
+          :drawer="drawer"
+          :items="availableItems"
+        >
           <v-navigation-drawer
             v-model="drawer"
             app
@@ -13,7 +21,13 @@
             <NavToolbarMobile :items="availableItems" />
           </v-navigation-drawer>
         </UIExtensionSlot>
-        <UIExtensionSlot name="app_bar">
+        <UIExtensionSlot
+          :drawer="drawer"
+          :profile-items="availableProfileItems"
+          :onion-url="onionURL"
+          :logo-style="logoStyle"
+          name="app_bar"
+        >
           <v-app-bar fixed app>
             <v-app-bar-nav-icon
               class="mb-3 hidden-md-and-up"
@@ -70,7 +84,7 @@
     </template>
     <template #default>
       <v-container>
-        <UIExtensionSlot name="toolbar">
+        <UIExtensionSlot name="toolbar" :items="availableItems">
           <Toolbar :items="availableItems" class="mb-3 hidden-sm-and-down" />
         </UIExtensionSlot>
         <slot />

@@ -1,10 +1,11 @@
+import Dashboard from "@TestPage/components/Dashboard"
 import ExtendNav from "@TestPage/components/ExtendNav"
 import NewCard from "@TestPage/components/NewCard"
 
 export default {
   extendComponents: {
     info_card: [NewCard],
-    dashboard: [NewCard],
+    dashboard: [Dashboard],
     checkout_payment: [NewCard],
     server_management_nav: [ExtendNav],
     profile_nav: [ExtendNav],

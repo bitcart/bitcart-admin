@@ -1,7 +1,11 @@
 <template>
   <Default>
     <v-row>
-      <UIExtensionSlot name="dashboard">
+      <UIExtensionSlot
+        name="dashboard"
+        :cards="cards"
+        :wallet-texts="walletTexts"
+      >
         <v-col md="3" cols="12">
           <info-card link="/wallets" :texts="walletTexts" />
         </v-col>
