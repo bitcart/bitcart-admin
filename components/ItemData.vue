@@ -112,7 +112,7 @@
               />
               <div
                 v-else
-                style="white-space: pre-wrap"
+                style="white-space: pre"
                 v-text="item[header.value]"
               />
             </span>
