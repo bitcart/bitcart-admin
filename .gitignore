@@ -1,5 +1,3 @@
-!modules/.gitkeep
-!modules/@bitcartcc/
 *.log
 *.pid
 *.pid.lock
@@ -29,6 +27,8 @@ jspm_packages/
 lib-cov
 logs
 modules/*
+!modules/.gitkeep
+!modules/@bitcartcc/
 node_modules/
 npm-debug.log*
 pids
