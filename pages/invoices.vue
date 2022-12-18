@@ -80,6 +80,7 @@
 <script>
 import ItemData from "@/components/ItemData.vue"
 import SearchFilters from "@/components/SearchFilters.vue"
+import JSONField from "@/components/JSONField.vue"
 export default {
   components: {
     ItemData,
@@ -167,6 +168,13 @@ export default {
           input: "tabbed",
           mode: "display",
           sortable: false,
+        },
+        {
+          text: "Metadata",
+          value: "metadata",
+          input: "metadata",
+          expand: true,
+          component: JSONField,
         },
         { text: "Actions", value: "action", sortable: false },
       ],

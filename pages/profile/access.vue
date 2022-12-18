@@ -29,6 +29,7 @@
 <script>
 import ItemData from "@/components/ItemData"
 import PermissionSet from "@/components/PermissionSet"
+import JSONField from "@/components/JSONField"
 export default {
   components: {
     ItemData,
@@ -51,6 +52,13 @@ export default {
           sortable: false,
         },
         { text: "Created date", value: "created", mode: "display" },
+        {
+          text: "Metadata",
+          value: "metadata",
+          input: "metadata",
+          expand: true,
+          component: JSONField,
+        },
         { text: "Actions", value: "action", sortable: false },
       ],
       url: "token",

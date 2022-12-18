@@ -18,6 +18,7 @@
 <script>
 import ItemData from "@/components/ItemData.vue"
 import TemplateEdit from "@/components/TemplateEdit.vue"
+import JSONField from "@/components/JSONField.vue"
 export default {
   components: {
     ItemData,
@@ -59,6 +60,13 @@ export default {
           expand: true,
         },
         { text: "Image", value: "image", input: "image" },
+        {
+          text: "Metadata",
+          value: "metadata",
+          input: "metadata",
+          expand: true,
+          component: JSONField,
+        },
         { text: "Actions", value: "action", sortable: false },
       ],
       actions: [

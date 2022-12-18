@@ -79,6 +79,13 @@ export default {
           mode: "display",
         },
         { text: "Created date", value: "created", mode: "display" },
+        {
+          text: "Metadata",
+          value: "metadata",
+          input: "metadata",
+          expand: true,
+          component: JSONField,
+        },
         { text: "Actions", value: "action", sortable: false },
       ],
       actions: [

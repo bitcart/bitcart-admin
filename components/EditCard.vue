@@ -19,7 +19,11 @@
             <v-container>
               <v-row>
                 <component
-                  :is="header.input !== 'dynamic' ? 'v-col' : 'v-container'"
+                  :is="
+                    header.input !== 'dynamic' && header.input !== 'metadata'
+                      ? 'v-col'
+                      : 'v-container'
+                  "
                   v-for="header in dialogData"
                   :key="header.value"
                   :cols="['image', 'textarea'].includes(header.input) ? 12 : 6"
@@ -74,6 +78,20 @@
                               ? [rules.required]
                               : []
                           "
+                        />
+                      </v-col>
+                    </v-row>
+                  </template>
+                  <template v-else-if="header.input === 'metadata'">
+                    <v-row>
+                      <v-col
+                        v-for="field in Object.keys(item[header.value])"
+                        :key="field"
+                        :cols="6"
+                      >
+                        <v-text-field
+                          v-model="item[header.value][field]"
+                          :label="$utils.toTitleCase(field)"
                         />
                       </v-col>
                     </v-row>

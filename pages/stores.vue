@@ -88,6 +88,7 @@ import ItemData from "@/components/ItemData.vue"
 import EditCard from "@/components/EditCard.vue"
 import TemplateEdit from "@/components/TemplateEdit.vue"
 import MenuDropdown from "@/components/MenuDropdown.vue"
+import JSONField from "@/components/JSONField.vue"
 export default {
   components: {
     ItemData,
@@ -134,6 +135,13 @@ export default {
           sortable: false,
         },
         { text: "Created date", value: "created", mode: "display" },
+        {
+          text: "Metadata",
+          value: "metadata",
+          input: "metadata",
+          expand: true,
+          component: JSONField,
+        },
         { text: "Actions", value: "action", sortable: false },
       ],
       actions: [

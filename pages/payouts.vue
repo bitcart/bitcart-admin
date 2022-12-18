@@ -77,6 +77,7 @@ import ItemData from "@/components/ItemData.vue"
 import SearchFilters from "@/components/SearchFilters.vue"
 import AutoComplete from "@/components/AutoComplete.vue"
 import TooltipIcon from "@/components/TooltipIcon"
+import JSONField from "@/components/JSONField.vue"
 
 export default {
   components: {
@@ -152,6 +153,13 @@ export default {
           expand: true,
         },
         { text: "Created date", value: "created", mode: "display" },
+        {
+          text: "Metadata",
+          value: "metadata",
+          input: "metadata",
+          expand: true,
+          component: JSONField,
+        },
         { text: "Actions", value: "action", sortable: false },
       ],
       url: "payouts",
