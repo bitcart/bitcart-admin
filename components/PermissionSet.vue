@@ -70,9 +70,14 @@ export default {
     )
     return {
       selectivePermissions,
-      displayProp: {
-        invoices: "id",
-      },
+      displayProp: this.$utils.getExtendSetting.call(
+        this,
+        "permission_set_display_prop",
+        {
+          invoices: "id",
+          payouts: "id",
+        }
+      ),
       permissions: new Set(),
       selectedItems: {},
       selectedBool: Object.assign({}, defaultBool),
@@ -83,13 +88,17 @@ export default {
         full_control: false,
         token: false,
       },
-      customTitles: {
-        server: "The app will have full control on your server.",
-        full_control:
-          "Make the app access everything in your account, all current and further permissions included.",
-        token:
-          "The app will be able to list, modify and delete all your API keys.",
-      },
+      customTitles: this.$utils.getExtendSetting.call(
+        this,
+        "permission_set_custom_titles",
+        {
+          server: "The app will have full control on your server.",
+          full_control:
+            "Make the app access everything in your account, all current and further permissions included.",
+          token:
+            "The app will be able to list, modify and delete all your API keys.",
+        }
+      ),
     }
   },
   mounted() {

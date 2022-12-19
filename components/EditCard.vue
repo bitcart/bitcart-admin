@@ -138,7 +138,7 @@
                       </v-chip>
                     </template>
                     <template #item="data">
-                      <template v-if="typeof data.item !== 'object'">
+                      <template v-if="isNotObject(data)">
                         <v-list-item-content v-text="data.item" />
                       </template>
                       <template v-else>
@@ -198,18 +198,25 @@
                       </p>
                     </div>
                   </div>
-                  <v-text-field
+                  <UIExtensionSlot
                     v-else
-                    v-model="item[header.value]"
-                    :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    :rules="header.rules"
-                    :type="showPassword ? 'text' : 'password'"
-                    :label="header.text"
-                    :hint="header.hint"
-                    name="input-10-1"
-                    counter
-                    @click:append="showPassword = !showPassword"
-                  />
+                    name="edit_card_input_types"
+                    :item="item"
+                    :header="header"
+                    @update:item="item = $event"
+                  >
+                    <v-text-field
+                      v-model="item[header.value]"
+                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      :rules="header.rules"
+                      :type="showPassword ? 'text' : 'password'"
+                      :label="header.text"
+                      :hint="header.hint"
+                      name="input-10-1"
+                      counter
+                      @click:append="showPassword = !showPassword"
+                    />
+                  </UIExtensionSlot>
                 </component>
                 <slot :item="item" name="dialog" />
               </v-row>
@@ -229,7 +236,8 @@
 
 <script>
 import debounce from "lodash.debounce"
-let components = {}
+import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
+let components = { UIExtensionSlot }
 if (process.env.NODE_ENV === "production") {
   const VAutocomplete = require("vuetify/lib/components/VAutocomplete").default
   const VCombobox = require("vuetify/lib/components/VCombobox").default
@@ -448,6 +456,9 @@ export default {
     this.performInit()
   },
   methods: {
+    isNotObject(data) {
+      return typeof data.item !== "object"
+    },
     performInit() {
       this.fetchAutocompletes()
       for (const field of this.headers.filter((x) => x.input === "dynamic")) {

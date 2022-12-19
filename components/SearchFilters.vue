@@ -2,7 +2,7 @@
   <div>
     <v-dialog v-model="showDateDialog" max-width="500px">
       <v-card>
-        <v-card-title>Filter invoices by custom date range </v-card-title>
+        <v-card-title>Filter {{ title }} by custom date range </v-card-title>
         <v-card-text>
           <v-datetime-picker
             ref="dateInput1"
@@ -38,6 +38,10 @@ export default {
     MenuDropdown,
   },
   props: {
+    title: {
+      type: String,
+      default: "invoices",
+    },
     search: {
       type: String,
       required: true,

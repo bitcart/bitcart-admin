@@ -7,5 +7,6 @@
   "stores",
   "discounts",
   "products",
-  "invoices"
+  "invoices",
+  "payouts"
 ]

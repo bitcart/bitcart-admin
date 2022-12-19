@@ -66,11 +66,14 @@
         </v-card>
       </v-col>
     </v-row>
+    <UIExtensionSlot name="configurator_deploy_methods" />
   </v-container>
 </template>
 
 <script>
+import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 export default {
+  components: { UIExtensionSlot },
   props: {
     value: {
       type: Object,
@@ -82,20 +85,24 @@ export default {
       showPassword: false,
       showRootPassword: false,
       modeSettings: this.value,
-      cards: [
-        {
-          title: "A remote machine",
-          text: "A remote machine that you can provide the SSH connectivity details to so that the configurator automagically sets it up for you",
-          icon: "mdi-remote",
-          id: "Remote",
-        },
-        {
-          title: "Manual",
-          text: "We'll generate a bash script that you run on the server without ever providing us access.",
-          icon: "mdi-console",
-          id: "Manual",
-        },
-      ],
+      cards: this.$utils.getExtendSetting.call(
+        this,
+        "configurator_deploy_methods",
+        [
+          {
+            title: "A remote machine",
+            text: "A remote machine that you can provide the SSH connectivity details to so that the configurator automagically sets it up for you",
+            icon: "mdi-remote",
+            id: "Remote",
+          },
+          {
+            title: "Manual",
+            text: "We'll generate a bash script that you run on the server without ever providing us access.",
+            icon: "mdi-console",
+            id: "Manual",
+          },
+        ]
+      ),
       currentInstance: {
         title: "Current instance",
         text: "Change current instance's settings",

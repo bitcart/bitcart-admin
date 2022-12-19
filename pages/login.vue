@@ -35,6 +35,7 @@
               :theme="$vuetify.theme.dark ? 'dark' : 'light'"
               @verify="processCaptcha"
             ></vue-hcaptcha>
+            <UIExtensionSlot name="login_form_extra" />
             <div v-if="!$store.state.policies.disable_registration">
               Don't have an account?
               <NuxtLink to="/register"> Sign up here </NuxtLink>
@@ -54,11 +55,13 @@
 <script>
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha"
 import OnionTextField from "@/components/OnionTextField"
+import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 export default {
   auth: "guest",
   components: {
     OnionTextField,
     VueHcaptcha,
+    UIExtensionSlot,
   },
   data() {
     return {

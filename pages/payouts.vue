@@ -20,7 +20,11 @@
       <template v-else>{{ item.tx_hash }}</template>
     </template>
     <template #before-toolbar>
-      <search-filters :search.sync="search" :custom-filters="customFilters" />
+      <search-filters
+        :search.sync="search"
+        :custom-filters="customFilters"
+        title="payouts"
+      />
       <v-dialog v-model="showSendDialog" max-width="700px">
         <v-card>
           <v-card-title

@@ -119,6 +119,7 @@
           </p>
         </div>
       </template>
+      <UIExtensionSlot name="item_types" />
       <template #item.id="{ item }">
         {{ item.id }}
       </template>
@@ -172,36 +173,38 @@
         <v-btn color="primary" @click="showImage(item)"> Show </v-btn>
       </template>
       <template #item.action="{ item }">
-        <tooltip-icon
-          small
-          icon="mdi-content-copy"
-          text="Copy"
-          class="mr-2"
-          @click="copyText(item.id)"
-        />
-        <tooltip-icon
-          small
-          icon="edit"
-          text="Edit"
-          class="mr-2"
-          @click="editItem(item)"
-        />
-        <tooltip-icon
-          v-for="action in actions"
-          :key="action.icon"
-          :icon="action.icon"
-          :text="action.text"
-          small
-          class="mr-2"
-          @click="action.process(item, items.indexOf(item))"
-        />
-        <tooltip-icon
-          icon="delete"
-          text="Delete"
-          small
-          class="mr-2"
-          @click="deleteItem(item)"
-        />
+        <UIExtensionSlot name="item_actions">
+          <tooltip-icon
+            small
+            icon="mdi-content-copy"
+            text="Copy"
+            class="mr-2"
+            @click="copyText(item.id)"
+          />
+          <tooltip-icon
+            small
+            icon="edit"
+            text="Edit"
+            class="mr-2"
+            @click="editItem(item)"
+          />
+          <tooltip-icon
+            v-for="action in actions"
+            :key="action.icon"
+            :icon="action.icon"
+            :text="action.text"
+            small
+            class="mr-2"
+            @click="action.process(item, items.indexOf(item))"
+          />
+          <tooltip-icon
+            icon="delete"
+            text="Delete"
+            small
+            class="mr-2"
+            @click="deleteItem(item)"
+          />
+        </UIExtensionSlot>
       </template>
     </v-data-table>
     <div class="text-center pt-2">
@@ -216,6 +219,7 @@
 
 <script>
 import debounce from "lodash.debounce"
+import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import EditCard from "@/components/EditCard"
 import TabbedCheckout from "@/components/TabbedCheckout"
 import MenuDropdown from "@/components/MenuDropdown"
@@ -241,6 +245,7 @@ export default {
     RefreshButton,
     MobileWrap,
     TooltipIcon,
+    UIExtensionSlot,
     ...runtimeComponents,
   },
   props: {

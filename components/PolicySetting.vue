@@ -27,21 +27,30 @@
       :url="url"
       @input="updatePolicy"
     />
-    <v-text-field
+    <UIExtensionSlot
       v-else
-      v-model="data"
-      hide-details
-      single-line
-      @change="updatePolicy"
-    />
+      name="policy_setting_types"
+      :data="data"
+      :url="url"
+      :update-policy="updatePolicy"
+    >
+      <v-text-field
+        v-model="data"
+        hide-details
+        single-line
+        @change="updatePolicy"
+      />
+    </UIExtensionSlot>
   </div>
 </template>
 <script>
 import AutoComplete from "@/components/AutoComplete"
 import ListEdit from "@/components/ListEdit"
 import ExplorerEdit from "@/components/ExplorerEdit"
+import UIExtensionSlot from "@/components/UIExtensionSlot"
 export default {
   components: {
+    UIExtensionSlot,
     AutoComplete,
     ListEdit,
     ExplorerEdit,

@@ -108,17 +108,21 @@ export default {
           },
           titles: { btc: "Bitcoin" }, // fallback
         },
-        additionalServices: {
-          cards: [
-            {
-              title: "Tor support",
-              text: "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run BitcartCC in complex network conditions or without a domain",
-              docs: "https://docs.bitcartcc.com/guides/tor",
-              service: "tor",
-            },
-          ],
-          services: { tor: false },
-        },
+        additionalServices: this.$utils.getExtendSetting.call(
+          this,
+          "services",
+          {
+            cards: [
+              {
+                title: "Tor support",
+                text: "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run BitcartCC in complex network conditions or without a domain",
+                docs: "https://docs.bitcartcc.com/guides/tor",
+                service: "tor",
+              },
+            ],
+            services: { tor: false },
+          }
+        ),
         advancedSettings: {
           installationPack: "all",
           additionalComponents: [],
