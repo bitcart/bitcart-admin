@@ -211,6 +211,13 @@ export default {
           to: "/configurator",
         },
       ],
+      superuserItems: [
+        {
+          icon: "mdi-puzzle",
+          text: "Plugins",
+          to: "/plugins",
+        },
+      ],
       profileItems: [
         {
           icon: "mdi-view-dashboard-outline",
@@ -255,7 +262,9 @@ export default {
         this,
         "nav_items",
         this.$auth.loggedIn
-          ? this.items
+          ? this.items.concat(
+              this.$auth.user.is_superuser ? this.superuserItems : []
+            )
           : this.guestItems.filter(
               (x) =>
                 !x.configurator ||

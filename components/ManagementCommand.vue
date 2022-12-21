@@ -44,6 +44,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    commandPrefix: {
+      type: String,
+      default: "manage",
+    },
+    fileAttr: {
+      type: String,
+      default: "backup",
+    },
     postprocess: {
       type: Function,
       default: (data) => {},
@@ -71,16 +79,16 @@ export default {
         if (this.fileToUpload.size >= 50 * 1024 * 1024) {
           this.done = true
           this.error = true
-          this.detail = "Backup size should be less than 50 MB!"
+          this.detail = "File size should be less than 50 MB!"
           return
         }
-        data.append("backup", this.fileToUpload)
+        data.append(this.fileAttr, this.fileToUpload)
         headers = {
           "Content-Type": "multipart/form-data",
         }
       }
       this.$axios
-        .post(`/manage/${what}`, data, headers)
+        .post(`/${this.commandPrefix}/${what}`, data, headers)
         .then((resp) => {
           this.done = true
           this.error = resp.data.status === "error"
@@ -90,6 +98,11 @@ export default {
         .catch((err) => {
           this.done = true
           this.error = true
+          if (typeof err.response === "undefined") {
+            this.detail =
+              "Network error. Possibly the upload file has been changed"
+            return
+          }
           this.detail = err.response.data.detail
         })
     },
