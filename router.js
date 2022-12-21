@@ -16,6 +16,7 @@ export function createRouter(
     routerOptions || createDefaultRouter(ssrContext, config).options
   const router = new Router({
     ...options,
+    base: config.ROOTPATH,
     routes: [...options.routes, ...extendRoutes()],
   })
   router.beforeEach((to, from, next) =>
