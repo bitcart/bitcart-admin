@@ -12,6 +12,10 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <v-alert v-if="failed" type="error"
+      >Plugins installation failed. Images restored to original state. Please
+      check and uninstall incorrect plugins</v-alert
+    >
     <p class="text-h4">Installed plugins</p>
     <v-row>
       <v-col
@@ -72,6 +76,7 @@ export default {
   data() {
     return {
       plugins: [],
+      failed: false,
       file: null,
       showDialog: false,
       pluginManifest: "",
@@ -88,7 +93,10 @@ export default {
   },
   methods: {
     fetchPlugins() {
-      this.$axios.get("/plugins").then((resp) => (this.plugins = resp.data))
+      this.$axios.get("/plugins").then((resp) => {
+        this.plugins = resp.data.plugins
+        this.failed = !resp.data.success
+      })
     },
     showDetails(plugin) {
       this.pluginManifest = plugin
