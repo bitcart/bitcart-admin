@@ -28,7 +28,7 @@ lib-cov
 logs
 modules/*
 !modules/.gitkeep
-!modules/@bitcartcc/
+!modules/@bitcartcc/core
 node_modules/
 npm-debug.log*
 pids
