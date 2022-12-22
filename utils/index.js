@@ -171,10 +171,8 @@ export default {
     return wei.toString(10)
   },
   toTitleCase(str) {
-    return str
-      .split(" ")
-      .map((w) => w[0].toUpperCase() + w.substring(1))
-      .join(" ")
+    str = str.replace(/_/g, " ")
+    return str[0].toUpperCase() + str.substring(1)
   },
   getTxURL(txHash, currency) {
     if (!txHash) return
