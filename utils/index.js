@@ -185,4 +185,46 @@ export default {
     if (Array.isArray(defaults)) return [...defaults, ...(extended || [])]
     else return Object.assign({}, defaults, extended || {})
   },
+  emailPresets: [
+    {
+      title: "Gmail",
+      command: {
+        email_host: "smtp.gmail.com",
+        email_port: 587,
+        email_use_ssl: true,
+      },
+    },
+    {
+      title: "Yahoo",
+      command: {
+        email_host: "mail.yahoo.com",
+        email_port: 587,
+        email_use_ssl: true,
+      },
+    },
+    {
+      title: "Mailgun",
+      command: {
+        email_host: "smtp.mailgun.org",
+        email_port: 587,
+        email_use_ssl: true,
+      },
+    },
+    {
+      title: "Office365",
+      command: {
+        email_host: "smtp.office365.com",
+        email_port: 587,
+        email_use_ssl: true,
+      },
+    },
+    {
+      title: "SendGrid",
+      command: {
+        email_host: "smtp.sendgrid.net",
+        email_port: 587,
+        email_use_ssl: true,
+      },
+    },
+  ],
 }

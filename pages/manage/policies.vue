@@ -33,12 +33,14 @@ export default {
         enable_captcha: "Enable captcha on login page",
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
+        email_settings: "Email server settings",
       }),
       types: this.$utils.getExtendSetting.call(this, "policy_types", {
         captcha_sitekey: "string",
         captcha_secretkey: "string",
         explorer_urls: "exploreredit",
         rpc_urls: "exploreredit",
+        email_settings: "emailsettings",
       }),
       urls: this.$utils.getExtendSetting.call(this, "policy_urls", {
         explorer_urls: "/cryptos/explorer",

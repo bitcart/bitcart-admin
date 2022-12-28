@@ -40,6 +40,7 @@
               Don't have an account?
               <NuxtLink to="/register"> Sign up here </NuxtLink>
             </div>
+            <NuxtLink to="/forgotpassword">Forgot password?</NuxtLink>
           </v-card-text>
           <v-card-actions>
             <div class="flex-grow-1" />

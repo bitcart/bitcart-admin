@@ -27,6 +27,12 @@
       :url="url"
       @input="updatePolicy"
     />
+    <email-settings
+      v-else-if="type === 'emailsettings'"
+      :initial-value="data"
+      :url="url"
+      @input="updatePolicy"
+    />
     <UIExtensionSlot
       v-else
       name="policy_setting_types"
@@ -47,6 +53,7 @@
 import AutoComplete from "@/components/AutoComplete"
 import ListEdit from "@/components/ListEdit"
 import ExplorerEdit from "@/components/ExplorerEdit"
+import EmailSettings from "@/components/EmailSettings"
 import UIExtensionSlot from "@/components/UIExtensionSlot"
 export default {
   components: {
@@ -54,6 +61,7 @@ export default {
     AutoComplete,
     ListEdit,
     ExplorerEdit,
+    EmailSettings,
   },
   props: {
     title: {

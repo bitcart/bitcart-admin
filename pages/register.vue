@@ -46,7 +46,7 @@
             <UIExtensionSlot name="register_form_extra" />
             <div>
               Already have an account ?
-              <NuxtLink to="/login"> Sign in </NuxtLink> instead
+              <NuxtLink to="/login"> Sign in</NuxtLink> instead
             </div>
           </v-card-text>
           <v-card-actions>
