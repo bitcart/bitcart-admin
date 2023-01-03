@@ -45,6 +45,9 @@
           </v-card-actions>
         </v-card>
       </v-col>
+      <v-col v-if="!loading && $utils.isEmpty(plugins)">
+        <p>No plugins found. Install some!</p>
+      </v-col>
     </v-row>
     <p class="text-h4">Upload plugin</p>
     <v-file-input
@@ -79,6 +82,7 @@ export default {
       failed: false,
       file: null,
       showDialog: false,
+      loading: true,
       pluginManifest: "",
       fileRules: [
         (value) =>
@@ -96,6 +100,7 @@ export default {
       this.$axios.get("/plugins").then((resp) => {
         this.plugins = resp.data.plugins
         this.failed = !resp.data.success
+        this.loading = false
       })
     },
     showDetails(plugin) {
