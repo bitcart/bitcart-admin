@@ -145,7 +145,24 @@ export default {
         { text: "Order", value: "order_id", copy: true },
         { text: "Discount", value: "discount", mode: "edit", copy: true },
         { text: "Status", value: "status", mode: "edit" },
-        { text: "Tx hashes", value: "tx_hashes", expand: true },
+        {
+          text: "Tx hashes",
+          value: "tx_hashes",
+          expand: true,
+          mode: "display",
+        },
+        {
+          text: "Sent amount",
+          value: "sent_amount",
+          expand: true,
+          mode: "display",
+        },
+        {
+          text: "Exception status",
+          value: "exception_status",
+          expand: true,
+          mode: "edit",
+        },
         {
           text: "Shipping address",
           value: "shipping_address",
