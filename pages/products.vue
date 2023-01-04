@@ -31,7 +31,12 @@ export default {
         { text: "ID", value: "id", mode: "display", copy: true },
         { text: "Name", value: "name", rules: ["required"] },
         { text: "Price", value: "price", rules: ["required", "positive"] },
-        { text: "Quantity", value: "quantity", rules: ["required"] },
+        {
+          text: "Quantity",
+          value: "quantity",
+          rules: ["required", "quantity"],
+          hint: "Use -1 for unlimited quantity",
+        },
         { text: "Category", value: "category" },
         {
           text: "Discounts",
