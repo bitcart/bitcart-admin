@@ -155,10 +155,18 @@
                     {{ itemv.amount }}
                     {{ itemv.symbol.toUpperCase() }}
                   </v-list-item-title>
-                  <v-list-item-subtitle
-                    >{{ invoice.price }}
-                    {{ invoice.currency }}</v-list-item-subtitle
-                  >
+                  <v-list-item-subtitle>
+                    <span v-if="invoice.price !== currentPrice">
+                      <strike>{{ invoice.price }}</strike>
+                      <span class="font-weight-black">
+                        {{ currentPrice }}
+                      </span>
+                    </span>
+                    <span v-else>
+                      {{ invoice.price }}
+                    </span>
+                    {{ invoice.currency }}
+                  </v-list-item-subtitle>
                 </v-list-item-action>
               </v-list-item>
               <v-list-item>
@@ -607,6 +615,12 @@ export default {
   computed: {
     itemv() {
       return this.invoice.payments[this.selectedCurrency]
+    },
+    currentPrice() {
+      return this.$utils.decimalStr(
+        this.itemv.amount * this.itemv.rate,
+        this.$utils.getDivisibility(this.invoice.price)
+      )
     },
     currentCurrency() {
       return this.itemv.currency

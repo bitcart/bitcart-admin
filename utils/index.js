@@ -237,4 +237,8 @@ export default {
     )
     return formattedWholeAmount + (fractionAmount ? "." + fractionAmount : "")
   },
+  getDivisibility(valueStr) {
+    const [, fractionAmount] = valueStr.split(".")
+    return fractionAmount ? fractionAmount.length : 0
+  },
 }
