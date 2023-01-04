@@ -11,7 +11,7 @@
       {{ title }}
     </p>
     <p>{{ details }}</p>
-    <v-btn color="primary" @click="manage(what)">
+    <v-btn color="primary" :loading="loading" @click="manage(what)">
       {{ btnText }}
     </v-btn>
   </div>
@@ -62,6 +62,7 @@ export default {
       done: false,
       error: false,
       detail: false,
+      loading: false,
     }
   },
   methods: {
@@ -87,17 +88,20 @@ export default {
           "Content-Type": "multipart/form-data",
         }
       }
+      this.loading = true
       this.$axios
         .post(`/${this.commandPrefix}/${what}`, data, headers)
         .then((resp) => {
           this.done = true
           this.error = resp.data.status === "error"
           this.detail = resp.data.message
+          this.loading = false
           this.postprocess(resp.data)
         })
         .catch((err) => {
           this.done = true
           this.error = true
+          this.loading = false
           if (typeof err.response === "undefined") {
             this.detail =
               "Network error. Possibly the upload file has been changed"
