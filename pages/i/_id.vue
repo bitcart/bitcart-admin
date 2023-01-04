@@ -4,6 +4,9 @@
       <v-icon>mdi-content-copy</v-icon>
       Successfully copied to clipboard!
     </v-snackbar>
+    <v-snackbar v-model="showPartial" :timeout="2500" color="info" bottom>
+      Partial payment detected. Please pay in full to complete the invoice.
+    </v-snackbar>
     <v-dialog
       hide-overlay
       persistent
@@ -68,6 +71,7 @@ export default {
   data() {
     return {
       showSnackbar: false,
+      showPartial: false,
       showDialog: true,
       status: "pending",
       invoice: {},
@@ -145,10 +149,25 @@ export default {
       url = url.replace("http://", "ws://").replace("https://", "wss://")
       const websocket = new WebSocket(url)
       websocket.onmessage = (event) => {
-        const status = JSON.parse(event.data).status
+        const data = JSON.parse(event.data)
+        const status = data.status
+        if (status === "pending") {
+          // received partial payment
+          this.invoice.exception_status = data.exception_status
+          this.invoice.sent_amount = data.sent_amount
+          this.invoice.paid_currency = data.paid_currency
+          this.$bus.$emit("showDetails")
+          this.showPartial = true
+        }
         if (this.invoice.status !== status) {
           window.parent.postMessage(
-            { invoice_id: this.invoice.id, status },
+            {
+              invoice_id: this.invoice.id,
+              status,
+              exception_status: data.exception_status,
+              sent_amount: data.sent_amount,
+              paid_currency: data.paid_currency,
+            },
             "*"
           )
         }

@@ -143,19 +143,62 @@
               </v-btn>
             </v-row>
             <v-divider v-if="showDetails" />
-            <v-list-item v-if="showDetails">
-              <v-list-item-content>
-                <v-list-item-title>Order amount</v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-list-item-title
-                  class="text-subtitle-1 font-weight-regular align-right"
-                >
-                  {{ invoice.price }}
-                  {{ invoice.currency }}
-                </v-list-item-title>
-              </v-list-item-action>
-            </v-list-item>
+            <div v-if="showDetails">
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Order amount</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-list-item-title
+                    class="text-subtitle-1 font-weight-regular align-right"
+                  >
+                    {{ itemv.amount }}
+                    {{ itemv.symbol.toUpperCase() }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle
+                    >{{ invoice.price }}
+                    {{ invoice.currency }}</v-list-item-subtitle
+                  >
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Already paid</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-list-item-title
+                    class="text-subtitle-1 font-weight-regular align-right"
+                  >
+                    -{{
+                      itemv.name === invoice.paid_currency
+                        ? invoice.sent_amount
+                        : $utils.decimalStr(0, itemv.divisibility)
+                    }}
+                    {{ itemv.symbol.toUpperCase() }}
+                  </v-list-item-title>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>Due</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-list-item-title
+                    class="text-subtitle-1 font-weight-regular align-right"
+                  >
+                    {{
+                      itemv.name === invoice.paid_currency
+                        ? $utils.decimalStr(
+                            itemv.amount - invoice.sent_amount,
+                            itemv.divisibility
+                          )
+                        : itemv.amount
+                    }}
+                    {{ itemv.symbol.toUpperCase() }}
+                  </v-list-item-title>
+                </v-list-item-action>
+              </v-list-item>
+            </div>
           </UIExtensionSlot>
           <v-divider />
           <v-list-item v-if="!needEmail && !needAddress" class="ma-0 pa-0">
@@ -644,6 +687,14 @@ export default {
       this.paymentAddressErrors = []
       this.fetchTokenABI()
     },
+  },
+  beforeMount() {
+    this.$bus.$on("showDetails", () => {
+      this.showDetails = true
+    })
+  },
+  beforeDestroy() {
+    this.$bus.$off("showDetails")
   },
   mounted() {
     this.fetchTokenABI()
