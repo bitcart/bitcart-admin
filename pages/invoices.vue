@@ -75,6 +75,15 @@
         <template v-else>{{ tx_hash }}</template>
       </div>
     </template>
+    <template #item.products="{ item, copyText }">
+      <v-list-item
+        v-for="itemv in item.products"
+        :key="itemv"
+        @click="copyText(itemv)"
+      >
+        <v-list-item-title>{{ item.product_names[itemv] }}</v-list-item-title>
+      </v-list-item>
+    </template>
   </item-data>
 </template>
 <script>

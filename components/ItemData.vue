@@ -149,8 +149,15 @@
             <v-btn color="primary" v-on="on"> Show </v-btn>
           </template>
           <v-list v-if="item[dropdownNames[key]].length > 0">
+            <slot
+              v-if="`item.${dropdownNames[key]}` in $scopedSlots"
+              :name="`item.${dropdownNames[key]}`"
+              v-bind="{ item, copyText }"
+            />
+
             <v-list-item
               v-for="(itemv, index) in item[dropdownNames[key]]"
+              v-else
               :key="index"
               @click="copyText(itemv)"
             >
