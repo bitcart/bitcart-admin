@@ -104,7 +104,8 @@ export default {
           text: "Price",
           value: "price",
           readonly: true,
-          rules: ["required", "positive"],
+          rules: ["required", "nonnegative"],
+          hint: "Price of 0 means accept any payment",
         },
         {
           text: "Currency",

@@ -60,6 +60,7 @@ export default {
       }
     },
     positive: (v) => isNull(v) || v > 0 || "Must be positive",
+    nonnegative: (v) => isNull(v) || v >= 0 || "Must be non-negative",
   },
   downloadFile(resp) {
     const url = window.URL.createObjectURL(new Blob([resp.data]))
