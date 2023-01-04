@@ -151,7 +151,10 @@ export default {
       websocket.onmessage = (event) => {
         const data = JSON.parse(event.data)
         const status = data.status
-        if (status === "pending") {
+        if (
+          status === "pending" &&
+          this.invoice.sent_amount !== data.sent_amount
+        ) {
           // received partial payment
           this.invoice.exception_status = data.exception_status
           this.invoice.sent_amount = data.sent_amount
