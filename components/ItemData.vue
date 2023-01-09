@@ -355,7 +355,10 @@ export default {
     },
     defaultHeaders() {
       return this.headers.filter(
-        (item) => !item.expand && item.mode !== "nodisplay"
+        (item) =>
+          !item.expand &&
+          item.mode !== "nodisplay" &&
+          item.mode !== "createonly"
       )
     },
     toExpand() {

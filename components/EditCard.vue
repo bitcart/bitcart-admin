@@ -390,6 +390,7 @@ export default {
         (item) =>
           item.value !== "action" &&
           (item.mode === "create" ||
+            item.mode === "createonly" ||
             item.mode === "nodisplay" ||
             typeof item.mode === "undefined")
       )

@@ -142,6 +142,13 @@ export default {
           sortable: false,
           mode: "create",
         },
+        {
+          text: "Invoice expiration",
+          value: "expiration",
+          rules: ["int"],
+          hint: "In minutes, defaults to store setting",
+          mode: "createonly",
+        },
         { text: "Promocode", value: "promocode" },
         {
           text: "Notification url",
