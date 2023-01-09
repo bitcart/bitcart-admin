@@ -3,6 +3,9 @@
     <p class="text-h6">
       {{ title }}
     </p>
+    <p v-if="detail" class="text-body-1">
+      {{ detail }}
+    </p>
     <v-checkbox
       v-if="type === 'checkbox'"
       v-model="data"
@@ -44,6 +47,7 @@
         v-model="data"
         hide-details
         single-line
+        class="mt-n6 pb-6"
         @change="updatePolicy"
       />
     </UIExtensionSlot>
@@ -65,6 +69,10 @@ export default {
   },
   props: {
     title: {
+      type: String,
+      default: "",
+    },
+    detail: {
       type: String,
       default: "",
     },
