@@ -44,6 +44,29 @@
         </v-stepper-items>
       </v-stepper>
     </v-container>
+    <v-dialog v-model="showInvalidDomainDialog" max-width="500px">
+      <v-card>
+        <v-card-title class="justify-center text-h4 font-weight-bold"
+          >Invalid domain</v-card-title
+        >
+        <v-card-text class="text--primary"
+          >DNS lookup failed on the domain. Without configured DNS records you
+          won't be able to access your BitcartCC instance. Do you want to
+          proceed?</v-card-text
+        >
+        <v-card-text class="text-subtitle-1">
+          <code>bitcart.local</code> domain is fine for local deployments
+        </v-card-text>
+        <v-card-actions class="justify-center">
+          <v-btn color="success" class="mx-1" @click="startDeployment"
+            >Yes</v-btn
+          >
+          <v-btn color="error" @click="showInvalidDomainDialog = false"
+            >No, let me re-configure</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="showDialog">
       <v-card>
         <v-card-title class="justify-center text-h4 font-weight-bold"
@@ -98,6 +121,7 @@ export default {
   data() {
     const dt = {
       showDialog: false,
+      showInvalidDomainDialog: false,
       deploymentInfo: { finished: false },
       initialInstallData: {
         mode: { name: "Manual", sshSettings: {} },
@@ -259,6 +283,16 @@ export default {
       else this.currentStep++
     },
     install() {
+      this.$axios
+        .get(
+          `/configurator/dns-resolve?name=${this.installData.domainSettings.domain}`
+        )
+        .then((r) => {
+          if (r.data) this.startDeployment()
+          else this.showInvalidDomainDialog = true
+        })
+    },
+    startDeployment() {
       const additionalServices = Object.entries(
         this.installData.additionalServices.services
       )
@@ -270,6 +304,7 @@ export default {
           .filter(([k, v]) => v.enabled)
           .map(([k, v]) => ({ [k]: v }))
       )
+      this.showInvalidDomainDialog = false
       this.deploymentInfo.finished = false
       this.showDialog = true
       this.$axios
