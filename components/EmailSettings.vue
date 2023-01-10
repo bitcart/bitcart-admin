@@ -8,7 +8,6 @@
               <v-text-field
                 v-if="typeof header.input === 'undefined'"
                 v-model="data[header.value]"
-                :rules="header.rules"
                 :label="header.text"
                 persistent-hint
                 @input="sendInput"
@@ -16,9 +15,8 @@
               <v-switch
                 v-else-if="header.input === 'switch'"
                 v-model="data[header.value]"
-                :rules="header.rules"
                 :label="header.text"
-                @input="sendInput"
+                @change="sendInput"
               />
               <v-btn
                 v-else-if="header.input === 'button'"
@@ -52,7 +50,6 @@
                 v-else
                 v-model="data[header.value]"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="header.rules"
                 :type="showPassword ? 'text' : 'password'"
                 :label="header.text"
                 :hint="header.hint"
@@ -101,13 +98,11 @@ export default {
         {
           text: "Server email",
           value: "email",
-          rules: [this.$utils.rules.email],
         },
         { text: "Email host", value: "email_host" },
         {
           text: "Email port",
           value: "email_port",
-          rules: [this.$utils.rules.int],
         },
         { text: "Email user", value: "email_user" },
         { text: "Email password", value: "email_password", input: "password" },
@@ -129,7 +124,6 @@ export default {
   },
   methods: {
     sendInputUnlimited() {
-      if (!this.$refs.form.validate()) return
       this.$emit("input", this.data)
     },
     testping(item) {
@@ -148,7 +142,7 @@ export default {
     },
     loadPreset(preset) {
       for (const key in preset) {
-        this.data[key] = preset[key]
+        this.$set(this.data, key, preset[key])
       }
       this.sendInputUnlimited()
     },
