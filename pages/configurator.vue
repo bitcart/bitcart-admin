@@ -55,7 +55,9 @@
           proceed?</v-card-text
         >
         <v-card-text class="text-subtitle-1">
-          <code>bitcart.local</code> domain is fine for local deployments
+          <code>bitcart.local</code> domain is fine for local deployments, but
+          our configurator can't access it, you would need to copy the script
+          manually
         </v-card-text>
         <v-card-actions class="justify-center">
           <v-btn color="success" class="mx-1" @click="startDeployment"
