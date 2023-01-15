@@ -352,12 +352,19 @@
                                   <v-tab>Invoice</v-tab>
                                   <v-tab>Node Info</v-tab>
                                 </v-tabs>
-                                <qrcode
-                                  :options="{ width: 240 }"
-                                  :value="qrValue"
-                                  tag="v-img"
-                                  class="d-flex justify-center"
-                                />
+                                <UIExtensionSlot
+                                  name="checkout_payment_qr"
+                                  :invoice="invoice"
+                                  :method="itemv"
+                                  :qr-value="qrValue"
+                                >
+                                  <qrcode
+                                    :options="{ width: 240 }"
+                                    :value="qrValue"
+                                    tag="v-img"
+                                    class="d-flex justify-center"
+                                  />
+                                </UIExtensionSlot>
                               </v-row>
                               <v-row justify="center">
                                 <metamask-button
@@ -368,15 +375,27 @@
                                 />
                               </v-row>
                               <v-row justify="center">
-                                <wallet-connect-button
-                                  v-if="$device.isDesktop && isEthPaymentMethod"
+                                <UIExtensionSlot
+                                  name="checkout_payment_open"
                                   :method="itemv"
                                   :update-address="updatePaymentDetails"
                                   :abi="abiCache"
-                                />
-                                <v-btn v-else color="primary" :href="paymentURL"
-                                  >Open in wallet</v-btn
                                 >
+                                  <wallet-connect-button
+                                    v-if="
+                                      $device.isDesktop && isEthPaymentMethod
+                                    "
+                                    :method="itemv"
+                                    :update-address="updatePaymentDetails"
+                                    :abi="abiCache"
+                                  />
+                                  <v-btn
+                                    v-else
+                                    color="primary"
+                                    :href="paymentURL"
+                                    >Open in wallet</v-btn
+                                  >
+                                </UIExtensionSlot>
                               </v-row>
                               <v-row v-if="showRecommendedFee" justify="center">
                                 Recommended fee:
@@ -404,23 +423,28 @@
                                   {{ itemv.amount }}
                                   {{ itemv.symbol.toUpperCase() }}
                                 </p>
-                                <v-divider />
-                                <display-field
-                                  :title="
-                                    itemv.lightning ? 'Invoice' : 'Address'
-                                  "
-                                  :value="itemv.payment_address"
-                                />
-                                <display-field
-                                  v-if="itemv.lightning"
-                                  title="Node Info"
-                                  :value="itemv.node_id"
-                                />
-                                <display-field
-                                  v-else
-                                  title="Payment Link"
-                                  :value="itemv.payment_url"
-                                />
+                                <UIExtensionSlot
+                                  name="checkout_payment_copy_extra"
+                                  :method="itemv"
+                                >
+                                  <v-divider />
+                                  <display-field
+                                    :title="
+                                      itemv.lightning ? 'Invoice' : 'Address'
+                                    "
+                                    :value="itemv.payment_address"
+                                  />
+                                  <display-field
+                                    v-if="itemv.lightning"
+                                    title="Node Info"
+                                    :value="itemv.node_id"
+                                  />
+                                  <display-field
+                                    v-else
+                                    title="Payment Link"
+                                    :value="itemv.payment_url"
+                                  />
+                                </UIExtensionSlot>
                               </v-card-text>
                             </v-card>
                           </v-tab-item>
@@ -840,7 +864,7 @@ export default {
 }
 .payment-box,
 .v-tabs-items.payment-box .v-window-item {
-  height: 400px;
+  height: 450px;
   overflow-y: auto;
 }
 .v-application.theme--light .activeTab {

@@ -38,10 +38,27 @@ export default {
         return props.component
           ? h(
               props.component,
-              { ...props.props, props: this.$attrs, on: this.$listeners },
+              {
+                ...props.props,
+                props: {
+                  ...this.$attrs,
+                  originalComponents: this.$slots.default,
+                },
+                on: this.$listeners,
+              },
               []
             )
-          : h(props, { props: this.$attrs, on: this.$listeners }, [])
+          : h(
+              props,
+              {
+                props: {
+                  ...this.$attrs,
+                  originalComponents: this.$slots.default,
+                },
+                on: this.$listeners,
+              },
+              []
+            )
       })
     )
   },

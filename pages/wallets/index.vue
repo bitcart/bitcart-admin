@@ -48,6 +48,7 @@ export default {
           input: "autocomplete",
           url: (item) => `cryptos/tokens/${item.currency}`,
           component: "v-combobox",
+          errors: { "Invalid contract": "Invalid contract" },
         },
         {
           text: "Label",
