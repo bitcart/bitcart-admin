@@ -109,7 +109,8 @@ export default {
         {
           text: "Amount",
           value: "amount",
-          rules: ["required", "positive"],
+          rules: ["required", "quantity"],
+          hint: "Use -1 to send all available funds",
         },
         {
           text: "Store",
