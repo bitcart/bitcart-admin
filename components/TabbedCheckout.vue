@@ -91,7 +91,7 @@
                       ></v-list-item-title
                     >
                   </template>
-                  <v-list>
+                  <v-list class="overflow-y-auto" style="max-height: 100vh">
                     <v-list-item-group v-model="selectedCurrency" mandatory>
                       <v-list-item
                         v-for="(item, index) in invoice.payments"
