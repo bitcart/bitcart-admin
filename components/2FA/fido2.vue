@@ -60,7 +60,10 @@ export default {
         return
       }
       this.$axios
-        .post("/token/2fa/fido2/begin", { token: this.code })
+        .post("/token/2fa/fido2/begin", {
+          token: this.code,
+          auth_host: window.location.hostname,
+        })
         .then(async (r) => {
           const options = parseRequestOptionsFromJSON(r.data)
           let response
@@ -74,6 +77,7 @@ export default {
             await this.$axios
               .post("/token/2fa/fido2/complete", {
                 token: this.code,
+                auth_host: window.location.hostname,
                 ...response.toJSON(),
               })
               .then((r) => {

@@ -18,7 +18,15 @@ export default {
     return {
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
-        { text: "Email", value: "email", rules: ["required", "email"] },
+        {
+          text: "Email",
+          value: "email",
+          rules: ["required", "email"],
+          errors: {
+            'duplicate key value violates unique constraint "users_email_idx"':
+              "This user already exists",
+          },
+        },
         {
           text: "Password",
           value: "password",

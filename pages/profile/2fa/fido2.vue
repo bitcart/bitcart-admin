@@ -54,27 +54,32 @@ export default {
         return
       }
       this.errorText = ""
-      this.$axios.post("/users/2fa/fido2/register/begin").then(async (r) => {
-        const options = parseCreationOptionsFromJSON(r.data)
-        let response
-        try {
-          response = await create(options)
-        } catch (e) {
-          this.errorText =
-            "Could not create credentials in browser. Probably because the username is already registered with your authenticator. Please change username or authenticator"
-          return
-        }
-        try {
-          await this.$axios.post("/users/2fa/fido2/register/complete", {
-            name: this.deviceName,
-            ...response.toJSON(),
-          })
-        } catch (e) {
-          this.errorText = e.response.data.detail
-          return
-        }
-        await this.$auth.fetchUser()
-      })
+      this.$axios
+        .post("/users/2fa/fido2/register/begin", {
+          auth_host: window.location.hostname,
+        })
+        .then(async (r) => {
+          const options = parseCreationOptionsFromJSON(r.data)
+          let response
+          try {
+            response = await create(options)
+          } catch (e) {
+            this.errorText =
+              "Could not create credentials in browser. Probably because the username is already registered with your authenticator. Please change username or authenticator"
+            return
+          }
+          try {
+            await this.$axios.post("/users/2fa/fido2/register/complete", {
+              name: this.deviceName,
+              auth_host: window.location.hostname,
+              ...response.toJSON(),
+            })
+          } catch (e) {
+            this.errorText = e.response.data.detail
+            return
+          }
+          await this.$auth.fetchUser()
+        })
     },
     removeDevice(id) {
       this.$axios
