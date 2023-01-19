@@ -1,16 +1,32 @@
 <template>
   <div>
-    <PolicySetting
-      v-for="(value, policy) in $auth.user.settings"
-      :key="policy"
-      :title="titles[policy]"
-      :type="types[policy] || 'checkbox'"
-      :what="policy"
-      :initial-value="value"
-      :url="autocomplete_urls[policy] || ''"
-      policy-url="/users/me/settings"
-      @updated="updateUser"
-    />
+    <div>Email:</div>
+    <v-text-field disabled filled dense :value="$auth.user.email" />
+    <div>2FA status: {{ $auth.user.tfa_enabled ? "Enabled" : "Disabled" }}</div>
+    <v-btn
+      v-if="!$auth.user.tfa_enabled"
+      color="primary"
+      to="/profile/2fa/setup"
+      class="my-2"
+    >
+      Setup 2FA
+    </v-btn>
+    <v-btn v-else color="error" class="my-2" @click="disable2FA">
+      Disable 2FA
+    </v-btn>
+    <div>
+      <PolicySetting
+        v-for="(value, policy) in $auth.user.settings"
+        :key="policy"
+        :title="titles[policy]"
+        :type="types[policy] || 'checkbox'"
+        :what="policy"
+        :initial-value="value"
+        :url="autocomplete_urls[policy] || ''"
+        policy-url="/users/me/settings"
+        @updated="updateUser"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -46,6 +62,11 @@ export default {
       this.$auth
         .fetchUser()
         .then((r) => this.$store.dispatch("syncStats", false))
+    },
+    disable2FA() {
+      this.$axios.post("/users/2fa/disable").then((r) => {
+        this.$auth.fetchUser()
+      })
     },
   },
 }
