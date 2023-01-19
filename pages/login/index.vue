@@ -81,18 +81,25 @@ export default {
     },
     login() {
       if (this.$refs.form.validate()) {
-        this.$auth
-          .loginWith("local", {
-            data: {
-              email: this.email,
-              password: this.password,
-              permissions: ["full_control"],
-              captcha_code: this.captchaCode,
-              strict: false,
-            },
+        this.$axios
+          .post("/token", {
+            email: this.email,
+            password: this.password,
+            permissions: ["full_control"],
+            captcha_code: this.captchaCode,
+            strict: false,
           })
           .then((r) => {
-            this.$store.dispatch("fetchServices")
+            if (r.data.tfa_required) {
+              this.$router.push(
+                `/login/2fa?code=${r.data.tfa_code}&tfa_types=${r.data.tfa_types}`
+              )
+              return
+            }
+            this.$auth.setUserToken(r.data.access_token)
+            this.$auth.fetchUser().then((r) => {
+              this.$store.dispatch("fetchServices")
+            })
           })
           .catch((err) => {
             if (err.response) {
