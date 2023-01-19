@@ -91,7 +91,9 @@ export default {
           })
           .then((r) => {
             if (r.data.tfa_required) {
-              this.$router.push(`/login/2fa?code=${r.data.tfa_code}`)
+              this.$router.push(
+                `/login/2fa?code=${r.data.tfa_code}&tfa_types=${r.data.tfa_types}`
+              )
               return
             }
             this.$auth.setUserToken(r.data.access_token)

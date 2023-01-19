@@ -14,6 +14,7 @@
     <v-btn v-else color="error" class="my-2" @click="disable2FA">
       Disable 2FA
     </v-btn>
+    <v-btn to="/profile/2fa/fido2" color="primary">FIDO2 Devices</v-btn>
     <div>
       <PolicySetting
         v-for="(value, policy) in $auth.user.settings"
