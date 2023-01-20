@@ -10,8 +10,10 @@ export default ({ $axios, $auth, $config }) => {
   $axios.onError((error) => {
     if (
       error.response &&
-      error.response.status === 401 &&
-      !error.config.url.endsWith("/token")
+      !error.config.url.endsWith("/token") &&
+      (error.response.status === 401 ||
+        (error.response.status === 403 &&
+          error.response.data.detail === "Account is disabled"))
     ) {
       $auth.logout()
     }

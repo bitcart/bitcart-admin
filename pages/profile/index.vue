@@ -7,6 +7,17 @@
       >
     </div>
     <v-text-field disabled filled dense :value="$auth.user.email" />
+    <p v-if="detail" class="green--text">
+      {{ detail }}
+    </p>
+    <v-btn
+      v-if="!$auth.user.is_verified"
+      color="primary"
+      class="mb-3"
+      :loading="loading"
+      @click="resendVerificationEmail"
+      >Re-send verification email</v-btn
+    >
     <div>2FA status: {{ $auth.user.tfa_enabled ? "Enabled" : "Disabled" }}</div>
     <v-btn
       v-if="!$auth.user.tfa_enabled"
@@ -36,15 +47,33 @@
   </div>
 </template>
 <script>
+import isHTTPS from "is-https"
 import PolicySetting from "~/components/PolicySetting.vue"
+
 export default {
   components: {
     PolicySetting,
   },
   layout: "profile",
+  asyncData({ req }) {
+    let url = ""
+    if (req) {
+      url = req.headers.host
+      if (isHTTPS(req)) {
+        url = "https://" + url
+      } else {
+        url = "http://" + url
+      }
+    } else {
+      url = window.location.origin
+    }
+    return { url }
+  },
   data() {
     return {
       policyURL: "/users/me/settings",
+      loading: false,
+      detail: "",
       titles: this.$utils.getExtendSetting.call(
         this,
         "user_policy_descriptions",
@@ -73,6 +102,19 @@ export default {
       this.$axios.post("/users/2fa/disable").then((r) => {
         this.$auth.fetchUser()
       })
+    },
+    resendVerificationEmail() {
+      this.loading = true
+      this.detail = ""
+      this.$axios
+        .post("/users/verify", {
+          email: this.$auth.user.email,
+          next_url: new URL("login/email", this.url).href,
+        })
+        .then((r) => {
+          this.loading = false
+          this.detail = "Verification email sent"
+        })
     },
   },
 }

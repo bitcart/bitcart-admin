@@ -86,6 +86,8 @@ export default {
     },
     login() {
       this.askForEmailVerify = false
+      this.usernameErrors = []
+      this.passwordErrors = []
       if (this.$refs.form.validate()) {
         this.$axios
           .post("/token", {
@@ -109,8 +111,6 @@ export default {
           })
           .catch((err) => {
             if (err.response) {
-              this.usernameErrors = []
-              this.passwordErrors = []
               const status = err.response.data.detail.status
               const detail = err.response.data.detail
               if (status === 404) {

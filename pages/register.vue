@@ -48,6 +48,10 @@
               Already have an account ?
               <NuxtLink to="/login"> Sign in</NuxtLink> instead
             </div>
+            <div v-if="askForEmailVerify">
+              Verification email sent. Didn't receive the verification email?
+              <NuxtLink to="/login/email"> Re-send it here</NuxtLink>
+            </div>
           </v-card-text>
           <v-card-actions>
             <div class="flex-grow-1" />
@@ -61,8 +65,10 @@
 </template>
 <script>
 import VueHcaptcha from "@hcaptcha/vue-hcaptcha"
+import isHTTPS from "is-https"
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
+
 export default {
   components: {
     OnionTextField,
@@ -70,6 +76,20 @@ export default {
     UIExtensionSlot,
   },
   middleware: "registeroff",
+  asyncData({ req }) {
+    let url = ""
+    if (req) {
+      url = req.headers.host
+      if (isHTTPS(req)) {
+        url = "https://" + url
+      } else {
+        url = "http://" + url
+      }
+    } else {
+      url = window.location.origin
+    }
+    return { url }
+  },
   data() {
     return {
       email: "",
@@ -82,6 +102,7 @@ export default {
         match: (v) =>
           this.password === this.repeat_password || "Passwords must match",
       },
+      askForEmailVerify: false,
     }
   },
   auth: "guest",
@@ -90,12 +111,15 @@ export default {
       this.captchaCode = token
     },
     register() {
+      this.askForEmailVerify = false
+      this.errors = []
       if (this.$refs.form.validate()) {
         this.$axios
           .post("users", {
             email: this.email,
             password: this.password,
             captcha_code: this.captchaCode,
+            verify_url: new URL("login/email", this.url).href,
           })
           .then((r) => {
             this.$auth.setUserToken(r.data.token)
@@ -113,6 +137,10 @@ export default {
                 this.errors = ["That username is already taken"]
               } else if (detail.status === 403) {
                 this.errors = ["Failed captcha"]
+              } else if (detail) {
+                this.errors = [detail]
+                if (detail === "Email is not verified")
+                  this.askForEmailVerify = true
               }
             }
           })

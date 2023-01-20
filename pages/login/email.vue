@@ -66,7 +66,7 @@ import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 
 export default {
-  auth: "guest",
+  auth: false,
   components: {
     OnionTextField,
     VueHcaptcha,
