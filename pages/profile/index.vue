@@ -18,6 +18,44 @@
       @click="resendVerificationEmail"
       >Re-send verification email</v-btn
     >
+    <v-form ref="changePasswordForm" @submit.prevent="sendChangePassword">
+      <h1>Change password</h1>
+      <v-text-field
+        v-model="old_password"
+        label="Old password"
+        :rules="[rules.required, rules.min]"
+        type="password"
+      />
+      <v-text-field
+        v-model="new_password"
+        label="New password"
+        :rules="[rules.required, rules.min]"
+        type="password"
+      />
+      <v-text-field
+        v-model="new_password2"
+        label="Confirm new password"
+        :rules="[rules.required, rules.min, rules.match]"
+        type="password"
+      />
+      <v-switch v-model="logoutAll" label="Logout all devices?" />
+      <p
+        v-if="changePassword.detail"
+        :class="{
+          'red--text': changePassword.error,
+          'green--text': !changePassword.error,
+        }"
+      >
+        {{ changePassword.detail }}
+      </p>
+      <v-btn
+        color="primary"
+        class="mb-3"
+        type="submit"
+        :loading="changePassword.loading"
+        >Change password</v-btn
+      >
+    </v-form>
     <div>2FA status: {{ $auth.user.tfa_enabled ? "Enabled" : "Disabled" }}</div>
     <v-btn
       v-if="!$auth.user.tfa_enabled"
@@ -74,6 +112,20 @@ export default {
       policyURL: "/users/me/settings",
       loading: false,
       detail: "",
+      old_password: "",
+      new_password: "",
+      new_password2: "",
+      logoutAll: false,
+      changePassword: {
+        loading: false,
+        error: false,
+        detail: "",
+      },
+      rules: {
+        ...this.$utils.rules,
+        match: (v) =>
+          this.new_password === this.new_password2 || "Passwords must match",
+      },
       titles: this.$utils.getExtendSetting.call(
         this,
         "user_policy_descriptions",
@@ -115,6 +167,29 @@ export default {
           this.loading = false
           this.detail = "Verification email sent"
         })
+    },
+    sendChangePassword() {
+      if (this.$refs.changePasswordForm.validate()) {
+        this.changePassword.loading = true
+        this.changePassword.detail = ""
+        this.changePassword.error = false
+        this.$axios
+          .post("/users/password", {
+            old_password: this.old_password,
+            password: this.new_password,
+            logout_all: this.logoutAll,
+          })
+          .then((r) => {
+            this.changePassword.loading = false
+            this.changePassword.detail = "Successfully changed password"
+            this.changePassword.error = false
+          })
+          .catch((e) => {
+            this.changePassword.loading = false
+            this.changePassword.detail = e.response.data.detail
+            this.changePassword.error = true
+          })
+      }
     },
   },
 }
