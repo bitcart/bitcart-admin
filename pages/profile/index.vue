@@ -1,6 +1,11 @@
 <template>
   <div>
-    <div>Email:</div>
+    <div>
+      Email:
+      <span v-if="!$auth.user.is_verified" class="error--text"
+        >(Unverified)</span
+      >
+    </div>
     <v-text-field disabled filled dense :value="$auth.user.email" />
     <div>2FA status: {{ $auth.user.tfa_enabled ? "Enabled" : "Disabled" }}</div>
     <v-btn

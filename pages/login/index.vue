@@ -40,6 +40,10 @@
               Don't have an account?
               <NuxtLink to="/register"> Sign up here </NuxtLink>
             </div>
+            <div v-if="askForEmailVerify">
+              Didn't receive the verification email?
+              <NuxtLink to="/login/email"> Re-send it here</NuxtLink>
+            </div>
             <NuxtLink to="/forgotpassword">Forgot password?</NuxtLink>
           </v-card-text>
           <v-card-actions>
@@ -73,6 +77,7 @@ export default {
       usernameErrors: [],
       passwordErrors: [],
       captchaCode: "",
+      askForEmailVerify: false,
     }
   },
   methods: {
@@ -80,6 +85,7 @@ export default {
       this.captchaCode = token
     },
     login() {
+      this.askForEmailVerify = false
       if (this.$refs.form.validate()) {
         this.$axios
           .post("/token", {
@@ -106,12 +112,19 @@ export default {
               this.usernameErrors = []
               this.passwordErrors = []
               const status = err.response.data.detail.status
+              const detail = err.response.data.detail
               if (status === 404) {
                 this.usernameErrors = ["That user does not exist"]
               } else if (status === 401) {
                 this.passwordErrors = ["Invalid password"]
               } else if (status === 403)
                 this.usernameErrors = ["Failed captcha"]
+              else if (detail) {
+                this.usernameErrors = [detail]
+                if (detail === "Email is not verified") {
+                  this.askForEmailVerify = true
+                }
+              }
             }
           })
       }
