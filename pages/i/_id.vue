@@ -70,6 +70,7 @@ export default {
   layout: "checkout",
   data() {
     return {
+      websocket: null,
       showSnackbar: false,
       showPartial: false,
       showDialog: true,
@@ -129,6 +130,11 @@ export default {
       })
       .catch((err) => this.setError(err))
   },
+  beforeDestroy() {
+    if (this.websocket) {
+      this.websocket.close()
+    }
+  },
   methods: {
     setError(err) {
       if (err.response && err.response.status === 404) {
@@ -147,8 +153,8 @@ export default {
         `/ws/invoices/${this.$route.params.id}`
       )
       url = url.replace("http://", "ws://").replace("https://", "wss://")
-      const websocket = new WebSocket(url)
-      websocket.onmessage = (event) => {
+      this.websocket = new WebSocket(url)
+      this.websocket.onmessage = (event) => {
         const data = JSON.parse(event.data)
         const status = data.status
         if (

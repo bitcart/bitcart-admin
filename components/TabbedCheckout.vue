@@ -392,7 +392,7 @@
                                   <v-btn
                                     v-else
                                     color="primary"
-                                    :href="paymentURL"
+                                    @click="openInWallet(paymentURL)"
                                     >Open in wallet</v-btn
                                   >
                                 </UIExtensionSlot>
@@ -851,6 +851,9 @@ export default {
     getAmountClass(textLen) {
       if (textLen <= 25) return { "text-h5": true }
       else return { "text-h6": true, "font-weight-regular": true }
+    },
+    openInWallet(url) {
+      window.open(url)
     },
   },
 }
