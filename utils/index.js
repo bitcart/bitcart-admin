@@ -230,12 +230,7 @@ export default {
     },
   ],
   decimalStr(value, divisibility) {
-    const parsedAmount = parseFloat(value).toFixed(divisibility)
-    const [wholeAmount, fractionAmount] = parsedAmount.split(".")
-    const formattedWholeAmount = new Intl.NumberFormat().format(
-      parseInt(wholeAmount, 10)
-    )
-    return formattedWholeAmount + (fractionAmount ? "." + fractionAmount : "")
+    return parseFloat(value).toFixed(divisibility)
   },
   getDivisibility(valueStr) {
     const [, fractionAmount] = valueStr.split(".")
