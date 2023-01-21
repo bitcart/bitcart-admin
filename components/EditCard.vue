@@ -9,6 +9,45 @@
       <template v-if="showNew" #activator="{ on: show }">
         <v-btn color="primary" dark v-on="show"> New {{ title }} </v-btn>
       </template>
+      <v-dialog v-model="showCreateWalletDialog" max-width="650px">
+        <v-card>
+          <v-card-title class="justify-center"
+            >Create a new wallet</v-card-title
+          >
+          <v-card-text v-if="!walletSeed">
+            Select wallet type
+            <v-radio-group v-model="walletType">
+              <v-radio
+                key="watchonly"
+                label="Watch-only (no private keys stored)"
+                value="watchonly"
+              />
+              <v-radio
+                key="seed"
+                label="Hot wallet (private keys on server)"
+                value="seed"
+              />
+            </v-radio-group>
+          </v-card-text>
+          <v-card-text v-else>
+            Write down this seed in a secure place. This won't be shown anymore.
+            If you loose your seed, you'll loose your funds.<br />
+            <code v-text="walletSeed" />
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn v-if="!walletSeed" color="primary" @click="createWallet"
+              >Create</v-btn
+            >
+            <v-btn
+              v-else
+              color="primary"
+              @click="showCreateWalletDialog = false"
+            >
+              Close</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-form ref="form" v-model="formValid" @submit.prevent="save">
         <v-card>
           <v-card-title>
@@ -42,8 +81,26 @@
                     :readonly="editMode && header.readonly"
                     @input="update(header.value, $event)"
                   >
-                    <template v-if="header.help" #append>
-                      <v-btn icon target="_blank" :href="header.help">
+                    <template #append>
+                      <v-tooltip v-if="header.value === 'xpub'" bottom>
+                        <template #activator="{ on: onAttr, attrs }">
+                          <v-btn
+                            icon
+                            v-bind="attrs"
+                            v-on="onAttr"
+                            @click="showCreateWalletDialog = true"
+                          >
+                            <v-icon medium>mdi-plus</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Create a new wallet</span>
+                      </v-tooltip>
+                      <v-btn
+                        v-if="header.help"
+                        icon
+                        target="_blank"
+                        :href="header.help"
+                      >
                         <v-icon medium> mdi-help-circle-outline </v-icon>
                       </v-btn>
                     </template>
@@ -354,6 +411,9 @@ export default {
             )
           : {},
       showPassword: false,
+      showCreateWalletDialog: false,
+      walletType: "watchonly",
+      walletSeed: "",
       rules: this.$utils.rules,
       oldItem: Object.assign({}, this.item),
     }
@@ -415,6 +475,12 @@ export default {
       this.$emit("update:dialogWatch", val)
       if (!val) {
         this.close()
+      }
+    },
+    showCreateWalletDialog(val) {
+      if (!val) {
+        this.walletSeed = ""
+        this.walletType = "watchonly"
       }
     },
     item: {
@@ -696,6 +762,17 @@ export default {
         this.$set(this.item, "data", {})
       }
       this.$set(this.item, key, value)
+    },
+    createWallet() {
+      this.$axios
+        .post("/wallets/create", {
+          currency: this.item.currency,
+          hot_wallet: this.walletType === "seed",
+        })
+        .then((r) => {
+          this.update("xpub", r.data.key)
+          this.walletSeed = r.data.seed
+        })
     },
   },
 }
