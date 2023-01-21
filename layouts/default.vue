@@ -225,18 +225,21 @@ export default {
           title: "Server management",
           superuser: true,
           click: () => {},
+          order: 1,
         },
         {
           icon: "account_circle",
           href: "/profile",
           title: "Profile",
           click: () => {},
+          order: 2,
         },
         {
           icon: "fullscreen_exit",
           href: "#",
           title: "Logout",
           click: this.handleLogout,
+          order: 99,
         },
       ],
       guestProfileItems: [
@@ -245,12 +248,14 @@ export default {
           href: "/login",
           title: "Login",
           click: () => {},
+          order: 1,
         },
         {
           icon: "mdi-account-plus",
           href: "/register",
           title: "Register",
           click: () => {},
+          order: 2,
         },
       ],
     }
@@ -277,16 +282,36 @@ export default {
       return this.syncInfo.filter((x) => !x.synchronized)
     },
     availableProfileItems() {
-      return this.$utils.getExtendSetting.call(
-        this,
-        "profile_items",
-        this.$auth.loggedIn
-          ? this.profileItems.filter(
-              (x) =>
-                !x.superuser || (x.superuser && this.$auth.user.is_superuser)
-            )
-          : this.guestProfileItems
-      )
+      return this.$utils.getExtendSetting
+        .call(
+          this,
+          "profile_items",
+          this.$auth.loggedIn
+            ? this.profileItems
+                .filter(
+                  (x) =>
+                    !x.superuser ||
+                    (x.superuser && this.$auth.user.is_superuser)
+                )
+                .concat(
+                  this.$auth.user.is_superuser ||
+                    this.$store.state.policies.allow_file_uploads
+                    ? [
+                        {
+                          icon: "mdi-paperclip",
+                          href: "/files",
+                          title: "Files",
+                          order: 3,
+                          click: () => {},
+                        },
+                      ]
+                    : []
+                )
+            : this.guestProfileItems
+        )
+        .sort(function (a, b) {
+          return a.order < b.order ? -1 : 1
+        })
     },
     logoStyle() {
       return this.$vuetify.theme.dark ? "filter: invert(1)" : ""

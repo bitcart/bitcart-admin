@@ -26,6 +26,7 @@ export default {
       titles: this.$utils.getExtendSetting.call(this, "policy_descriptions", {
         disable_registration: "Disable user registration",
         require_verified_email: "Require verified email address for all users",
+        allow_file_uploads: "Allow file uploads for non-superusers",
         discourage_index: "Discourage search engines from indexing this site",
         check_updates: "Check for updates once a day",
         staging_updates: "Install updates from staging branch directly",

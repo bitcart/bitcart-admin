@@ -63,6 +63,17 @@
                       </v-btn>
                     </template>
                   </v-textarea>
+                  <v-file-input
+                    v-else-if="header.input === 'file'"
+                    v-model="item[header.value]"
+                    :label="header.text"
+                    :rules="[
+                      (value) =>
+                        !value ||
+                        value.size < 50 * 1024 * 1024 ||
+                        'File size should be less than 50 MB!',
+                    ]"
+                  />
                   <template v-else-if="header.input === 'dynamic'">
                     <v-row>
                       <v-col
@@ -619,14 +630,21 @@ export default {
         let data = Object.assign({}, this.item)
         data = this.postprocess(data)
         let headers = {}
-        if (this.body || this.headers.some((x) => x.input === "image")) {
-          const header = this.headers.find((x) => x.input === "image")
+        if (
+          this.body ||
+          this.headers.some((x) => x.input === "image" || x.input === "file")
+        ) {
+          const header = this.headers.find(
+            (x) => x.input === "image" || x.input === "file"
+          )
           const dataForm = new FormData()
           if (header) {
             if (data[header.value]) {
               dataForm.append(
                 header.value,
-                this.dataURLtoBlob(data[header.value])
+                header.input === "image"
+                  ? this.dataURLtoBlob(data[header.value])
+                  : data[header.value]
               )
             }
             delete data[header.value]

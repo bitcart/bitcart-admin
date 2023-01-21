@@ -8,5 +8,6 @@
   "discounts",
   "products",
   "invoices",
-  "payouts"
+  "payouts",
+  "files"
 ]

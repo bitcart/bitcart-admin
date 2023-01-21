@@ -565,7 +565,18 @@ export default {
     },
     showImage(item) {
       this.showImageItem = item
-      this.showImageDialog = true
+      // this workaround is there to send CORS OPTIONS request before v-img loads image to avoid errors with cors where
+      // one request didn't request it, another one did and we get CORS error
+      if (!item.image) {
+        this.showImageDialog = true
+        return
+      }
+      const img = new Image()
+      img.crossOrigin = "Anonymous"
+      img.src = this.imageURL(item.image)
+      img.onload = () => {
+        this.showImageDialog = true
+      }
     },
   },
 }

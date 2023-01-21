@@ -76,6 +76,7 @@ export default {
         {
           invoices: "id",
           payouts: "id",
+          files: "id",
         }
       ),
       permissions: new Set(),
