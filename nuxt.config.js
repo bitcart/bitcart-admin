@@ -86,11 +86,11 @@ export default {
    */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
+    "@ergonode/vuems",
     "@nuxtjs/eslint-module",
     "@nuxtjs/vuetify",
     "@nuxtjs/pwa",
     "@nuxtjs/device",
-    "@ergonode/vuems",
     "@nuxtjs/router",
   ],
   /*
@@ -176,6 +176,7 @@ export default {
       if (ctx.isClient) {
         config.externals = ["fs"]
       }
+      if (ctx.isDev) config.resolve.symlinks = false
     },
     transpile: transpileDeps,
   },

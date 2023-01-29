@@ -27,7 +27,7 @@
       </v-chip>
     </template>
     <template #item="data">
-      <template v-if="typeof data.item !== 'object'">
+      <template v-if="isNotObject(data)">
         <v-list-item-content v-text="data.item" />
       </template>
       <template v-else>
@@ -104,6 +104,9 @@ export default {
     },
   },
   methods: {
+    isNotObject(data) {
+      return typeof data.item !== "object"
+    },
     updateValue(value) {
       this.$emit("input", value)
     },

@@ -5,7 +5,7 @@
         <v-row>
           <v-list-item v-for="(item, index) in data" :key="index" class="pl-0">
             <v-list-item-content>
-              <v-col cols="4">
+              <v-col v-if="!listOnly" cols="4">
                 <v-text-field
                   v-model="item.key"
                   label="Name"
@@ -46,6 +46,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    listOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -64,7 +68,14 @@ export default {
       })
     },
     sendInput() {
-      this.$emit("input", this.data)
+      if (this.listOnly) {
+        this.$emit(
+          "input",
+          this.data.map((item) => item.value)
+        )
+      } else {
+        this.$emit("input", this.data)
+      }
     },
     deleteItem(index) {
       this.data.splice(index, 1)
