@@ -30,7 +30,7 @@
             Version: {{ plugin.version }}<br />
             Author: {{ plugin.organization }}</v-card-title
           >
-          <v-card-text>
+          <v-card-text style="overflow-y: auto; height: 150px">
             <p class="text-h6">
               {{ plugin.description }}
             </p>
