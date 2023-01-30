@@ -416,6 +416,7 @@ export default {
       walletSeed: "",
       rules: this.$utils.rules,
       oldItem: Object.assign({}, this.item),
+      cachedSchema: {},
     }
     dt.oldAutosearches = Object.assign({}, dt.autosearches)
     return dt
@@ -485,6 +486,17 @@ export default {
     },
     item: {
       handler(val) {
+        if (val.currency !== this.oldItem.currency) {
+          this.headers.forEach((header) => {
+            if (header.dynamicText) {
+              this.$set(
+                header,
+                "text",
+                header.dynamicText(val, this.cachedSchema)
+              )
+            }
+          })
+        }
         if (this.dynamicAutocompletes && val.currency !== this.oldItem.currency)
           this.fetchAutocompletes()
         this.oldItem = Object.assign({}, val)
@@ -530,6 +542,11 @@ export default {
     },
   },
   beforeMount() {
+    if (this.url === "wallets") {
+      this.$axios.get("/wallets/schema").then((r) => {
+        this.cachedSchema = r.data
+      })
+    }
     this.getItems = debounce(this.getItemsNolimit, 250)
     this.performInit()
   },

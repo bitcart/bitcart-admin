@@ -104,7 +104,8 @@
             :data="item[header.value]"
           />
           <p v-else>
-            {{ header.text }}: <br /><span
+            {{ header.dynamicText ? header.dynamicText(item) : header.text }}:
+            <br /><span
               ><slot
                 v-if="`item.${header.value}` in $scopedSlots"
                 :name="`item.${header.value}`"

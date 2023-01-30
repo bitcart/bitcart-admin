@@ -41,6 +41,12 @@ export default {
           rules: ["required"],
           help: "https://docs.bitcartcc.com/your-first-invoice#creating-a-wallet",
           errors: { "Wallet key invalid": "Invalid xpub" },
+          dynamicText: (v, schema) => {
+            if (schema && schema[v.currency]) {
+              return schema[v.currency].xpub_name
+            }
+            return v.xpub_name || "Xpub"
+          },
         },
         {
           text: "Contract",
