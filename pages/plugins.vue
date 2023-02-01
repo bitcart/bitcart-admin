@@ -20,7 +20,7 @@
     <v-row>
       <v-col
         v-for="plugin in plugins"
-        :key="plugin.organization + plugin.name"
+        :key="plugin.author + plugin.name"
         md="3"
         cols="12"
       >
@@ -28,12 +28,47 @@
           <v-card-title
             >{{ plugin.name }}<br />
             Version: {{ plugin.version }}<br />
-            Author: {{ plugin.organization }}</v-card-title
+            Author: {{ plugin.author }}</v-card-title
           >
           <v-card-text style="overflow-y: auto; height: 150px">
             <p class="text-h6">
               {{ plugin.description }}
             </p>
+            <v-btn
+              v-if="plugin.website"
+              icon
+              :href="plugin.website"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+            >
+              <v-icon>mdi-web</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="plugin.docs_url"
+              icon
+              :href="plugin.docs_url"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+            >
+              <v-icon>mdi-book-open-variant</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="plugin.source_url"
+              icon
+              :href="plugin.source_url"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+            >
+              <v-icon>mdi-code-tags</v-icon>
+            </v-btn>
+            <v-tooltip v-if="plugin.license" bottom>
+              <template #activator="{ on, attrs }">
+                <v-icon v-bind="{ ...attrs, ...$attrs }" v-on="on">
+                  mdi-license
+                </v-icon>
+              </template>
+              <span>License: {{ plugin.license }}</span>
+            </v-tooltip>
           </v-card-text>
           <v-card-actions class="justify-space-between">
             <v-btn color="primary" @click="showDetails(plugin)">
@@ -111,12 +146,11 @@ export default {
       this.$axios
         .post("/plugins/uninstall", {
           name: plugin.name,
-          organization: plugin.organization,
+          author: plugin.author,
         })
         .then(() => {
           this.plugins = this.plugins.filter(
-            (p) =>
-              p.name !== plugin.name || p.organization !== plugin.organization
+            (p) => p.name !== plugin.name || p.author !== plugin.author
           )
         })
     },
