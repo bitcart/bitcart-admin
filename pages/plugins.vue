@@ -25,58 +25,66 @@
         cols="12"
       >
         <v-card height="100%" max-width="350" class="ml-1">
-          <v-card-title
-            >{{ plugin.name }}<br />
-            Version: {{ plugin.version }}<br />
-            Author: {{ plugin.author }}</v-card-title
-          >
-          <v-card-text style="overflow-y: auto; height: 150px">
-            <p class="text-h6">
-              {{ plugin.description }}
-            </p>
-            <v-btn
-              v-if="plugin.website"
-              icon
-              :href="plugin.website"
-              target="_blank"
-              rel="noopener noreferrer nofollow"
+          <div style="overflow-y: auto; height: 250px">
+            <v-card-title
+              >{{ plugin.name }}<br />
+              Version: {{ plugin.version }}<br />
+              Author: {{ plugin.author }}</v-card-title
             >
-              <v-icon>mdi-web</v-icon>
-            </v-btn>
-            <v-btn
-              v-if="plugin.docs_url"
-              icon
-              :href="plugin.docs_url"
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-            >
-              <v-icon>mdi-book-open-variant</v-icon>
-            </v-btn>
-            <v-btn
-              v-if="plugin.source_url"
-              icon
-              :href="plugin.source_url"
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-            >
-              <v-icon>mdi-code-tags</v-icon>
-            </v-btn>
-            <v-tooltip v-if="plugin.license" bottom>
-              <template #activator="{ on, attrs }">
-                <v-icon v-bind="{ ...attrs, ...$attrs }" v-on="on">
-                  mdi-license
-                </v-icon>
-              </template>
-              <span>License: {{ plugin.license }}</span>
-            </v-tooltip>
-          </v-card-text>
-          <v-card-actions class="justify-space-between">
-            <v-btn color="primary" @click="showDetails(plugin)">
-              Details
-            </v-btn>
-            <v-btn color="error" @click="uninstallPlugin(plugin)"
-              >Uninstall</v-btn
-            >
+            <v-card-text class="py-0">
+              <p class="text-h6">
+                {{ plugin.description }}
+              </p>
+            </v-card-text>
+          </div>
+          <v-card-actions>
+            <v-container>
+              <v-row class="pb-2">
+                <v-btn
+                  v-if="plugin.website"
+                  icon
+                  :href="plugin.website"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                >
+                  <v-icon>mdi-web</v-icon>
+                </v-btn>
+                <v-btn
+                  v-if="plugin.docs_url"
+                  icon
+                  :href="plugin.docs_url"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                >
+                  <v-icon>mdi-book-open-variant</v-icon>
+                </v-btn>
+                <v-btn
+                  v-if="plugin.source_url"
+                  icon
+                  :href="plugin.source_url"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                >
+                  <v-icon>mdi-code-tags</v-icon>
+                </v-btn>
+                <v-tooltip v-if="plugin.license" bottom>
+                  <template #activator="{ on, attrs }">
+                    <v-icon v-bind="{ ...attrs, ...$attrs }" v-on="on">
+                      mdi-license
+                    </v-icon>
+                  </template>
+                  <span>License: {{ plugin.license }}</span>
+                </v-tooltip>
+              </v-row>
+              <v-row class="justify-space-between">
+                <v-btn color="primary" @click="showDetails(plugin)">
+                  Details
+                </v-btn>
+                <v-btn color="error" @click="uninstallPlugin(plugin)"
+                  >Uninstall</v-btn
+                >
+              </v-row>
+            </v-container>
           </v-card-actions>
         </v-card>
       </v-col>
