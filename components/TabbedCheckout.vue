@@ -152,11 +152,15 @@
                   <v-list-item-title
                     class="text-subtitle-1 font-weight-regular align-right"
                   >
-                    {{ itemv.amount }}
+                    {{ networkFeeIncluded ? expectedAmount : itemv.amount }}
                     {{ itemv.symbol.toUpperCase() }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    <span v-if="invoice.price !== currentPrice">
+                    <span
+                      v-if="
+                        parseFloat(currentPrice) < parseFloat(invoice.price)
+                      "
+                    >
                       <strike>{{ invoice.price }}</strike>
                       <span class="font-weight-black">
                         {{ currentPrice }}
@@ -186,6 +190,24 @@
                   </v-list-item-title>
                 </v-list-item-action>
               </v-list-item>
+              <v-list-item v-if="networkFeeIncluded">
+                <v-list-item-content>
+                  <v-list-item-title>Network cost</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-list-item-title
+                    class="text-subtitle-1 font-weight-regular align-right"
+                  >
+                    +{{
+                      $utils.decimalStr(
+                        parseFloat(itemv.amount) - parseFloat(expectedAmount),
+                        itemv.divisibility
+                      )
+                    }}
+                    {{ itemv.symbol.toUpperCase() }}
+                  </v-list-item-title>
+                </v-list-item-action>
+              </v-list-item>
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title>Due</v-list-item-title>
@@ -197,7 +219,7 @@
                     {{
                       itemv.name === invoice.paid_currency
                         ? $utils.decimalStr(
-                            itemv.amount - invoice.sent_amount,
+                            Math.max(0, itemv.amount - invoice.sent_amount),
                             itemv.divisibility
                           )
                         : itemv.amount
@@ -646,6 +668,15 @@ export default {
         this.$utils.getDivisibility(this.invoice.price)
       )
     },
+    expectedAmount() {
+      return this.$utils.decimalStr(
+        this.invoice.price / this.itemv.rate,
+        this.itemv.divisibility
+      )
+    },
+    networkFeeIncluded() {
+      return parseFloat(this.itemv.amount) > parseFloat(this.expectedAmount)
+    },
     currentCurrency() {
       return this.itemv.currency
     },
@@ -867,7 +898,7 @@ export default {
 }
 .payment-box,
 .v-tabs-items.payment-box .v-window-item {
-  height: 450px;
+  height: 450px !important;
   overflow-y: auto;
 }
 .v-application.theme--light .activeTab {

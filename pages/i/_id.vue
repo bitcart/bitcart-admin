@@ -209,6 +209,14 @@ export default {
 }
 </script>
 
+<style lang="scss">
+@import "~vuetify/src/components/VDialog/_variables.scss";
+
+$dialog-max-height: 100%;
+
+@import "~vuetify/src/components/VDialog/VDialog.sass";
+</style>
+
 <style scoped>
 @keyframes checkbounce {
   0% {

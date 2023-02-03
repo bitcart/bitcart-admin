@@ -285,6 +285,11 @@ export default {
           input: "switch",
           help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#why-could-anyone-create-an-invoice-without-authorization-how-to-disallow-that",
         },
+        {
+          text: "Include network fee in invoice amount",
+          value: "include_network_fee",
+          input: "switch",
+        },
       ],
       themeHeaders: [
         {
