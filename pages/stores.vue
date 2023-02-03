@@ -1,11 +1,21 @@
 <template>
   <div>
-    <item-data
-      :headers="headers"
-      :url="url"
-      :title="title"
-      :actions="actions"
-    />
+    <item-data :headers="headers" :url="url" :title="title" :actions="actions">
+      <template #before-toolbar>
+        <v-row>
+          <v-col class="px-3">
+            <v-btn
+              color="primary"
+              class="mr-2"
+              href="https://docs.bitcartcc.com/integrations"
+              target="_blank"
+            >
+              Integrations
+            </v-btn>
+          </v-col>
+        </v-row>
+      </template>
+    </item-data>
     <edit-card
       :url="url"
       :on.sync="showDialog"
