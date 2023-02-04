@@ -298,8 +298,8 @@ export default {
           help: "https://docs.bitcartcc.com/guides/themes",
         },
         {
-          text: "Admin theme css url",
-          value: "admin_theme_url",
+          text: "Checkout page theme css url",
+          value: "checkout_theme_url",
           help: "https://docs.bitcartcc.com/guides/themes",
         },
       ],

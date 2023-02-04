@@ -34,6 +34,7 @@ export default {
           "Allow access to configurator for unauthorized users",
         captcha_sitekey: "HCaptcha site key",
         captcha_secretkey: "HCaptcha secret key",
+        admin_theme_url: "Admin theme css URL",
         enable_captcha: "Enable captcha on login page",
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
@@ -46,6 +47,7 @@ export default {
       types: this.$utils.getExtendSetting.call(this, "policy_types", {
         captcha_sitekey: "string",
         captcha_secretkey: "string",
+        admin_theme_url: "string",
         explorer_urls: "exploreredit",
         rpc_urls: "exploreredit",
         email_settings: "emailsettings",
