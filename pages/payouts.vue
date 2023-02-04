@@ -33,7 +33,7 @@
               <v-btn
                 icon
                 target="_blank"
-                href="https://docs.bitcartcc.com/guides/payouts"
+                href="https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#signing-payouts"
               >
                 <v-icon medium> mdi-help-circle-outline </v-icon>
               </v-btn></v-card-title
@@ -153,11 +153,13 @@ export default {
           text: "Tx hash",
           value: "tx_hash",
           expand: true,
+          mode: "display",
         },
         {
           text: "Used fee",
           value: "used_fee",
           expand: true,
+          mode: "display",
         },
         { text: "Created date", value: "created", mode: "display" },
         {
