@@ -65,7 +65,15 @@
               title="Actions"
             />
           </mobile-wrap>
-          <mobile-wrap v-if="$slots['before-toolbar']" :wrap="true">
+          <mobile-wrap
+            v-if="$slots['before-toolbar'] || $getExtendSlot('before_toolbar')"
+            :wrap="true"
+          >
+            <UIExtensionSlot
+              name="before_toolbar"
+              :url="url"
+              :trigger-reload="triggerReload"
+            />
             <slot name="before-toolbar" />
           </mobile-wrap>
           <mobile-wrap>
