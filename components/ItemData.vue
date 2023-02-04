@@ -69,12 +69,14 @@
             v-if="$slots['before-toolbar'] || $getExtendSlot('before_toolbar')"
             :wrap="true"
           >
-            <UIExtensionSlot
-              name="before_toolbar"
-              :url="url"
-              :trigger-reload="triggerReload"
-            />
-            <slot name="before-toolbar" />
+            <v-row class="px-3">
+              <UIExtensionSlot
+                name="before_toolbar"
+                :url="url"
+                :trigger-reload="triggerReload"
+              />
+              <slot name="before-toolbar" />
+            </v-row>
           </mobile-wrap>
           <mobile-wrap>
             <edit-card
