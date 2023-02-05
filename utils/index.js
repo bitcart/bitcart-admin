@@ -3,17 +3,50 @@ function isNull(v) {
 }
 
 export default {
-  copyToClipboard(text) {
-    const el = document.createElement("textarea")
-    el.addEventListener("focusin", (e) => e.stopPropagation())
-    el.value = text
-    el.setAttribute("readonly", "")
-    el.style.position = "absolute"
-    el.style.left = "-9999px"
-    document.body.appendChild(el)
-    el.select()
-    document.execCommand("copy")
-    document.body.removeChild(el)
+  isObjectEqual(a, b) {
+    if (!a || !b) return a === b
+    const aKeys = Object.keys(a).sort()
+    const bKeys = Object.keys(b).sort()
+    if (aKeys.length !== bKeys.length) {
+      return false
+    }
+    return aKeys.every((key, i) => {
+      const aVal = a[key]
+      const bKey = bKeys[i]
+      if (bKey !== key) return false
+      const bVal = b[key]
+      if (aVal == null || bVal == null) return aVal === bVal
+      if (typeof aVal === "object" && typeof bVal === "object") {
+        return this.isObjectEqual(aVal, bVal)
+      }
+      return String(aVal) === String(bVal)
+    })
+  },
+  async copyToClipboard(text) {
+    let hasPermission = true
+    if (navigator.clipboard && navigator.permissions) {
+      try {
+        const permissionStatus = await navigator.permissions.query({
+          name: "clipboard-write",
+          allowWithoutGesture: false,
+        })
+        hasPermission = permissionStatus.state === "granted"
+      } catch (err) {}
+    }
+    if (navigator.clipboard && hasPermission) {
+      await navigator.clipboard.writeText(text)
+    } else {
+      const el = document.createElement("textarea")
+      el.addEventListener("focusin", (e) => e.stopPropagation())
+      el.value = text
+      el.setAttribute("readonly", "")
+      el.style.position = "absolute"
+      el.style.left = "-9999px"
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand("copy")
+      document.body.removeChild(el)
+    }
   },
   redirectTo(url, newTab = false) {
     if (url) {

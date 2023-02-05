@@ -357,6 +357,9 @@ export default {
       ],
     }
   },
+  fetch() {
+    this.searchProp = this.$route.query.query || this.searchProp
+  },
   computed: {
     shouldExpand() {
       return this.headers.some((header) => header.expand)
@@ -437,7 +440,6 @@ export default {
   },
   beforeMount() {
     this.$bus.$on("updateitem", (item, index) => {
-      console.log("OOO", item, index, item.payout_id)
       this.editItemObj(item, index)
     })
     this.$bus.$on("additem", (item) => {
@@ -453,12 +455,19 @@ export default {
   },
   methods: {
     updateQueryStringImpl(val) {
-      if (!val) this.$router.push({ path: this.$route.path })
-      else
+      if (!val && !this.$utils.isObjectEqual(this.$route.query, {})) {
+        this.$router.push({ path: this.$route.path })
+      } else if (
+        !this.$utils.isObjectEqual(
+          { ...this.$route.query, query: val },
+          this.$route.query
+        )
+      ) {
         this.$router.push({
           path: this.$route.path,
           query: { ...this.$route.query, query: val },
         })
+      }
     },
     triggerReload(search = false, refreshStats = true) {
       const { sortBy, sortDesc, itemsPerPage } = this.options

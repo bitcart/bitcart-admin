@@ -428,14 +428,6 @@ export default {
         .then((r) => {
           this.loading = false
           this.$set(this.currentItem, "refund_id", r.data.id)
-          // console.log(
-          //   "HEREE",
-          //   this.item,
-          //   this.item.refund_id,
-          //   r.data.id,
-          //   this.itemIndex
-          // )
-          // this.$bus.$emit("updateitem", this.item, this.itemIndex)
           this.copyRefundLink(r.data.id)
           this.showRefundDialog = false
         })
