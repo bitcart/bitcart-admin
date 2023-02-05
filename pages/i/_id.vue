@@ -40,7 +40,11 @@
               class="d-flex justify-center success-circle success-icon"
             >
               <v-icon
-                :color="texts[status].icon === 'mdi-check' ? 'green' : 'red'"
+                :color="
+                  ['mdi-check', 'mdi-cash-refund'].includes(texts[status].icon)
+                    ? 'green'
+                    : 'red'
+                "
                 class="d-flex justify-center"
               >
                 {{ texts[status].icon }}
@@ -99,6 +103,10 @@ export default {
         complete: {
           icon: "mdi-check",
           text: "This invoice has been paid",
+        },
+        refunded: {
+          icon: "mdi-cash-refund",
+          text: "This invoice has been refunded",
         },
         "": {
           icon: "mdi-close",
@@ -190,10 +198,8 @@ export default {
       }
     },
     colorClass(icon) {
-      return {
-        "green--text": icon === "mdi-check",
-        "red--text": icon !== "mdi-check",
-      }
+      if (["mdi-check", "mdi-cash-refund"].includes(icon)) return "green--text"
+      return "red--text"
     },
     copyText(text) {
       this.$utils.copyToClipboard(text)

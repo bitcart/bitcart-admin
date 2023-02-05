@@ -437,6 +437,7 @@ export default {
   },
   beforeMount() {
     this.$bus.$on("updateitem", (item, index) => {
+      console.log("OOO", item, index, item.payout_id)
       this.editItemObj(item, index)
     })
     this.$bus.$on("additem", (item) => {

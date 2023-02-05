@@ -1,105 +1,181 @@
 <template>
-  <item-data
-    ref="itemdata"
-    :search.sync="search"
-    :headers="headers"
-    :url="url"
-    :title="title"
-    :custom-batch-actions="batchActions"
-  >
-    <template #before-toolbar>
-      <v-row>
-        <v-col class="pr-0">
-          <search-filters
-            :search.sync="search"
-            :custom-filters="customFilters"
-          />
-        </v-col>
-        <v-col class="pl-0">
-          <v-dialog v-model="showExportDialog" max-width="500px">
+  <div style="display: contents">
+    <item-data
+      ref="itemdata"
+      :search.sync="search"
+      :headers="headers"
+      :url="url"
+      :title="title"
+      :custom-batch-actions="batchActions"
+      :actions="actions"
+    >
+      <template #before-toolbar>
+        <v-row>
+          <v-col class="pr-0">
+            <search-filters
+              :search.sync="search"
+              :custom-filters="customFilters"
+            />
+          </v-col>
+          <v-col class="pl-0">
+            <v-dialog v-model="showExportDialog" max-width="500px">
+              <v-card>
+                <v-card-title>Export invoices</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="6">
+                        <v-select
+                          v-model="exportSettings.format"
+                          label="Export format"
+                          :items="exportItems"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-switch
+                          v-model="exportSettings.query"
+                          label="Use current query"
+                        />
+                      </v-col>
+                      <v-col cols="6">
+                        <v-switch
+                          v-model="exportSettings.payments"
+                          label="Include payments"
+                        />
+                      </v-col>
+                      <v-col cols="6">
+                        <v-switch
+                          v-model="exportSettings.allUsers"
+                          label="All users"
+                          :disabled="!$auth.user.is_superuser"
+                        />
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions class="justify-center pb-5">
+                  <v-btn color="primary" @click="exportInvoices">Export</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <v-btn color="primary" class="mr-2" @click="openExportDialog">
+              Export
+            </v-btn>
+          </v-col>
+          <v-dialog v-model="showRefundDialog" max-width="650px">
             <v-card>
-              <v-card-title>Export invoices</v-card-title>
+              <v-card-title class="justify-center">Issue refund</v-card-title>
               <v-card-text>
-                <v-container>
+                Choose what to refund
+                <v-radio-group v-model="refundType">
+                  <v-radio
+                    key="sent_amount_old"
+                    :label="`${currentItem.sent_amount} ${currentItem.paid_currency} (sent amount, at exchange rate of invoice creation)`"
+                    value="sent_amount_old"
+                  />
+                  <v-radio
+                    key="sent_amount_new"
+                    :label="`${newAmount} ${currentItem.paid_currency} (sent amount, at current exchange rate)`"
+                    value="sent_amount_new"
+                  />
+                  <v-radio
+                    key="sent_price"
+                    :label="`${sentPrice} ${currentItem.currency} (sent amount, at invoice currency)`"
+                    value="sent_price"
+                  />
+                  <v-radio key="custom" label="Custom amount" value="custom" />
                   <v-row>
                     <v-col cols="6">
-                      <v-select
-                        v-model="exportSettings.format"
-                        label="Export format"
-                        :items="exportItems"
-                      ></v-select>
+                      <v-text-field v-model="customAmount" label="Amount" />
                     </v-col>
                     <v-col cols="6">
-                      <v-switch
-                        v-model="exportSettings.query"
-                        label="Use current query"
-                      />
-                    </v-col>
-                    <v-col cols="6">
-                      <v-switch
-                        v-model="exportSettings.payments"
-                        label="Include payments"
-                      />
-                    </v-col>
-                    <v-col cols="6">
-                      <v-switch
-                        v-model="exportSettings.allUsers"
-                        label="All users"
-                        :disabled="!$auth.user.is_superuser"
+                      <auto-complete
+                        v-model="customCurrency"
+                        url="cryptos/fiatlist"
+                        label="Currency"
+                        :body="true"
                       />
                     </v-col>
                   </v-row>
-                </v-container>
+                  <v-row>
+                    <v-switch
+                      v-model="sendCustomerEmail"
+                      label="Send email notification to the customer if possible"
+                    />
+                  </v-row>
+                </v-radio-group>
               </v-card-text>
-              <v-card-actions class="justify-center pb-5">
-                <v-btn color="primary" @click="exportInvoices">Export</v-btn>
+              <v-card-actions class="justify-center">
+                <v-btn color="primary" :loading="loading" @click="createRefund"
+                  >Issue refund</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-btn color="primary" class="mr-2" @click="openExportDialog">
-            Export
-          </v-btn>
-        </v-col>
-      </v-row>
-    </template>
-    <template #item.tx_hashes="{ item }">
-      <div v-for="tx_hash of item.tx_hashes" :key="tx_hash">
-        <a
-          v-if="getTxURL(tx_hash, item)"
-          :href="`${getTxURL(tx_hash, item)}`"
-          target="_blank"
-          rel="noopener noreferrer nofollow"
+        </v-row>
+      </template>
+      <template #item.tx_hashes="{ item }">
+        <div v-for="tx_hash of item.tx_hashes" :key="tx_hash">
+          <a
+            v-if="getTxURL(tx_hash, item)"
+            :href="`${getTxURL(tx_hash, item)}`"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+          >
+            {{ tx_hash }}
+          </a>
+          <template v-else>{{ tx_hash }}</template>
+        </div>
+      </template>
+      <template #item.products="{ item, copyText }">
+        <v-list-item
+          v-for="itemv in item.products"
+          :key="itemv"
+          @click="copyText(itemv)"
         >
-          {{ tx_hash }}
-        </a>
-        <template v-else>{{ tx_hash }}</template>
-      </div>
-    </template>
-    <template #item.products="{ item, copyText }">
-      <v-list-item
-        v-for="itemv in item.products"
-        :key="itemv"
-        @click="copyText(itemv)"
-      >
-        <v-list-item-title>{{ item.product_names[itemv] }}</v-list-item-title>
-      </v-list-item>
-    </template>
-  </item-data>
+          <v-list-item-title>{{ item.product_names[itemv] }}</v-list-item-title>
+        </v-list-item>
+      </template>
+    </item-data>
+    <v-snackbar
+      v-model="showSnackbar"
+      :timeout="2500"
+      :color="snackbarColor"
+      bottom
+    >
+      {{ snackbarText }}
+    </v-snackbar>
+  </div>
 </template>
 <script>
 import ItemData from "@/components/ItemData.vue"
 import SearchFilters from "@/components/SearchFilters.vue"
 import JSONField from "@/components/JSONField.vue"
+import AutoComplete from "@/components/AutoComplete.vue"
 export default {
   components: {
     ItemData,
     SearchFilters,
+    AutoComplete,
   },
   layout: "dashboard",
   data() {
     const dt = {
       search: "",
       showExportDialog: false,
+      showRefundDialog: false,
+      currentItem: {},
+      itemIndex: -1,
+      refundType: "sent_amount_old",
+      showSnackbar: false,
+      newAmount: 0,
+      sentPrice: 0,
+      customAmount: "0",
+      customCurrency: "USD",
+      sendCustomerEmail: true,
+      loading: false,
+      snackbarColor: "success",
+      snackbarText: "",
       defaultExportSettings: {
         format: "CSV",
         query: false,
@@ -212,6 +288,13 @@ export default {
         },
         { text: "Actions", value: "action", sortable: false },
       ],
+      actions: [
+        {
+          icon: "mdi-cash-refund",
+          text: "Issue a refund",
+          process: this.issueRefund,
+        },
+      ],
       url: "invoices",
       title: "Invoice",
       exportItems: ["CSV", "JSON"],
@@ -270,7 +353,7 @@ export default {
           this.$utils.downloadFile(resp)
         })
     },
-    getTxURL(txHash, item) {
+    matchPayment(item) {
       let matchedPayment = item.payments.find((payment) => {
         return payment.name === item.paid_currency
       })
@@ -280,7 +363,88 @@ export default {
           return payment.name.startsWith(item.paid_currency)
         })
       }
+      return matchedPayment
+    },
+    getTxURL(txHash, item) {
+      const matchedPayment = this.matchPayment(item)
       return this.$utils.getTxURL.call(this, txHash, matchedPayment.currency)
+    },
+    issueRefund(item, itemIndex) {
+      if (item.paid_currency === "") {
+        this.snackbarColor = "error"
+        this.snackbarText =
+          "This invoice has no payments, so it can't be refunded"
+        this.showSnackbar = true
+        return
+      }
+      if (item.refund_id) {
+        this.copyRefundLink(item.refund_id)
+        return
+      }
+      const matchedPayment = this.matchPayment(item)
+      this.$axios
+        .get(
+          `/wallets/${matchedPayment.wallet_id}/rate?currency=${item.currency}`
+        )
+        .then((r) => {
+          this.newAmount = this.$utils.decimalStr(
+            (item.sent_amount * matchedPayment.rate) / r.data,
+            matchedPayment.divisibility
+          )
+          this.sentPrice = this.$utils.decimalStr(
+            item.sent_amount * matchedPayment.rate,
+            this.$utils.getDivisibility(item.price)
+          )
+          this.currentItem = item
+          this.itemIndex = itemIndex
+          this.showRefundDialog = true
+        })
+    },
+    createRefund() {
+      let refundAmount = this.customAmount
+      let refundCurrency = this.customCurrency
+      if (
+        this.refundType === "sent_amount_old" ||
+        this.refundType === "sent_amount_new"
+      ) {
+        refundAmount =
+          this.refundType === "sent_amount_new"
+            ? this.newAmount
+            : this.currentItem.sent_amount
+        refundCurrency = this.currentItem.paid_currency
+      }
+      if (this.refundType === "sent_price") {
+        refundAmount = this.sentPrice
+        refundCurrency = this.currentItem.currency
+      }
+      this.loading = true
+      this.$axios
+        .post(`/invoices/${this.currentItem.id}/refunds`, {
+          amount: refundAmount,
+          currency: refundCurrency,
+          admin_host: window.location.origin,
+          sent_email: this.sendCustomerEmail,
+        })
+        .then((r) => {
+          this.loading = false
+          this.$set(this.currentItem, "refund_id", r.data.id)
+          // console.log(
+          //   "HEREE",
+          //   this.item,
+          //   this.item.refund_id,
+          //   r.data.id,
+          //   this.itemIndex
+          // )
+          // this.$bus.$emit("updateitem", this.item, this.itemIndex)
+          this.copyRefundLink(r.data.id)
+          this.showRefundDialog = false
+        })
+    },
+    copyRefundLink(id) {
+      this.snackbarColor = "success"
+      this.snackbarText = "Refund link copied to clipboard"
+      this.showSnackbar = true
+      this.$utils.copyToClipboard(`${window.location.origin}/refunds/${id}`)
     },
   },
 }

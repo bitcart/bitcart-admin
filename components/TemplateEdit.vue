@@ -12,7 +12,7 @@
     :title="title"
   >
     <template v-if="dialogWatch" #dialog="{ item: itemd }">
-      <v-col v-for="template in defaultTemplates" :key="template">
+      <v-col v-for="template in defaultTemplates" :key="template" cols="6">
         <auto-complete
           :value="itemd.templates[template]"
           :label="template"
