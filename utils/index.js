@@ -67,10 +67,12 @@ export default {
     }
   },
   isEmpty(obj) {
-    return (
-      obj.length === 0 ||
-      (Object.entries(obj).length === 0 && obj.constructor === Object)
-    )
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        return false
+      }
+    }
+    return true
   },
   rules: {
     required: (v) => !isNull(v) || "Required.",

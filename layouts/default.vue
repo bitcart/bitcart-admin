@@ -199,16 +199,13 @@ export default {
           icon: "mdi-view-dashboard-outline",
           text: "Dashboard",
           to: "/",
-        },
-        {
-          component: OnionIcon,
-          text: "Tor services",
-          to: "/services",
+          order: 1,
         },
         {
           icon: "mdi-cog",
           text: "Configurator",
           to: "/configurator",
+          order: 3,
         },
       ],
       superuserItems: [
@@ -216,6 +213,7 @@ export default {
           icon: "mdi-puzzle",
           text: "Plugins",
           to: "/plugins",
+          order: 4,
         },
       ],
       profileItems: [
@@ -263,20 +261,35 @@ export default {
   computed: {
     ...mapGetters(["onionURL", "showSnow", "syncInfo"]),
     availableItems() {
-      return this.$utils.getExtendSetting.call(
-        this,
-        "nav_items",
-        this.$auth.loggedIn
-          ? this.items.concat(
-              this.$auth.user.is_superuser ? this.superuserItems : []
-            )
-          : this.guestItems.filter(
-              (x) =>
-                !x.configurator ||
-                (x.configurator &&
-                  this.$store.state.policies.allow_anonymous_configurator)
-            )
-      )
+      return this.$utils.getExtendSetting
+        .call(
+          this,
+          "nav_items",
+          this.$auth.loggedIn
+            ? this.items
+                .concat(this.$auth.user.is_superuser ? this.superuserItems : [])
+                .concat(
+                  !this.$utils.isEmpty(this.$store.state.services)
+                    ? [
+                        {
+                          component: OnionIcon,
+                          text: "Tor services",
+                          to: "/services",
+                          order: 2,
+                        },
+                      ]
+                    : []
+                )
+            : this.guestItems.filter(
+                (x) =>
+                  !x.configurator ||
+                  (x.configurator &&
+                    this.$store.state.policies.allow_anonymous_configurator)
+              )
+        )
+        .sort(function (a, b) {
+          return a.order < b.order ? -1 : 1
+        })
     },
     unsyncedInfo() {
       return this.syncInfo.filter((x) => !x.synchronized)
