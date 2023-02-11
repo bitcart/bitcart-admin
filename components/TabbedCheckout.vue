@@ -118,19 +118,18 @@
               </v-list-item-content>
               <v-list-item-action>
                 <v-list-item-title
+                  v-if="!zeroAmountInvoice"
                   class="text-subtitle-1 font-weight-regular align-right"
                   >{{ itemv.amount }}
                   {{ itemv.symbol.toUpperCase() }}</v-list-item-title
                 >
-                <v-list-item-title
-                  class="text-caption font-weight-regular align-right"
-                >
+                <v-list-item-title :class="rateClass">
                   1 {{ itemv.symbol.toUpperCase() }} =
                   {{ itemv.rate_str }}
                 </v-list-item-title>
               </v-list-item-action>
             </v-list-item>
-            <v-row class="mt-n5" no-gutters>
+            <v-row v-if="!zeroAmountInvoice" class="mt-n5" no-gutters>
               <v-btn
                 icon
                 x-small
@@ -431,25 +430,27 @@
                           <v-tab-item>
                             <v-card flat class="pa-0 ma-0">
                               <v-card-text>
-                                <p class="d-flex justify-center">Amount</p>
-                                <p
-                                  class="d-flex justify-center"
-                                  :class="
-                                    getAmountClass(
-                                      itemv.amount.length +
-                                        itemv.symbol.length +
-                                        1
-                                    )
-                                  "
-                                >
-                                  {{ itemv.amount }}
-                                  {{ itemv.symbol.toUpperCase() }}
-                                </p>
+                                <div v-if="!zeroAmountInvoice">
+                                  <p class="d-flex justify-center">Amount</p>
+                                  <p
+                                    class="d-flex justify-center"
+                                    :class="
+                                      getAmountClass(
+                                        itemv.amount.length +
+                                          itemv.symbol.length +
+                                          1
+                                      )
+                                    "
+                                  >
+                                    {{ itemv.amount }}
+                                    {{ itemv.symbol.toUpperCase() }}
+                                  </p>
+                                  <v-divider />
+                                </div>
                                 <UIExtensionSlot
                                   name="checkout_payment_copy_extra"
                                   :method="itemv"
                                 >
-                                  <v-divider />
                                   <display-field
                                     :title="
                                       itemv.lightning ? 'Invoice' : 'Address'
@@ -659,6 +660,9 @@ export default {
     }
   },
   computed: {
+    zeroAmountInvoice() {
+      return parseFloat(this.invoice.price) === 0
+    },
     itemv() {
       return this.invoice.payments[this.selectedCurrency]
     },
@@ -701,6 +705,12 @@ export default {
       return this.invoice.payments.length > 1
         ? { multipleCurrency: true, rounded: true }
         : {}
+    },
+    rateClass() {
+      const base = { "font-weight-regular": true, "align-right": true }
+      return this.zeroAmountInvoice
+        ? { ...base, "text-subtitle-2": true }
+        : { ...base, "text-caption": true }
     },
     paymentURL() {
       return this.itemv.lightning
