@@ -11,13 +11,13 @@
     >
       <template #before-toolbar>
         <v-row>
-          <v-col class="pr-0">
+          <v-col cols="12" md="6">
             <search-filters
               :search.sync="search"
               :custom-filters="customFilters"
             />
           </v-col>
-          <v-col class="pl-0">
+          <v-col class="pr-0" cols="12" md="6">
             <v-dialog v-model="showExportDialog" max-width="500px">
               <v-card>
                 <v-card-title>Export invoices</v-card-title>
@@ -58,9 +58,7 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <v-btn color="primary" class="mr-2" @click="openExportDialog">
-              Export
-            </v-btn>
+            <v-btn color="primary" @click="openExportDialog"> Export </v-btn>
           </v-col>
           <v-dialog v-model="showRefundDialog" max-width="650px">
             <v-card>
@@ -231,8 +229,14 @@ export default {
           value: "notification_url",
           help: "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#notification-url",
           rules: ["url"],
+          expand: true,
         },
-        { text: "Redirect url", value: "redirect_url", rules: ["url"] },
+        {
+          text: "Redirect url",
+          value: "redirect_url",
+          rules: ["url"],
+          expand: true,
+        },
         { text: "Buyer email", value: "buyer_email", rules: ["email"] },
         { text: "Order", value: "order_id", copy: true },
         { text: "Discount", value: "discount", mode: "edit", copy: true },

@@ -16,7 +16,9 @@
             app
             disable-route-watcher
             disable-resize-watcher
-            class="mb-3 hidden-md-and-up"
+            fixed
+            temporary
+            @mouseenter="drawerOn"
           >
             <NavToolbarMobile :items="availableItems" />
           </v-navigation-drawer>
@@ -30,8 +32,9 @@
         >
           <v-app-bar fixed app>
             <v-app-bar-nav-icon
-              class="mb-3 hidden-md-and-up"
-              @click.stop="drawer = !drawer"
+              class="mb-3"
+              @mouseenter.stop="drawerOn"
+              @click.stop="drawer = true"
             />
             <v-spacer />
             <v-img
@@ -83,10 +86,7 @@
       </UIExtensionSlot>
     </template>
     <template #default>
-      <v-container>
-        <UIExtensionSlot name="toolbar" :items="availableItems">
-          <Toolbar :items="availableItems" class="mb-3 hidden-sm-and-down" />
-        </UIExtensionSlot>
+      <v-container fluid>
         <slot />
         <nuxt />
         <div v-if="$auth.loggedIn && $auth.user.is_superuser">
@@ -156,7 +156,6 @@
 import { mapGetters } from "vuex"
 import BaseLayout from "@/layouts/base"
 import OnionButton from "@/components/OnionButton"
-import Toolbar from "@/components/Toolbar"
 import OnionIcon from "@/components/OnionIcon"
 import NavToolbarMobile from "@/components/NavToolbarMobile"
 import VERSION from "@/version"
@@ -165,7 +164,6 @@ export default {
   components: {
     OnionButton,
     BaseLayout,
-    Toolbar,
     NavToolbarMobile,
     UIExtensionSlot,
   },
@@ -174,7 +172,7 @@ export default {
       VERSION,
       toolbar: false,
       dark: true,
-      drawer: false,
+      drawer: null,
       hideSyncData: {},
       guestItems: [
         {
@@ -206,6 +204,54 @@ export default {
           text: "Configurator",
           to: "/configurator",
           order: 3,
+        },
+        {
+          icon: "mdi-wallet",
+          text: "Wallets",
+          to: "/wallets",
+          order: 5,
+        },
+        {
+          icon: "mdi-bell",
+          text: "Notifications",
+          to: "/notifications",
+          order: 6,
+        },
+        {
+          icon: "mdi-text-box",
+          text: "Templates",
+          to: "/templates",
+          order: 7,
+        },
+        {
+          icon: "mdi-store",
+          text: "Stores",
+          to: "/stores",
+          order: 8,
+        },
+        {
+          icon: "mdi-sale-outline",
+          text: "Discounts",
+          to: "/discounts",
+          order: 9,
+        },
+        {
+          icon: "mdi-tag",
+          text: "Products",
+          to: "/products",
+          order: 10,
+        },
+        {
+          icon: "receipt_long",
+          text: "Invoices",
+          to: "/invoices",
+          order: 11,
+        },
+        {
+          icon: "mdi-cash",
+          text: "Payouts",
+          to: "/payouts",
+          order: 12,
         },
       ],
       superuserItems: [
@@ -333,7 +379,23 @@ export default {
   beforeCreate() {
     this.$utils.maybeEnableDarkTheme.call(this)
   },
+  beforeMount() {
+    this.$bus.$on("drawerOff", () => {
+      this.drawerOff()
+    })
+  },
+  beforeDestroy() {
+    this.$bus.$off("drawerOff")
+  },
   methods: {
+    drawerOn() {
+      if (this.$device.isMobile) return
+      this.drawer = true
+    },
+    drawerOff() {
+      if (this.$device.isMobile) return
+      this.drawer = false
+    },
     changeTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
     },
@@ -346,3 +408,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.v-overlay--active {
+  pointer-events: none !important;
+}
+</style>

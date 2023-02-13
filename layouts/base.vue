@@ -3,7 +3,7 @@
     <UIExtensionSlot name="base_header">
       <slot name="header" />
     </UIExtensionSlot>
-    <v-main>
+    <v-main @mouseenter.native="$bus.$emit('drawerOff')">
       <div v-if="adminUnconfigured">
         <troubleshooting-guide :title="unconfiguredTitle" />
       </div>
