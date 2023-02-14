@@ -18,6 +18,7 @@
             disable-resize-watcher
             fixed
             temporary
+            hide-overlay
             @mouseenter="drawerOn"
           >
             <NavToolbarMobile :items="availableItems" />
@@ -408,9 +409,3 @@ export default {
   },
 }
 </script>
-
-<style>
-.v-overlay--active {
-  pointer-events: none !important;
-}
-</style>
