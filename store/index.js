@@ -18,6 +18,8 @@ export const state = () => ({
   env: {},
   updatedata: {},
   apiError: null,
+  drawer: null,
+  pinned: false,
 })
 
 export const mutations = {
@@ -50,6 +52,12 @@ export const mutations = {
   },
   apiError(state, value) {
     state.apiError = value
+  },
+  drawer(state, value) {
+    state.drawer = value
+  },
+  pinned(state, value) {
+    state.pinned = value
   },
 }
 export const actions = {
@@ -141,6 +149,12 @@ export const actions = {
       }
     })
   },
+  setDrawer({ commit }, value) {
+    commit("drawer", value)
+  },
+  setPinned({ commit }, value) {
+    commit("pinned", value)
+  },
 }
 
 export const getters = {
@@ -163,5 +177,11 @@ export const getters = {
   },
   syncInfo({ syncInfo }) {
     return syncInfo
+  },
+  drawer({ drawer }) {
+    return drawer
+  },
+  pinned({ pinned }) {
+    return pinned
   },
 }

@@ -6,36 +6,37 @@
         :items="availableItems"
         :profile-items="availableProfileItems"
       >
-        <UIExtensionSlot
-          name="mobile_nav"
-          :drawer="drawer"
-          :items="availableItems"
-        >
+        <UIExtensionSlot name="mobile_nav" :items="availableItems">
           <v-navigation-drawer
-            v-model="drawer"
+            :value="drawer"
             app
             disable-route-watcher
             disable-resize-watcher
             fixed
-            temporary
             hide-overlay
+            :temporary="!pinned"
+            @input="setDrawer($event)"
             @mouseenter="drawerOn"
           >
-            <NavToolbarMobile :items="availableItems" />
+            <NavToolbarMobile
+              :value="pinned"
+              :items="availableItems"
+              @input="setPinned($event)"
+            />
           </v-navigation-drawer>
         </UIExtensionSlot>
         <UIExtensionSlot
-          :drawer="drawer"
           :profile-items="availableProfileItems"
           :onion-url="onionURL"
           :logo-style="logoStyle"
           name="app_bar"
         >
-          <v-app-bar fixed app>
+          <v-app-bar fixed app @mouseenter.native.stop="drawerOff">
             <v-app-bar-nav-icon
+              v-if="!pinned"
               class="mb-3"
               @mouseenter.stop="drawerOn"
-              @click.stop="drawer = true"
+              @click.stop="setDrawer(!drawer)"
             />
             <v-spacer />
             <v-img
@@ -133,7 +134,7 @@
     </template>
     <template #footer>
       <UIExtensionSlot name="footer">
-        <v-footer fixed app>
+        <v-footer fixed app @mouseenter.native="drawerOff">
           <span>&copy; BitcartCC v{{ VERSION }}</span>
           <v-spacer />
           <nuxt-link
@@ -154,7 +155,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters, mapActions } from "vuex"
 import BaseLayout from "@/layouts/base"
 import OnionButton from "@/components/OnionButton"
 import OnionIcon from "@/components/OnionIcon"
@@ -173,7 +174,6 @@ export default {
       VERSION,
       toolbar: false,
       dark: true,
-      drawer: null,
       hideSyncData: {},
       guestItems: [
         {
@@ -306,7 +306,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["onionURL", "showSnow", "syncInfo"]),
+    ...mapGetters(["onionURL", "showSnow", "syncInfo", "drawer", "pinned"]),
     availableItems() {
       return this.$utils.getExtendSetting
         .call(
@@ -377,6 +377,11 @@ export default {
       return this.$vuetify.theme.dark ? "filter: invert(1)" : ""
     },
   },
+  watch: {
+    pinned(v) {
+      setTimeout(() => this.$store.commit("drawer", v), 100)
+    },
+  },
   beforeCreate() {
     this.$utils.maybeEnableDarkTheme.call(this)
   },
@@ -389,13 +394,14 @@ export default {
     this.$bus.$off("drawerOff")
   },
   methods: {
+    ...mapActions(["setDrawer", "setPinned"]),
     drawerOn() {
-      if (this.$device.isMobile) return
-      this.drawer = true
+      if (this.$device.isMobile || this.pinned) return
+      this.$store.commit("drawer", true)
     },
     drawerOff() {
-      if (this.$device.isMobile) return
-      this.drawer = false
+      if (this.$device.isMobile || this.pinned) return
+      this.$store.commit("drawer", false)
     },
     changeTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark

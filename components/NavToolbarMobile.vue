@@ -1,5 +1,13 @@
 <template>
   <v-list>
+    <v-btn
+      v-if="$device.isDesktop"
+      icon
+      class="d-flex ml-auto mr-0"
+      @click="$emit('input', !value)"
+    >
+      <v-icon>{{ value ? "mdi-chevron-right" : "mdi-chevron-left" }}</v-icon>
+    </v-btn>
     <v-list-item v-for="item in items" :key="item.text" :to="item.to" exact>
       <v-list-item-action v-if="item.icon || item.component">
         <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
@@ -18,6 +26,10 @@ export default {
     items: {
       type: Array,
       required: true,
+    },
+    value: {
+      type: Boolean,
+      default: false,
     },
   },
 }
