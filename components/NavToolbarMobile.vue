@@ -6,7 +6,9 @@
       class="d-flex ml-auto mr-0"
       @click="$emit('input', !value)"
     >
-      <v-icon>{{ value ? "mdi-chevron-right" : "mdi-chevron-left" }}</v-icon>
+      <v-icon>{{
+        value ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right"
+      }}</v-icon>
     </v-btn>
     <v-list-item v-for="item in items" :key="item.text" :to="item.to" exact>
       <v-list-item-action v-if="item.icon || item.component">
