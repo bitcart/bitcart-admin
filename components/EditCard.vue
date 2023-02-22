@@ -159,7 +159,11 @@
                       >
                         <v-text-field
                           v-model="item[header.value][field]"
-                          :label="$utils.toTitleCase(field)"
+                          :label="
+                            header.useTitle
+                              ? header.text
+                              : $utils.toTitleCase(field)
+                          "
                         />
                       </v-col>
                     </v-row>
