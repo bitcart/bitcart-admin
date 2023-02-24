@@ -792,6 +792,7 @@ export default {
         })
         .then((r) => {
           this.update("xpub", r.data.key)
+          this.update("additional_xpub_data", r.data.additional_data)
           this.walletSeed = r.data.seed
         })
     },
