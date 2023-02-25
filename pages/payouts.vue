@@ -65,6 +65,13 @@
                     >Add private key</v-btn
                   >
                 </v-row>
+                <v-row>
+                  <v-switch
+                    v-model="batchPayouts"
+                    label="Batch payouts in one transaction"
+                    hide-details
+                  />
+                </v-row>
               </v-container>
             </v-card-text>
             <v-card-actions class="justify-center pb-5">
@@ -97,6 +104,7 @@ export default {
     return {
       search: "",
       showSendDialog: false,
+      batchPayouts: false,
       wallets: [],
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
@@ -208,10 +216,16 @@ export default {
       if (command === "send") {
         if (!this.showSendDialog) {
           this.wallets = []
+          this.batchPayouts = false
           this.showSendDialog = true
         } else {
           this.showSendDialog = false
-          return { options: { wallets: Object.fromEntries(this.wallets) } }
+          return {
+            options: {
+              wallets: Object.fromEntries(this.wallets),
+              batch: this.batchPayouts,
+            },
+          }
         }
         return null
       } else return {}
