@@ -421,6 +421,7 @@ export default {
       rules: this.$utils.rules,
       oldItem: Object.assign({}, this.item),
       cachedSchema: {},
+      justOpened: false,
     }
     dt.oldAutosearches = Object.assign({}, dt.autosearches)
     return dt
@@ -510,6 +511,7 @@ export default {
     on(val) {
       // clever trick: load when user closed to hide loading times
       if (val === false) this.performInit()
+      else this.justOpened = true
     },
     autosearches: {
       handler(val) {
@@ -520,6 +522,10 @@ export default {
         if (typeof key === "undefined") return // card closed
         val = val[key]
         this.oldAutosearches[key] = val
+        if (this.justOpened || !this.on) {
+          this.justOpened = false
+          return
+        }
         if (val === null || typeof val === "undefined") {
           val = ""
         }
