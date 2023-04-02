@@ -124,6 +124,7 @@ export default {
           value: "default_currency",
           default: "USD",
           input: "autocomplete",
+          component: "v-combobox",
           url: "cryptos/fiatlist",
           body: true,
         },
@@ -184,6 +185,11 @@ export default {
           icon: "receipt_long",
           text: "View invoices",
           process: this.showInvoices,
+        },
+        {
+          icon: "mdi-swap-horizontal",
+          text: "Configure exchange rates",
+          process: this.showRates,
         },
       ],
       emailHeaders: [
@@ -375,6 +381,9 @@ export default {
     },
     showInvoices(item, itemIndex) {
       this.$router.push({ path: `/invoices?query=store_id:${item.id}` })
+    },
+    showRates(item, itemIndex) {
+      this.$router.push({ path: `/stores/${item.id}/rates` })
     },
     testping(item) {
       this.emailCheck = ""
