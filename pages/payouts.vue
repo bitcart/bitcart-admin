@@ -142,6 +142,7 @@ export default {
           text: "Currency",
           value: "currency",
           input: "autocomplete",
+          component: "v-combobox",
           url: "cryptos/fiatlist",
           body: true,
         },
