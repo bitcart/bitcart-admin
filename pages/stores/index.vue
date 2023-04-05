@@ -296,6 +296,11 @@ export default {
           value: "include_network_fee",
           input: "switch",
         },
+        {
+          text: "Show POS (calculator) screen in the store",
+          value: "pos_screen_enabled",
+          input: "switch",
+        },
       ],
       themeHeaders: [
         {
