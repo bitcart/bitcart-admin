@@ -125,6 +125,12 @@
           <template v-else>{{ tx_hash }}</template>
         </div>
       </template>
+      <template #item.paid_date="{ item }">
+        <div v-if="item.paid_date">
+          {{ minutesDiff(item) }}
+          {{ minutesDiff(item) === 1 ? "minute" : "minutes" }}
+        </div>
+      </template>
       <template #item.products="{ item, copyText }">
         <v-list-item
           v-for="itemv in item.products"
@@ -276,6 +282,12 @@ export default {
           mode: "edit",
           expand: true,
         },
+        {
+          text: "Paid time",
+          value: "paid_date",
+          mode: "display",
+          expand: true,
+        },
         { text: "Created date", value: "created", mode: "display" },
         {
           text: "Payment methods",
@@ -369,6 +381,11 @@ export default {
         })
       }
       return matchedPayment
+    },
+    minutesDiff(item) {
+      return Math.round(
+        (new Date(item.paid_date) - new Date(item.created)) / 60000
+      )
     },
     getTxURL(txHash, item) {
       const matchedPayment = this.matchPayment(item)
