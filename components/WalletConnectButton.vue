@@ -59,7 +59,7 @@ export default {
           src: `https://unpkg.com/@walletconnect/web3-provider`,
         },
         {
-          src: `https://unpkg.com/web3@latest/dist/web3.min.js`,
+          src: `https://unpkg.com/web3@1/dist/web3.min.js`,
         },
       ],
     }
