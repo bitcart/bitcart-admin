@@ -117,7 +117,7 @@ export default {
   },
   async connectToWallet(wallet, addressfunc, updateAddress) {
     this.loading = true
-    const chainid = await this.web3.eth.getChainId()
+    const chainid = parseInt(await this.web3.eth.getChainId())
     if (chainid !== this.method.chain_id)
       return this.showError(
         `Please change your network in ${wallet} to work on the ${this.method.currency.toUpperCase()} network (chain id ${
