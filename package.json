@@ -17,7 +17,7 @@
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.1",
     "@ergonode/vuems": "^1.1.0",
-    "@hcaptcha/vue-hcaptcha": "^0.3.2",
+    "@hcaptcha/vue-hcaptcha": "^0.4.0",
     "@nuxtjs/auth": "^4.9.0",
     "@nuxtjs/axios": "^5.12.5",
     "@nuxtjs/router": "^1.7.0",
@@ -42,14 +42,14 @@
     "lodash.mergewith": "^4.6.2",
     "nuxt": "^2.15.1",
     "prettier": "^2.2.1",
-    "vuetify": "~2.6",
+    "vuetify": "~2.7.0",
     "vuetify-datetime-picker": "^2.1.1",
     "vuetify-image-input": "19.2.2"
   },
   "resolutions": {
-    "vue": "<2.7",
-    "vue-server-renderer": "<2.7",
-    "vue-template-compiler": "<2.7",
-    "vuetify-loader": "1.7.3"
+    "vue": "<2.8",
+    "vue-server-renderer": "<2.8",
+    "vue-template-compiler": "<2.8",
+    "vuetify-loader": "1.9.2"
   }
 }
