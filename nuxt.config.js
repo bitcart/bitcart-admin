@@ -1,11 +1,5 @@
-import crypto from "crypto"
 import path from "path"
 import globby from "globby"
-
-// Patch for webpack4 on nodejs 17+
-const origCreateHash = crypto.createHash
-crypto.createHash = (algorithm) =>
-  origCreateHash(algorithm === "md4" ? "sha256" : algorithm)
 
 const packages = globby
   .sync(["modules/*/package.json", "modules/*/*/package.json"])
