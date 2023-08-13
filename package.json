@@ -17,7 +17,7 @@
   "dependencies": {
     "@chenfengyuan/vue-qrcode": "^1.0.1",
     "@ergonode/vuems": "^1.1.0",
-    "@hcaptcha/vue-hcaptcha": "^0.4.0",
+    "@hcaptcha/vue-hcaptcha": "^1.0.0",
     "@nuxtjs/auth": "^4.9.0",
     "@nuxtjs/axios": "^5.12.5",
     "@nuxtjs/router": "^1.7.0",
