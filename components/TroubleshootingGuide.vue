@@ -27,7 +27,7 @@
         <p class="text-h6">
           Check out
           <a
-            href="https://docs.bitcartcc.com/support-and-community/troubleshooting-an-issue"
+            href="https://docs.bitcart.ai/support-and-community/troubleshooting-an-issue"
             target="_blank"
             >this guide</a
           >
@@ -40,10 +40,10 @@
         <p class="text-h6">
           Quick steps to try:<br />
           1. Ensure merchants API is running. If you are developing locally,
-          BitcartCC assumes it is running on port 8000 by default.<br />
+          Bitcart assumes it is running on port 8000 by default.<br />
           2. Make sure <code>BITCART_ADMIN_API_URL</code> is set to the correct
           URL.<br />
-          3. If you are using BitcartCC with ssl enabled, Merchants API's ssl
+          3. If you are using Bitcart with ssl enabled, Merchants API's ssl
           certificate might not have been generated yet. Please retry a bit
           later.
         </p>

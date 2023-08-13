@@ -39,7 +39,7 @@ export default {
           value: "xpub",
           expand: true,
           rules: ["required"],
-          help: "https://docs.bitcartcc.com/your-first-invoice#creating-a-wallet",
+          help: "https://docs.bitcart.ai/your-first-invoice#creating-a-wallet",
           errors: { "Wallet key invalid": "Invalid xpub" },
           dynamicText: (v, schema) => {
             if (schema && schema[v.currency]) {
@@ -59,13 +59,13 @@ export default {
         {
           text: "Label",
           value: "label",
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-change-my-payment-methods-name",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#how-do-i-change-my-payment-methods-name",
         },
         {
           text: "Hint",
           value: "hint",
           expand: true,
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-display-a-checkout-hint-for-customers",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#how-do-i-display-a-checkout-hint-for-customers",
         },
         {
           text: "Additional xpub data",

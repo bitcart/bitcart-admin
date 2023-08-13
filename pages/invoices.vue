@@ -234,7 +234,7 @@ export default {
         {
           text: "Notification url",
           value: "notification_url",
-          help: "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#notification-url",
+          help: "https://docs.bitcart.ai/bitcart-basics/walkthrough#notification-url",
           rules: ["url"],
           expand: true,
         },

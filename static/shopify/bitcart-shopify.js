@@ -16,7 +16,7 @@ window.BitcartShopifyIntegrationModule = function () {
   }
 
   if (!window.bitcart) {
-    throw new Error("The BitcartCC modal js was not loaded on this page.")
+    throw new Error("The Bitcart modal js was not loaded on this page.")
   }
   if (!window.Shopify) {
     throw new Error("The Shopify global object was not loaded on this page.")
@@ -95,7 +95,7 @@ window.BitcartShopifyIntegrationModule = function () {
       })
       .catch(function () {
         if (!backgroundCheck)
-          alert("Could not initiate BitcartCC payment method, try again later.")
+          alert("Could not initiate Bitcart payment method, try again later.")
       })
   }
 
@@ -164,16 +164,16 @@ window.BitcartShopifyIntegrationModule = function () {
   }
 
   const payButtonHtml =
-    '<button class="" onclick="onPayButtonClicked()" style="width:210px; border: none; outline: none;">Pay with BitcartCC</button>'
+    '<button class="" onclick="onPayButtonClicked()" style="width:210px; border: none; outline: none;">Pay with Bitcart</button>'
 
   function injectPaymentButtonHtml() {
     // Payment button that opens modal
-    buttonElement = document.getElementById("bitcartcc-pay")
+    buttonElement = document.getElementById("bitcart-pay")
     if (buttonElement) {
       return
     }
     buttonElement = document.createElement("div")
-    buttonElement.id = "bitcartcc-pay"
+    buttonElement.id = "bitcart-pay"
     buttonElement.innerHTML = payButtonHtml
     insertElement(buttonElement, pageItems.orderConfirmed)
   }

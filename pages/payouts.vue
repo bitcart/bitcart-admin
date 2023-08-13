@@ -33,7 +33,7 @@
               <v-btn
                 icon
                 target="_blank"
-                href="https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#signing-payouts"
+                href="https://docs.bitcart.ai/bitcart-basics/walkthrough#signing-payouts"
               >
                 <v-icon medium> mdi-help-circle-outline </v-icon>
               </v-btn></v-card-title
@@ -149,7 +149,7 @@ export default {
         {
           text: "Notification url",
           value: "notification_url",
-          help: "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#notification-url",
+          help: "https://docs.bitcart.ai/bitcart-basics/walkthrough#notification-url",
           rules: ["url"],
         },
         { text: "Status", value: "status", mode: "edit" },

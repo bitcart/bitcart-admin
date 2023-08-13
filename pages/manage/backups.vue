@@ -28,7 +28,7 @@
     <v-alert outlined text type="info"
       >All backup providers, except for local, require environment variables to
       be set. Check
-      <a href="https://docs.bitcartcc.com/guides/backups" target="_blank"
+      <a href="https://docs.bitcart.ai/guides/backups" target="_blank"
         >the docs</a
       >
       for more information

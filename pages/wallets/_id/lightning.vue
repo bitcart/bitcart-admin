@@ -21,7 +21,7 @@
           </p>
           <ul>
             <li>
-              Lightning support in Electrum, used by BitcartCC, is experimental
+              Lightning support in Electrum, used by Bitcart, is experimental
             </li>
             <li>
               Currently it is not possible to move your lightning node with

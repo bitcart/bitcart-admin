@@ -7,7 +7,7 @@
             <v-btn
               color="primary"
               class="mr-2"
-              href="https://docs.bitcartcc.com/integrations"
+              href="https://docs.bitcart.ai/integrations"
               target="_blank"
             >
               Integrations
@@ -223,7 +223,7 @@ export default {
             "Transaction speed must be in range from 0 to 6":
               "Transaction speed must be in range from 0 to 6",
           },
-          help: "https://docs.bitcartcc.com/guides/transaction-speed",
+          help: "https://docs.bitcart.ai/guides/transaction-speed",
         },
         {
           text: "Underpaid percentage",
@@ -233,13 +233,13 @@ export default {
             "Underpaid percentage must be in range from 0 to 99.99":
               "Underpaid percentage must be in range from 0 to 99.99",
           },
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-underpaid-percentage",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#what-is-underpaid-percentage",
         },
         {
           text: "Show recommended fee",
           value: "show_recommended_fee",
           input: "switch",
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#recommended-fee",
         },
         {
           text: "Recommended fee confirmation target blocks",
@@ -250,24 +250,24 @@ export default {
             "Recommended fee confirmation target blocks must be either of":
               "Recommended fee confirmation target blocks must be either of: 25, 10, 5, 2, 1",
           },
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#recommended-fee",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#recommended-fee",
         },
         {
           text: "Custom logo link",
           value: "custom_logo_link",
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-custom-logo-link",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#what-is-custom-logo-link",
         },
         {
           text: "Use Dark Mode",
           value: "use_dark_mode",
           input: "switch",
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#what-is-the-use-dark-mode-setting",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#what-is-the-use-dark-mode-setting",
         },
         {
           text: "Use HTML templates",
           value: "use_html_templates",
           input: "switch",
-          help: "https://docs.bitcartcc.com/guides/templates#html-templates",
+          help: "https://docs.bitcart.ai/guides/templates#html-templates",
         },
         {
           text: "Require email on checkout",
@@ -283,13 +283,13 @@ export default {
           text: "Randomize same currency wallet selection",
           value: "randomize_wallet_selection",
           input: "switch",
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#how-do-i-randomize-wallets-used-distribute-funds-across-multiple-wallets",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#how-do-i-randomize-wallets-used-distribute-funds-across-multiple-wallets",
         },
         {
           text: "Allow anonymous invoice creation",
           value: "allow_anonymous_invoice_creation",
           input: "switch",
-          help: "https://docs.bitcartcc.com/support-and-community/faq/stores-faq#why-could-anyone-create-an-invoice-without-authorization-how-to-disallow-that",
+          help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#why-could-anyone-create-an-invoice-without-authorization-how-to-disallow-that",
         },
         {
           text: "Include network fee in invoice amount",
@@ -306,12 +306,12 @@ export default {
         {
           text: "Store theme css url",
           value: "store_theme_url",
-          help: "https://docs.bitcartcc.com/guides/themes",
+          help: "https://docs.bitcart.ai/guides/themes",
         },
         {
           text: "Checkout page theme css url",
           value: "checkout_theme_url",
-          help: "https://docs.bitcartcc.com/guides/themes",
+          help: "https://docs.bitcart.ai/guides/themes",
         },
       ],
       shopifyHeaders: [

@@ -51,7 +51,7 @@
         >
         <v-card-text class="text--primary"
           >DNS lookup failed on the domain. Without configured DNS records you
-          won't be able to access your BitcartCC instance. Do you want to
+          won't be able to access your Bitcart instance. Do you want to
           proceed?</v-card-text
         >
         <v-card-text class="text-subtitle-1">
@@ -141,8 +141,8 @@ export default {
             cards: [
               {
                 title: "Tor support",
-                text: "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run BitcartCC in complex network conditions or without a domain",
-                docs: "https://docs.bitcartcc.com/guides/tor",
+                text: "Enables Tor and hidden services support.\nMakes all the public-facing services run under Tor,\nmaking it possible to run Bitcart in complex network conditions or without a domain",
+                docs: "https://docs.bitcart.ai/guides/tor",
                 service: "tor",
               },
             ],
@@ -167,8 +167,8 @@ export default {
         "Summary",
       ],
       titles: [
-        "What BitcartCC instance are you configuring?",
-        "How will you be accessing your BitcartCC?",
+        "What Bitcart instance are you configuring?",
+        "How will you be accessing your Bitcart?",
         "Which coins to enable?",
         "Something else?",
         "Advanced settings",
@@ -215,7 +215,7 @@ export default {
     },
     statusText() {
       return !this.failedDeployment
-        ? "Successfully installed BitcartCC"
+        ? "Successfully installed Bitcart"
         : "Deployment failed"
     },
   },

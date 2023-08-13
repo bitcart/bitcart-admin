@@ -30,7 +30,7 @@ export default {
           value: "text",
           input: "textarea",
           expand: true,
-          help: "https://docs.bitcartcc.com/bitcartcc-basics/walkthrough#templates",
+          help: "https://docs.bitcart.ai/bitcart-basics/walkthrough#templates",
           rules: ["required"],
         },
         { text: "Created date", value: "created", mode: "display" },

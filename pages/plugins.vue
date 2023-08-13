@@ -100,7 +100,7 @@
     ></v-file-input>
     <ManagementCommand
       title="Upload plugin"
-      details="Installs a plugin from .bitcartcc file"
+      details="Installs a plugin from .bitcart file"
       btn-text="Start plugin installation process"
       command-prefix="plugins"
       what="install"

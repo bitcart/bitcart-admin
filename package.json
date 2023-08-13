@@ -1,7 +1,7 @@
 {
   "name": "bitcart-admin",
   "version": "1.0.0",
-  "description": "BitcartCC admin panel",
+  "description": "Bitcart admin panel",
   "author": "MrNaif2018",
   "private": true,
   "scripts": {

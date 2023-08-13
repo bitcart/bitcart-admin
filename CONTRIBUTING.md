@@ -1,14 +1,14 @@
-# Contributing to BitcartCC Admin Panel
+# Contributing to Bitcart Admin Panel
 
-Welcome, and thank you for your interest in contributing to BitcartCC Admin Panel!
+Welcome, and thank you for your interest in contributing to Bitcart Admin Panel!
 
-Our [central contributing guidelines](https://github.com/bitcartcc/bitcart/blob/master/CONTRIBUTING.md) apply to all BitcartCC repositories.
+Our [central contributing guidelines](https://github.com/bitcart/bitcart/blob/master/CONTRIBUTING.md) apply to all Bitcart repositories.
 
-Below are the instructions for setting up development environment with BitcartCC Admin Panel.
+Below are the instructions for setting up development environment with Bitcart Admin Panel.
 
 ## Setting up development environment
 
-Some general advice can be found in our [central contributing guidelines](https://github.com/bitcartcc/bitcart/blob/master/CONTRIBUTING.md#setting-up-development-environment).
+Some general advice can be found in our [central contributing guidelines](https://github.com/bitcart/bitcart/blob/master/CONTRIBUTING.md#setting-up-development-environment).
 
 Installation instructions:
 
@@ -40,20 +40,20 @@ pre-commit install
 
 ## Merchants API
 
-In order to develop the admin panel you need our [Merchants API](https://github.com/bitcartcc/bitcart) instance running.
+In order to develop the admin panel you need our [Merchants API](https://github.com/bitcart/bitcart) instance running.
 
 There are two possible ways:
 
 1. Use our demo (recommended for quick setup to try it out or small fixes, won't work when adding new features with api changes)
 
 ```bash
-export BITCART_ADMIN_API_URL=https://api.bitcartcc.com
+export BITCART_ADMIN_API_URL=https://api.bitcart.ai
 yarn dev
 ```
 
-2. Run merchants API locally (recommended to not depend on demo api, when adding new api features and for faster local development in the future). See [this guide](https://github.com/bitcartcc/bitcart/blob/master/CONTRIBUTING.md#setting-up-python-development-environment)
+2. Run merchants API locally (recommended to not depend on demo api, when adding new api features and for faster local development in the future). See [this guide](https://github.com/bitcart/bitcart/blob/master/CONTRIBUTING.md#setting-up-python-development-environment)
 
-Make sure to follow [our coding guidelines](https://github.com/bitcartcc/bitcart/blob/master/CODING_STANDARDS.md) when developing.
+Make sure to follow [our coding guidelines](https://github.com/bitcart/bitcart/blob/master/CODING_STANDARDS.md) when developing.
 
 # Thank You!
 
