@@ -34,7 +34,7 @@
     "@nuxtjs/pwa": "^3.3.4",
     "@nuxtjs/vuetify": "^1.11.3",
     "eslint": "^8.0.0",
-    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-nuxt": ">=2.0.0",
     "eslint-plugin-prettier": "^4.0.0",
     "lodash.debounce": "^4.0.8",
