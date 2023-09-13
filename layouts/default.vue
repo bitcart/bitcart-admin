@@ -28,7 +28,6 @@
         <UIExtensionSlot
           :profile-items="availableProfileItems"
           :onion-url="onionURL"
-          :logo-style="logoStyle"
           name="app_bar"
         >
           <v-app-bar fixed app @mouseenter.native.stop="drawerOff">
@@ -44,7 +43,6 @@
               max-width="60"
               contain
               :src="`${STATIC_PATH}/icon.svg`"
-              :style="logoStyle"
             />
             <v-spacer />
             <onion-button v-if="onionURL" :url="onionURL" />
@@ -372,9 +370,6 @@ export default {
         .sort(function (a, b) {
           return a.order < b.order ? -1 : 1
         })
-    },
-    logoStyle() {
-      return this.$vuetify.theme.dark ? "filter: invert(1)" : ""
     },
   },
   watch: {
