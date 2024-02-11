@@ -11,12 +11,9 @@ const transpileDeps = [
   ...new Set(
     packages
       .map((name) => {
-        const pkg = require(path.join(
-          __dirname,
-          "modules",
-          name,
-          "package.json"
-        ))
+        const pkg = require(
+          path.join(__dirname, "modules", name, "package.json")
+        )
         return Object.keys(pkg.dependencies || {}).concat(
           Object.keys(pkg.devDependencies || {})
         )
