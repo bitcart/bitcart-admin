@@ -48,8 +48,8 @@
   },
   "resolutions": {
     "vue": "<2.7",
-    "vue-server-renderer": "<2.7",
-    "vue-template-compiler": "<2.7",
-    "vuetify-loader": "1.7.3"
+    "vue-server-renderer": "<2.8",
+    "vue-template-compiler": "<2.8",
+    "vuetify-loader": "1.9.2"
   }
 }
