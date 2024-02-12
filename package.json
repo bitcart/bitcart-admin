@@ -45,5 +45,11 @@
     "vuetify": "~2.7.0",
     "vuetify-datetime-picker": "^2.1.1",
     "vuetify-image-input": "19.2.2"
+  },
+  "resolutions": {
+    "vue": "<2.7",
+    "vue-server-renderer": "<2.7",
+    "vue-template-compiler": "<2.7",
+    "vuetify-loader": "1.7.3"
   }
 }
