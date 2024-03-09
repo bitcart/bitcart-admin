@@ -226,41 +226,41 @@ export default {
     {
       title: "Gmail",
       command: {
-        email_host: "smtp.gmail.com",
-        email_port: 587,
-        email_use_ssl: true,
+        host: "smtp.gmail.com",
+        port: 587,
+        auth_mode: "starttls",
       },
     },
     {
       title: "Yahoo",
       command: {
-        email_host: "mail.yahoo.com",
-        email_port: 587,
-        email_use_ssl: true,
+        host: "mail.yahoo.com",
+        port: 587,
+        auth_mode: "starttls",
       },
     },
     {
       title: "Mailgun",
       command: {
-        email_host: "smtp.mailgun.org",
-        email_port: 587,
-        email_use_ssl: true,
+        host: "smtp.mailgun.org",
+        port: 587,
+        auth_mode: "starttls",
       },
     },
     {
       title: "Office365",
       command: {
-        email_host: "smtp.office365.com",
-        email_port: 587,
-        email_use_ssl: true,
+        host: "smtp.office365.com",
+        port: 587,
+        auth_mode: "starttls",
       },
     },
     {
       title: "SendGrid",
       command: {
-        email_host: "smtp.sendgrid.net",
-        email_port: 587,
-        email_use_ssl: true,
+        host: "smtp.sendgrid.net",
+        port: 587,
+        auth_mode: "starttls",
       },
     },
   ],

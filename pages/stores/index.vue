@@ -20,11 +20,12 @@
       :url="url"
       :on.sync="showDialog"
       :headers="emailHeaders"
-      :item.sync="item"
+      :item.sync="item.email_settings"
       :item-index="itemIndex"
       :custom-props="{ loadingEmail, emailCheck, emailStatus }"
       :show-new="false"
       :edit-mode="true"
+      :get-edit-url="(item) => getEditURL(item, 'email_settings')"
       title="store email settings"
       @reset-custom-props="resetCustomProps"
     >
@@ -193,12 +194,17 @@ export default {
         },
       ],
       emailHeaders: [
-        { text: "Store email", value: "email", rules: ["email"] },
-        { text: "Email host", value: "email_host" },
-        { text: "Email port", value: "email_port", rules: ["int"] },
-        { text: "Email user", value: "email_user" },
-        { text: "Email password", value: "email_password", input: "password" },
-        { text: "SSL/TLS", value: "email_use_ssl", input: "switch" },
+        { text: "Store email", value: "address", rules: ["email"] },
+        { text: "Email host", value: "host" },
+        { text: "Email port", value: "port", rules: ["int"] },
+        { text: "Email user", value: "user" },
+        { text: "Email password", value: "password", input: "password" },
+        {
+          text: "Auth mode",
+          value: "auth_mode",
+          input: "select",
+          items: ["none", "ssl/tls", "starttls"],
+        },
         { text: "Test ping", input: "button", click: this.testping },
         {
           input: "progress",
@@ -393,7 +399,7 @@ export default {
     testping(item) {
       this.emailCheck = ""
       this.loadingEmail = true
-      this.$axios.get(`/stores/${item.id}/ping`).then((resp) => {
+      this.$axios.get(`/stores/${this.item.id}/ping`).then((resp) => {
         this.loadingEmail = false
         if (resp.status === 200 && resp.data === true) {
           this.emailCheck = "Ping successful"
@@ -406,7 +412,7 @@ export default {
     },
     loadPreset(preset) {
       for (const key in preset) {
-        this.item[key] = preset[key]
+        this.item.email_settings[key] = preset[key]
       }
     },
     resetCustomProps() {

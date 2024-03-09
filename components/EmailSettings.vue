@@ -18,6 +18,13 @@
                 :label="header.text"
                 @change="sendInput"
               />
+              <v-select
+                v-else-if="header.input === 'select'"
+                v-model="data[header.value]"
+                :items="header.items"
+                :label="header.text"
+                @input="sendInput"
+              />
               <v-btn
                 v-else-if="header.input === 'button'"
                 color="primary"
@@ -97,16 +104,21 @@ export default {
       fields: [
         {
           text: "Server email",
-          value: "email",
+          value: "address",
         },
-        { text: "Email host", value: "email_host" },
+        { text: "Email host", value: "host" },
         {
           text: "Email port",
-          value: "email_port",
+          value: "port",
         },
-        { text: "Email user", value: "email_user" },
-        { text: "Email password", value: "email_password", input: "password" },
-        { text: "SSL/TLS", value: "email_use_ssl", input: "switch" },
+        { text: "Email user", value: "user" },
+        { text: "Email password", value: "password", input: "password" },
+        {
+          text: "Auth mode",
+          value: "auth_mode",
+          input: "select",
+          items: ["none", "ssl/tls", "starttls"],
+        },
         { text: "Test ping", input: "button", click: this.testping },
         {
           input: "progress",

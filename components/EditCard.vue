@@ -233,6 +233,15 @@
                     image-min-scaling="contain"
                   />
                   <div v-else-if="header.input === 'tabbed'" />
+                  <v-select
+                    v-else-if="header.input === 'select'"
+                    :items="header.items"
+                    :rules="header.rules"
+                    :error-messages="errors[header.text]"
+                    :label="header.text"
+                    :value="item[header.value]"
+                    @input="update(header.value, $event)"
+                  />
                   <v-datetime-picker
                     v-else-if="header.input === 'datetime'"
                     ref="dateInput"
