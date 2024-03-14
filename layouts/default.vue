@@ -39,10 +39,12 @@
             />
             <v-spacer />
             <v-img
+              class="cursor-pointer"
               max-height="60"
               max-width="60"
               contain
               :src="`${STATIC_PATH}/icon.svg`"
+              @click="redirectTo('/')"
             />
             <v-spacer />
             <onion-button v-if="onionURL" :url="onionURL" />
@@ -405,8 +407,11 @@ export default {
       this.$auth.logout()
       this.$store.commit("services", {})
       this.$store.dispatch("fetchServices")
-      this.$router.push("/login").catch((e) => {})
+      this.redirectTo("/login")
     },
+    redirectTo(url) {
+      this.$router.push(url).catch((e) => {})
+    }
   },
 }
 </script>
