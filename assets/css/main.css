@@ -5,3 +5,6 @@
 html {
   overflow-y: auto !important;
 }
+.cursor-pointer:hover {
+  cursor: pointer;
+}
