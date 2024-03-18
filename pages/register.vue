@@ -37,12 +37,11 @@
               prepend-icon="lock"
               type="password"
             />
-            <vue-hcaptcha
+            <turnstile-captcha
               v-if="$store.state.policies.enable_captcha"
+              v-model="captchaCode"
               :sitekey="$store.state.policies.captcha_sitekey"
-              :theme="$vuetify.theme.dark ? 'dark' : 'light'"
-              @verify="processCaptcha"
-            ></vue-hcaptcha>
+            />
             <UIExtensionSlot name="register_form_extra" />
             <div>
               Already have an account ?
@@ -64,16 +63,16 @@
   </v-row>
 </template>
 <script>
-import VueHcaptcha from "@hcaptcha/vue-hcaptcha"
 import isHTTPS from "is-https"
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
+import TurnstileCaptcha from "@/components/TurnstileCaptcha.vue"
 
 export default {
   components: {
     OnionTextField,
-    VueHcaptcha,
     UIExtensionSlot,
+    TurnstileCaptcha,
   },
   middleware: "registeroff",
   asyncData({ req }) {
@@ -107,9 +106,6 @@ export default {
   },
   auth: "guest",
   methods: {
-    processCaptcha(token, ekey) {
-      this.captchaCode = token
-    },
     register() {
       this.askForEmailVerify = false
       this.errors = []

@@ -32,8 +32,8 @@ export default {
         staging_updates: "Install updates from staging branch directly",
         allow_anonymous_configurator:
           "Allow access to configurator for unauthorized users",
-        captcha_sitekey: "HCaptcha site key",
-        captcha_secretkey: "HCaptcha secret key",
+        captcha_sitekey: "Turnstile captcha site key",
+        captcha_secretkey: "Turnstile captcha secret key",
         admin_theme_url: "Admin theme css URL",
         enable_captcha: "Enable captcha on login page",
         explorer_urls: "Block explorer URLs",

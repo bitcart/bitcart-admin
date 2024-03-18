@@ -23,13 +23,11 @@
                 prepend-icon="email"
                 type="email"
               />
-
-              <vue-hcaptcha
+              <turnstile-captcha
                 v-if="$store.state.policies.enable_captcha"
+                v-model="captchaCode"
                 :sitekey="$store.state.policies.captcha_sitekey"
-                :theme="$vuetify.theme.dark ? 'dark' : 'light'"
-                @verify="processCaptcha"
-              ></vue-hcaptcha>
+              />
             </div>
             <div v-else>
               <h2>Email successfully verified</h2>
@@ -60,17 +58,17 @@
 </template>
 
 <script>
-import VueHcaptcha from "@hcaptcha/vue-hcaptcha"
 import isHTTPS from "is-https"
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
+import TurnstileCaptcha from "@/components/TurnstileCaptcha.vue"
 
 export default {
   auth: false,
   components: {
     OnionTextField,
-    VueHcaptcha,
     UIExtensionSlot,
+    TurnstileCaptcha,
   },
   asyncData({ req, route }) {
     let url = ""
@@ -112,9 +110,6 @@ export default {
     }
   },
   methods: {
-    processCaptcha(token, ekey) {
-      this.captchaCode = token
-    },
     verifyEmail() {
       if (this.$refs.form.validate()) {
         this.detail = ""
