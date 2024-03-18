@@ -403,7 +403,7 @@ export default {
     },
     redirectToStore(item) {
       const newTab = window.open(
-        this.$config.STORE_HOST + `/store/${item.id}`,
+        "//" + this.$config.STORE_HOST + `/store/${item.id}`,
         "_blank"
       )
       newTab.focus()
