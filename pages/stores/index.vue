@@ -404,7 +404,7 @@ export default {
     redirectToStore(item) {
       const newTab = window.open(
         this.$config.STORE_HOST + `/store/${item.id}`,
-        "_blank"
+        '_blank'
       )
       newTab.focus()
     },
