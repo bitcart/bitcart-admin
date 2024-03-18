@@ -94,6 +94,7 @@ export default {
     ONION_HOST: process.env.BITCART_ADMIN_ONION_HOST || "",
     ROOTPATH: process.env.BITCART_ADMIN_ROOTPATH || "/",
     LOG_FILE_NAME: process.env.BITCART_ADMIN_LOG_FILE || "bitcart.log",
+    STORE_HOST: process.env.BITCART_STORE_HOST || "//localhost:4000",
   },
   /*
    ** Nuxt.js modules
