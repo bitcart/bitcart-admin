@@ -93,6 +93,9 @@ export const actions = {
       onionURL: env.ONION_API_URL || (onionURL ? onionURL.trim() : null),
       onionHost: env.ONION_HOST,
       rootPath: env.ROOTPATH,
+      storeHost: env.STORE_HOST,
+      storeRootPath: env.STORE_ROOTPATH,
+      onionStoreHost: env.ONION_STORE_HOST,
     })
     if (req) {
       commit("onion", req.headers.host.toLowerCase().endsWith(".onion"))
@@ -174,6 +177,20 @@ export const getters = {
   },
   apiURL({ onion, env }, { apiOnionURL }) {
     return onion && apiOnionURL ? apiOnionURL : env.URL
+  },
+  onionStoreHost({ services, env }) {
+    if (env.onionStoreHost)
+      return env.onionStoreHost.replace(/^https?:\/\//, "")
+    const service = services["Bitcart Store"]
+    return service && service.hostname
+      ? service.hostname.replace(/^https?:\/\//, "")
+      : ""
+  },
+  storeHost({ onion, env }, { onionStoreHost }) {
+    const rootPath = env.storeRootPath === "/" ? "" : env.storeRootPath
+    return onion && onionStoreHost
+      ? onionStoreHost + rootPath
+      : env.storeHost.replace(/^https?:\/\//, "")
   },
   syncInfo({ syncInfo }) {
     return syncInfo
