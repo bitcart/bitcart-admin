@@ -411,7 +411,7 @@ export default {
     },
     redirectTo(url) {
       this.$router.push(url).catch((e) => {})
-    }
+    },
   },
 }
 </script>
