@@ -192,6 +192,11 @@ export default {
           text: "Configure exchange rates",
           process: this.showRates,
         },
+        {
+          icon: "mdi-eye",
+          text: "Go to the store",
+          process: this.redirectToStore,
+        },
       ],
       emailHeaders: [
         { text: "Store email", value: "address", rules: ["email"] },
@@ -395,6 +400,13 @@ export default {
     },
     showRates(item, itemIndex) {
       this.$router.push({ path: `/stores/${item.id}/rates` })
+    },
+    redirectToStore(item) {
+      const newTab = window.open(
+        this.$config.STORE_HOST + `/store/${item.id}`,
+        "_blank"
+      )
+      newTab.focus()
     },
     testping(item) {
       this.emailCheck = ""
