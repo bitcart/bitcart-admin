@@ -23,11 +23,7 @@
                 prepend-icon="email"
                 type="email"
               />
-              <turnstile-captcha
-                v-if="$store.state.policies.enable_captcha"
-                v-model="captchaCode"
-                :sitekey="$store.state.policies.captcha_sitekey"
-              />
+              <universal-captcha v-model="captchaCode" />
             </div>
             <div v-else>
               <v-text-field
@@ -82,14 +78,14 @@
 import isHTTPS from "is-https"
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
-import TurnstileCaptcha from "@/components/TurnstileCaptcha.vue"
+import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
 
 export default {
   auth: "guest",
   components: {
     OnionTextField,
     UIExtensionSlot,
-    TurnstileCaptcha,
+    UniversalCaptcha,
   },
   asyncData({ store, req, route }) {
     let url = ""

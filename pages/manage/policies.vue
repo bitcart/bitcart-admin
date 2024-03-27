@@ -7,6 +7,7 @@
       :detail="details[policy]"
       :type="types[policy] || 'checkbox'"
       :what="policy"
+      :items="items[policy]"
       :url="urls[policy] || ''"
       :initial-value="value"
     />
@@ -32,10 +33,10 @@ export default {
         staging_updates: "Install updates from staging branch directly",
         allow_anonymous_configurator:
           "Allow access to configurator for unauthorized users",
-        captcha_sitekey: "Turnstile captcha site key",
-        captcha_secretkey: "Turnstile captcha secret key",
+        captcha_sitekey: "Captcha site key",
+        captcha_secretkey: "Captcha secret key",
         admin_theme_url: "Admin theme css URL",
-        enable_captcha: "Enable captcha on login page",
+        captcha_type: "Captcha type",
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
         email_settings: "Email server settings",
@@ -51,10 +52,14 @@ export default {
         explorer_urls: "exploreredit",
         rpc_urls: "exploreredit",
         email_settings: "emailsettings",
+        captcha_type: "select",
       }),
       urls: this.$utils.getExtendSetting.call(this, "policy_urls", {
         explorer_urls: "/cryptos/explorer",
         rpc_urls: "/cryptos/rpc",
+      }),
+      items: this.$utils.getExtendSetting.call(this, "policy_items", {
+        captcha_type: ["none", "hcaptcha", "cloudflare_turnstile"],
       }),
     }
   },

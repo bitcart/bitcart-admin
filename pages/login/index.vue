@@ -18,7 +18,6 @@
               prepend-icon="person"
               type="text"
             />
-
             <v-text-field
               id="password"
               v-model="password"
@@ -29,11 +28,7 @@
               prepend-icon="lock"
               type="password"
             />
-            <turnstile-captcha
-              v-if="$store.state.policies.enable_captcha"
-              v-model="captchaCode"
-              :sitekey="$store.state.policies.captcha_sitekey"
-            />
+            <universal-captcha v-model="captchaCode" />
             <UIExtensionSlot name="login_form_extra" />
             <div v-if="!$store.state.policies.disable_registration">
               Don't have an account?
@@ -59,13 +54,13 @@
 <script>
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
-import TurnstileCaptcha from "@/components/TurnstileCaptcha.vue"
+import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
 export default {
   auth: "guest",
   components: {
     OnionTextField,
     UIExtensionSlot,
-    TurnstileCaptcha,
+    UniversalCaptcha,
   },
   data() {
     return {

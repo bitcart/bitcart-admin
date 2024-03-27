@@ -37,11 +37,7 @@
               prepend-icon="lock"
               type="password"
             />
-            <turnstile-captcha
-              v-if="$store.state.policies.enable_captcha"
-              v-model="captchaCode"
-              :sitekey="$store.state.policies.captcha_sitekey"
-            />
+            <universal-captcha v-model="captchaCode" />
             <UIExtensionSlot name="register_form_extra" />
             <div>
               Already have an account ?
@@ -66,13 +62,13 @@
 import isHTTPS from "is-https"
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
-import TurnstileCaptcha from "@/components/TurnstileCaptcha.vue"
+import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
 
 export default {
   components: {
     OnionTextField,
     UIExtensionSlot,
-    TurnstileCaptcha,
+    UniversalCaptcha,
   },
   middleware: "registeroff",
   asyncData({ req }) {

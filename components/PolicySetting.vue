@@ -30,6 +30,13 @@
       :url="url"
       @input="updatePolicy"
     />
+    <v-select
+      v-else-if="type === 'select'"
+      :value="data"
+      :items="items"
+      :label="title"
+      @input="updatePolicy"
+    />
     <email-settings
       v-else-if="type === 'emailsettings'"
       :initial-value="data"
@@ -95,6 +102,10 @@ export default {
     url: {
       type: String,
       default: "",
+    },
+    items: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

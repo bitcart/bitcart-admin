@@ -1356,6 +1356,11 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
+"@hcaptcha/vue-hcaptcha@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@hcaptcha/vue-hcaptcha/-/vue-hcaptcha-1.3.0.tgz#b456591f80cd3fc6f698a1117c19c01f8e61ce48"
+  integrity sha512-aUSWyhRucgFeBOBUC3nWBZuE0TkeoSH5QIVFwiTLnNsYpIaxD1tKBbI5Tdoy0TdpkuXKsB4KqyElbvoMZ9reGw==
+
 "@humanwhocodes/config-array@^0.11.13":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.14.tgz#d78e481a039f7566ecc9660b4ea7fe6b1fec442b"
