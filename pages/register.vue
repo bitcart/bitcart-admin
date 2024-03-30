@@ -59,7 +59,6 @@
   </v-row>
 </template>
 <script>
-import isHTTPS from "is-https"
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
@@ -71,20 +70,6 @@ export default {
     UniversalCaptcha,
   },
   middleware: "registeroff",
-  asyncData({ req }) {
-    let url = ""
-    if (req) {
-      url = req.headers.host
-      if (isHTTPS(req)) {
-        url = "https://" + url
-      } else {
-        url = "http://" + url
-      }
-    } else {
-      url = window.location.origin
-    }
-    return { url }
-  },
   data() {
     return {
       email: "",
@@ -111,7 +96,6 @@ export default {
             email: this.email,
             password: this.password,
             captcha_code: this.captchaCode,
-            verify_url: new URL("login/email", this.url).href,
           })
           .then((r) => {
             this.$auth.setUserToken(r.data.token)

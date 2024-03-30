@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import isHTTPS from "is-https"
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
@@ -87,19 +86,8 @@ export default {
     UIExtensionSlot,
     UniversalCaptcha,
   },
-  asyncData({ store, req, route }) {
-    let url = ""
-    if (req) {
-      url = req.headers.host
-      if (isHTTPS(req)) {
-        url = "https://" + url
-      } else {
-        url = "http://" + url
-      }
-    } else {
-      url = window.location.origin
-    }
-    return { url, code: route.query.code }
+  asyncData({ route }) {
+    return { code: route.query.code }
   },
   data() {
     return {
@@ -147,12 +135,10 @@ export default {
             })
           return
         }
-        const finalURL = new URL(this.$route.path, this.url).href
         this.$axios
           .post("/users/reset_password", {
             email: this.email,
             captcha_code: this.captchaCode,
-            next_url: finalURL,
           })
           .then((r) => {
             setsuccess()

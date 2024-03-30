@@ -85,7 +85,6 @@
   </div>
 </template>
 <script>
-import isHTTPS from "is-https"
 import PolicySetting from "~/components/PolicySetting.vue"
 
 export default {
@@ -93,20 +92,6 @@ export default {
     PolicySetting,
   },
   layout: "profile",
-  asyncData({ req }) {
-    let url = ""
-    if (req) {
-      url = req.headers.host
-      if (isHTTPS(req)) {
-        url = "https://" + url
-      } else {
-        url = "http://" + url
-      }
-    } else {
-      url = window.location.origin
-    }
-    return { url }
-  },
   data() {
     return {
       policyURL: "/users/me/settings",
@@ -161,7 +146,6 @@ export default {
       this.$axios
         .post("/users/verify", {
           email: this.$auth.user.email,
-          next_url: new URL("login/email", this.url).href,
         })
         .then((r) => {
           this.loading = false
