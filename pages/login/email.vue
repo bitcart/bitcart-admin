@@ -5,46 +5,59 @@
         <v-card class="elevation-12">
           <v-toolbar color="primary" dark flat>
             <v-spacer />
-            <v-toolbar-title>Send verification email</v-toolbar-title>
+            <v-toolbar-title>{{
+              codeInput ? "Verify" : "Send verification email"
+            }}</v-toolbar-title>
             <div class="flex-grow-1" />
           </v-toolbar>
-          <v-card-text>
-            <div v-if="!code">
-              <p class="text-subtitle-1">
-                Enter your email address to receive email verification link:
+          <v-card-text class="pb-0">
+            <verify-code v-if="codeInput && !verifiedEmail" v-model="code" />
+            <div v-else-if="!codeInput">
+              <div v-if="!code">
+                <p class="text-subtitle-1">
+                  Enter your email address to receive email verification link:
+                </p>
+                <v-text-field
+                  id="email"
+                  v-model="email"
+                  :rules="[rules.required, rules.email]"
+                  :error-messages="errors"
+                  label="Email"
+                  name="email"
+                  prepend-icon="email"
+                  type="email"
+                />
+                <universal-captcha v-model="captchaCode" />
+              </div>
+              <v-progress-circular v-else-if="codeLoading" indeterminate />
+
+              <UIExtensionSlot name="verifyemail_form_extra" :code="code" />
+            </div>
+            <div v-if="detail">
+              <h2
+                v-if="code"
+                :class="{ 'red--text': error, 'green--text': !error }"
+              >
+                {{ detail }}
+              </h2>
+              <p v-else :class="{ 'red--text': error, 'green--text': !error }">
+                {{ detail }}
               </p>
-              <v-text-field
-                id="email"
-                v-model="email"
-                :rules="[rules.required, rules.email]"
-                :error-messages="errors"
-                label="Email"
-                name="email"
-                prepend-icon="email"
-                type="email"
-              />
-              <universal-captcha v-model="captchaCode" />
             </div>
-            <div v-else>
-              <h2>Email successfully verified</h2>
-            </div>
-            <p
-              v-if="detail"
-              :class="{ 'red--text': error, 'green--text': !error }"
-            >
-              {{ detail }}
-            </p>
-            <UIExtensionSlot name="verifyemail_form_extra" :code="code" />
           </v-card-text>
-          <v-card-actions class="justify-center">
-            <v-btn
-              v-if="!code"
-              type="submit"
-              color="primary"
-              :loading="loading"
-            >
-              Send email verification link</v-btn
-            >
+          <v-card-actions>
+            <v-container>
+              <v-row class="justify-center">
+                <v-btn
+                  v-if="!fromQuery && !verifiedEmail"
+                  type="submit"
+                  color="primary"
+                  :loading="reqLoading"
+                >
+                  {{ codeInput ? "Verify" : "Send email verification link" }}
+                </v-btn>
+              </v-row>
+            </v-container>
           </v-card-actions>
         </v-card>
       </v-form>
@@ -57,6 +70,7 @@
 import OnionTextField from "@/components/OnionTextField"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
+import VerifyCode from "@/components/VerifyCode.vue"
 
 export default {
   auth: false,
@@ -64,9 +78,13 @@ export default {
     OnionTextField,
     UIExtensionSlot,
     UniversalCaptcha,
+    VerifyCode,
   },
   asyncData({ route }) {
-    return { code: route.query.code }
+    return {
+      code: route.query.code,
+      fromQuery: typeof route.query.code !== "undefined",
+    }
   },
   data() {
     return {
@@ -74,9 +92,13 @@ export default {
       rules: this.$utils.rules,
       errors: [],
       captchaCode: "",
-      loading: false,
+      reqLoading: false,
+      codeLoading: this.code !== "",
       detail: "",
       error: false,
+      codeInput: false,
+      code: "",
+      verifiedEmail: false,
     }
   },
   mounted() {
@@ -84,24 +106,29 @@ export default {
       this.$axios
         .post(`/users/verify/finalize/${this.code}`, {})
         .then((r) => {
-          this.loading = false
+          this.detail = "Email successfully verified"
+          this.codeLoading = false
         })
         .catch((r) => {
           this.detail = r.response.data.detail
-          this.loading = false
           this.error = true
+          this.codeLoading = false
         })
     }
   },
   methods: {
     verifyEmail() {
+      if (this.codeInput) {
+        this.sendCode()
+        return
+      }
       if (this.$refs.form.validate()) {
         this.detail = ""
         this.error = false
-        this.loading = true
+        this.reqLoading = true
         const setsuccess = () => {
-          this.loading = false
-          this.detail = "Verification email successfully sent"
+          this.reqLoading = false
+          this.codeInput = true
         }
         this.$axios
           .post("/users/verify", {
@@ -112,10 +139,28 @@ export default {
             setsuccess()
           })
           .catch((e) => {
-            this.loading = false
+            this.reqLoading = false
             this.error = true
             const detail = e.response?.data?.detail
             this.errors = detail ? [detail] : []
+          })
+      }
+    },
+    sendCode() {
+      if (this.$refs.form.validate()) {
+        this.error = false
+        this.$axios
+          .post(`users/verify/finalize/${this.code}`)
+          .then((r) => {
+            this.detail = "Email successfully verified"
+            this.codeLoading = false
+            this.verifiedEmail = true
+          })
+          .catch((err) => {
+            if (err.response) {
+              this.detail = err.response.data.detail
+              this.error = true
+            }
           })
       }
     },
