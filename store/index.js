@@ -20,6 +20,7 @@ export const state = () => ({
   apiError: null,
   drawer: null,
   pinned: false,
+  dark: null,
 })
 
 export const mutations = {
@@ -58,6 +59,9 @@ export const mutations = {
   },
   pinned(state, value) {
     state.pinned = value
+  },
+  dark(state, value) {
+    state.dark = value
   },
 }
 export const actions = {
@@ -158,6 +162,9 @@ export const actions = {
   setPinned({ commit }, value) {
     commit("pinned", value)
   },
+  setDark({ commit }, value) {
+    commit("dark", value)
+  },
 }
 
 export const getters = {
@@ -200,5 +207,8 @@ export const getters = {
   },
   pinned({ pinned }) {
     return pinned
+  },
+  dark({ dark }) {
+    return dark
   },
 }
