@@ -155,11 +155,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import BaseLayout from "@/layouts/base"
+import { mapActions, mapGetters } from "vuex"
+import NavToolbarMobile from "@/components/NavToolbarMobile"
 import OnionButton from "@/components/OnionButton"
 import OnionIcon from "@/components/OnionIcon"
-import NavToolbarMobile from "@/components/NavToolbarMobile"
+import BaseLayout from "@/layouts/base"
 import VERSION from "@/version"
 import UIExtensionSlot from "~/components/UIExtensionSlot.vue"
 export default {
@@ -393,7 +393,11 @@ export default {
         this.$vuetify.theme.dark = v
       }
     },
+    dark(v) {
+      this.$vuetify.theme.dark = v
+    },
   },
+
   beforeCreate() {
     this.$utils.maybeEnableDarkTheme.call(this)
   },
