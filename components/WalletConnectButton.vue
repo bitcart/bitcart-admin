@@ -9,9 +9,9 @@
       <template v-if="insufficientBalance">Insuficient Balance</template>
       <template v-else>
         <v-img
-          :src="`${STATIC_PATH}/walletconnect.svg`"
+          :src="`${STATIC_PATH}/walletconnect-white.svg`"
           height="30"
-          width="30"
+          width="34"
           class="mr-2"
         />Pay with WalletConnect
       </template>
@@ -100,14 +100,7 @@ export default {
         return this.showError(error.message)
       }
       //  Create Web3
-      this.web3 = new window.Web3(provider)
-
-      await this.$utils.connectToWallet.call(
-        this,
-        "walletconnect",
-        () => this.address,
-        this.updateAddress
-      )
+      console.log(123);
     },
   },
 }
