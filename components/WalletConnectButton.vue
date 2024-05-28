@@ -100,7 +100,14 @@ export default {
         return this.showError(error.message)
       }
       //  Create Web3
-      console.log(123);
+      this.web3 = new window.Web3(provider)
+
+      await this.$utils.connectToWallet.call(
+        this,
+        "walletconnect",
+        () => this.address,
+        this.updateAddress
+      )
     },
   },
 }
