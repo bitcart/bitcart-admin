@@ -66,6 +66,33 @@
               title="Actions"
             />
           </mobile-wrap>
+          <v-dialog v-model="batch_dialog_delete" persistent max-width="400px">
+            <v-card>
+              <v-card-title class="text-h5 justify-center">
+                <v-icon>mdi-alert-circle-outline</v-icon> Warning
+              </v-card-title>
+              <v-card-text class="d-flex justify-center"
+                >Are you sure you want to delete those items?</v-card-text
+              >
+              <v-spacer></v-spacer>
+              <v-card-actions class="d-flex justify-center">
+                <v-btn
+                  color="primary"
+                  text
+                  @click="batch_dialog_delete = false"
+                >
+                  No
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  text
+                  @click="processBatchCommand('delete', true)"
+                >
+                  Yes
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <mobile-wrap
             v-if="$slots['before-toolbar'] || $getExtendSlot('before_toolbar')"
             :wrap="true"
@@ -226,6 +253,21 @@
         </UIExtensionSlot>
       </template>
     </v-data-table>
+    <v-dialog v-model="dialog_delete" persistent max-width="400px">
+      <v-card>
+        <v-card-title class="text-h5 justify-center">
+          <v-icon>mdi-alert-circle-outline</v-icon> Warning
+        </v-card-title>
+        <v-card-text class="d-flex justify-center"
+          >Are you sure you want to delete this item?</v-card-text
+        >
+        <v-spacer></v-spacer>
+        <v-card-actions class="d-flex justify-center">
+          <v-btn color="primary" text @click="denyDeleteItem">No</v-btn>
+          <v-btn color="primary" text @click="acceptDeleteItem">Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <div class="text-center pt-2">
       <v-pagination v-model="page" :length="pageCount" :total-visible="11" />
     </div>
@@ -235,17 +277,16 @@
     </v-snackbar>
   </div>
 </template>
-
 <script>
 import debounce from "lodash.debounce"
-import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
-import EditCard from "@/components/EditCard"
-import TabbedCheckout from "@/components/TabbedCheckout"
-import MenuDropdown from "@/components/MenuDropdown"
 import CopyText from "@/components/CopyText"
-import RefreshButton from "@/components/RefreshButton"
+import EditCard from "@/components/EditCard"
+import MenuDropdown from "@/components/MenuDropdown"
 import MobileWrap from "@/components/MobileWrap"
+import RefreshButton from "@/components/RefreshButton"
+import TabbedCheckout from "@/components/TabbedCheckout"
 import TooltipIcon from "@/components/TooltipIcon"
+import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 let runtimeComponents = {}
 if (process.env.NODE_ENV === "production") {
   const VList = require("vuetify/lib/components/VList").VList
@@ -335,6 +376,9 @@ export default {
       options: {},
       numItems: 0,
       dialog: false,
+      batch_dialog_delete: false,
+      dialog_delete: false,
+      deleted_item_id: null,
       showTabDialog: false,
       showImageDialog: false,
       showSnackbar: false,
@@ -479,7 +523,16 @@ export default {
       this.getItems(sortBy, sortDesc, page, itemsPerPage, this.searchProp)
       if (refreshStats) this.$store.dispatch("syncStats", false)
     },
-    processBatchCommand(command) {
+    processBatchCommand(command, confirm = false) {
+      // check for "delete"
+      console.log(command.localeCompare("delete"))
+      if (command.localeCompare("delete") === 0 && !confirm) {
+        this.batch_dialog_delete = true
+        return
+      } else if (command.localeCompare("delete") === 0 && confirm) {
+        this.batch_dialog_delete = false
+      }
+
       const data = this.processbatch(command)
       if (data === null) return
       this.$axios
@@ -565,14 +618,25 @@ export default {
       this.dialog = true
     },
     deleteItem(item) {
-      this.$axios.delete(`/${this.url}/${item.id}`).then((resp) => {
-        if (this.items.length - 1 === 0 && this.options.page > 1) {
-          this.options.page--
-        } else {
-          this.triggerReload(false, false)
-        }
-        this.$store.dispatch("syncStats", false)
-      })
+      this.deleted_item_id = item.id
+      this.dialog_delete = true
+    },
+    acceptDeleteItem() {
+      this.$axios
+        .delete(`/${this.url}/${this.deleted_item_id}`)
+        .then((resp) => {
+          if (this.items.length - 1 === 0 && this.options.page > 1) {
+            this.options.page--
+          } else {
+            this.triggerReload(false, false)
+          }
+          this.$store.dispatch("syncStats", false)
+        })
+      this.denyDeleteItem()
+    },
+    denyDeleteItem() {
+      this.dialog_delete = false
+      this.deleted_item_id = null
     },
     close() {
       this.$emit("update:editMode", false)
