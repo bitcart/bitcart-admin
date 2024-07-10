@@ -155,11 +155,11 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import BaseLayout from "@/layouts/base"
+import { mapActions, mapGetters } from "vuex"
+import NavToolbarMobile from "@/components/NavToolbarMobile"
 import OnionButton from "@/components/OnionButton"
 import OnionIcon from "@/components/OnionIcon"
-import NavToolbarMobile from "@/components/NavToolbarMobile"
+import BaseLayout from "@/layouts/base"
 import VERSION from "@/version"
 import UIExtensionSlot from "~/components/UIExtensionSlot.vue"
 export default {
@@ -173,7 +173,6 @@ export default {
     return {
       VERSION,
       toolbar: false,
-      dark: true,
       hideSyncData: {},
       guestItems: [
         {
@@ -306,7 +305,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["onionURL", "showSnow", "syncInfo", "drawer", "pinned"]),
+    ...mapGetters([
+      "onionURL",
+      "showSnow",
+      "syncInfo",
+      "drawer",
+      "pinned",
+      "dark",
+    ]),
     availableItems() {
       return this.$utils.getExtendSetting
         .call(
@@ -378,7 +384,11 @@ export default {
     pinned(v) {
       setTimeout(() => this.$store.commit("drawer", v), 100)
     },
+    dark(v) {
+      this.$vuetify.theme.dark = v
+    },
   },
+
   beforeCreate() {
     this.$utils.maybeEnableDarkTheme.call(this)
   },
@@ -391,7 +401,7 @@ export default {
     this.$bus.$off("drawerOff")
   },
   methods: {
-    ...mapActions(["setDrawer", "setPinned"]),
+    ...mapActions(["setDrawer", "setPinned", "setDark"]),
     drawerOn() {
       if (this.$device.isMobile || this.pinned) return
       this.$store.commit("drawer", true)
@@ -401,7 +411,7 @@ export default {
       this.$store.commit("drawer", false)
     },
     changeTheme() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      this.setDark(!this.$vuetify.theme.dark)
     },
     handleLogout() {
       this.$auth.logout()

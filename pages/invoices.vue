@@ -50,6 +50,12 @@
                           :disabled="!$auth.user.is_superuser"
                         />
                       </v-col>
+                      <v-col cols="6">
+                        <v-switch
+                          v-model="exportSettings.excludeManuallyMarked"
+                          label="Exclude manually marked invoices"
+                        />
+                      </v-col>
                     </v-row>
                   </v-container>
                 </v-card-text>
@@ -152,10 +158,10 @@
   </div>
 </template>
 <script>
-import ItemData from "@/components/ItemData.vue"
-import SearchFilters from "@/components/SearchFilters.vue"
-import JSONField from "@/components/JSONField.vue"
 import AutoComplete from "@/components/AutoComplete.vue"
+import ItemData from "@/components/ItemData.vue"
+import JSONField from "@/components/JSONField.vue"
+import SearchFilters from "@/components/SearchFilters.vue"
 export default {
   components: {
     ItemData,
@@ -353,7 +359,7 @@ export default {
       this.showExportDialog = false
       let finalURL = `/invoices/export?export_format=${this.exportSettings.format.toLowerCase()}&add_payments=${
         this.exportSettings.payments
-      }&all_users=${this.exportSettings.allUsers}`
+      }&all_users=${this.exportSettings.allUsers}&exclude_manually_marked=${this.exportSettings.excludeManuallyMarked}`
       if (this.exportSettings.query) {
         const { sortBy, sortDesc } = this.$refs.itemdata.options
         finalURL += `&query=${encodeURIComponent(
