@@ -173,6 +173,7 @@ export default {
           this.invoice.exception_status = data.exception_status
           this.invoice.sent_amount = data.sent_amount
           this.invoice.paid_currency = data.paid_currency
+          this.invoice.payment_id = data.payment_id
           this.$bus.$emit("showDetails")
           this.showPartial = true
         }
@@ -184,6 +185,7 @@ export default {
               exception_status: data.exception_status,
               sent_amount: data.sent_amount,
               paid_currency: data.paid_currency,
+              payment_id: data.payment_id,
             },
             "*"
           )
