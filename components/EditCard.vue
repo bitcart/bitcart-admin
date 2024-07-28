@@ -135,12 +135,17 @@
                     <v-row>
                       <v-col
                         v-for="field in getFields(header, item)"
-                        :key="field"
+                        :key="field.key"
                         :cols="6"
                       >
                         <v-text-field
-                          v-model="item[header.value][field]"
-                          :label="$utils.toTitleCase(field)"
+                          v-model="item[header.value][field.key]"
+                          :label="
+                            $utils.toTitleCase(field.name) +
+                            (field.type && field.type !== 'string'
+                              ? ' (' + field.type + ')'
+                              : '')
+                          "
                           :rules="
                             isRequiredField(header, item, field)
                               ? [rules.required]
@@ -149,6 +154,14 @@
                         />
                       </v-col>
                     </v-row>
+                    <v-btn
+                      v-if="getFieldHelp(header, item)"
+                      color="primary"
+                      target="_blank"
+                      :href="getFieldHelp(header, item)"
+                    >
+                      Setup guide
+                    </v-btn>
                   </template>
                   <template v-else-if="header.input === 'metadata'">
                     <v-row>
@@ -605,15 +618,19 @@ export default {
     getFields(header, item) {
       const properties = this.getProperties(header, item)
       const result = [...(properties ? properties[header.propertiesKey] : [])]
-      result.sort((a, b) => a.localeCompare(b))
+      result.sort((a, b) => a.name.localeCompare(b.name))
       result.sort((a, b) =>
         this.isRequiredField(header, item, a, properties) ? -1 : 1
       )
       return result
     },
+    getFieldHelp(header, item) {
+      const properties = this.getProperties(header, item)
+      return properties ? properties[header.helpKey] : ""
+    },
     isRequiredField(header, item, field, propertiesPassed) {
       const properties = propertiesPassed || this.getProperties(header, item)
-      return properties[header.requiredKey].includes(field)
+      return properties[header.requiredKey].includes(field.key)
     },
     fetchField(field) {
       this.$axios.get(field.url).then((resp) => {

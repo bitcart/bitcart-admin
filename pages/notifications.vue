@@ -32,6 +32,7 @@ export default {
           component: JSONField,
           requiredKey: "required",
           propertiesKey: "properties",
+          helpKey: "setup_url",
         },
         { text: "Created date", value: "created", mode: "display" },
         {
