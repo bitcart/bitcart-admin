@@ -206,6 +206,12 @@ export default {
         },
         { text: "Paid Currency", value: "paid_currency", mode: "display" },
         {
+          text: "Payment method ID",
+          value: "payment_id",
+          mode: "display",
+          expand: true,
+        },
+        {
           text: "Store",
           value: "store_id",
           rules: ["required"],
@@ -371,16 +377,9 @@ export default {
         })
     },
     matchPayment(item) {
-      let matchedPayment = item.payments.find((payment) => {
-        return payment.name === item.paid_currency
+      return item.payments.find((payment) => {
+        return payment.id === item.payment_id
       })
-      // if we didn't match via label, match via name (startsWith because of index)
-      if (!matchedPayment) {
-        matchedPayment = item.payments.find((payment) => {
-          return payment.name.startsWith(item.paid_currency)
-        })
-      }
-      return matchedPayment
     },
     minutesDiff(item) {
       return Math.round(

@@ -181,7 +181,7 @@
                     class="text-subtitle-1 font-weight-regular align-right"
                   >
                     -{{
-                      itemv.name === invoice.paid_currency
+                      itemv.id === invoice.payment_id
                         ? invoice.sent_amount
                         : $utils.decimalStr(0, itemv.divisibility)
                     }}
@@ -216,7 +216,7 @@
                     class="text-subtitle-1 font-weight-regular align-right"
                   >
                     {{
-                      itemv.name === invoice.paid_currency
+                      itemv.id === invoice.payment_id
                         ? $utils.decimalStr(
                             Math.max(0, itemv.amount - invoice.sent_amount),
                             itemv.divisibility
