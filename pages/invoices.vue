@@ -194,6 +194,7 @@ export default {
           value: "price",
           readonly: true,
           rules: ["required", "nonnegative"],
+          mode: "create",
           hint: "Price of 0 means accept any payment",
         },
         {
@@ -202,6 +203,7 @@ export default {
           input: "autocomplete",
           component: "v-combobox",
           url: "cryptos/fiatlist",
+          mode: "create",
           body: true,
         },
         { text: "Paid Currency", value: "paid_currency", mode: "display" },
@@ -219,6 +221,7 @@ export default {
           url: "stores",
           errors: { "No wallet linked": "No wallet linked" },
           copy: true,
+          mode: "create",
         },
         {
           text: "Products",
@@ -236,7 +239,7 @@ export default {
           hint: "In minutes, defaults to store setting",
           mode: "createonly",
         },
-        { text: "Promocode", value: "promocode" },
+        { text: "Promocode", value: "promocode", mode: "create" },
         {
           text: "Notification url",
           value: "notification_url",
@@ -252,8 +255,8 @@ export default {
         },
         { text: "Buyer email", value: "buyer_email", rules: ["email"] },
         { text: "Order", value: "order_id", copy: true },
-        { text: "Discount", value: "discount", mode: "edit", copy: true },
-        { text: "Status", value: "status", mode: "edit" },
+        { text: "Discount", value: "discount", mode: "display", copy: true },
+        { text: "Status", value: "status", mode: "display" },
         {
           text: "Tx hashes",
           value: "tx_hashes",
@@ -270,7 +273,7 @@ export default {
           text: "Exception status",
           value: "exception_status",
           expand: true,
-          mode: "edit",
+          mode: "display",
         },
         {
           text: "Shipping address",
