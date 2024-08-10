@@ -173,7 +173,6 @@ export default {
     return {
       VERSION,
       toolbar: false,
-      dark: true,
       hideSyncData: {},
       guestItems: [
         {
@@ -306,7 +305,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["onionURL", "showSnow", "syncInfo", "drawer", "pinned"]),
+    ...mapGetters([
+      "onionURL",
+      "showSnow",
+      "syncInfo",
+      "drawer",
+      "pinned",
+      "dark",
+    ]),
     availableItems() {
       return this.$utils.getExtendSetting
         .call(
@@ -375,8 +381,17 @@ export default {
     },
   },
   watch: {
-    pinned(v) {
-      setTimeout(() => this.$store.commit("drawer", v), 100)
+    pinned: {
+      handler(v, prev) {
+        if (typeof prev === "undefined") this.$store.commit("drawer", v)
+        else setTimeout(() => this.$store.commit("drawer", v), 100)
+      },
+      immediate: true,
+    },
+    dark(v) {
+      if (v !== null) {
+        this.$vuetify.theme.dark = v
+      }
     },
   },
   beforeCreate() {
@@ -391,7 +406,7 @@ export default {
     this.$bus.$off("drawerOff")
   },
   methods: {
-    ...mapActions(["setDrawer", "setPinned"]),
+    ...mapActions(["setDrawer", "setPinned", "setDark"]),
     drawerOn() {
       if (this.$device.isMobile || this.pinned) return
       this.$store.commit("drawer", true)
@@ -401,7 +416,7 @@ export default {
       this.$store.commit("drawer", false)
     },
     changeTheme() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      this.setDark(!this.$vuetify.theme.dark)
     },
     handleLogout() {
       this.$auth.logout()
