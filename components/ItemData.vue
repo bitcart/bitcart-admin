@@ -226,6 +226,34 @@
         </UIExtensionSlot>
       </template>
     </v-data-table>
+    <v-dialog v-model="deleteDialog" persistent max-width="400px">
+      <v-card>
+        <v-card-title class="text-h6 justify-center"
+          ><v-icon color="error" large class="pr-2">
+            mdi-alert-circle-outline</v-icon
+          >
+          Do you want to delete
+          {{
+            isBatchDelete ? selected.length + " items" : "this item"
+          }}?</v-card-title
+        >
+        <v-card-text class="text-h6 font-weight-regular d-flex justify-center">
+          This operation is irreversible.
+        </v-card-text>
+        <v-card-actions class="d-flex justify-center">
+          <v-btn @click="closeDeleteDialog">No</v-btn>
+          <v-btn
+            color="error"
+            @click="
+              isBatchDelete
+                ? processBatchCommand('delete', true)
+                : acceptDeleteItem(true)
+            "
+            >Yes</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <div class="text-center pt-2">
       <v-pagination v-model="page" :length="pageCount" :total-visible="11" />
     </div>
@@ -335,6 +363,8 @@ export default {
       options: {},
       numItems: 0,
       dialog: false,
+      deleteDialog: false,
+      deleteItemId: null,
       showTabDialog: false,
       showImageDialog: false,
       showSnackbar: false,
@@ -362,6 +392,9 @@ export default {
     this.searchProp = this.$route.query.query || this.searchProp
   },
   computed: {
+    isBatchDelete() {
+      return this.deleteItemId === null
+    },
     shouldExpand() {
       return this.headers.some((header) => header.expand)
     },
@@ -479,7 +512,11 @@ export default {
       this.getItems(sortBy, sortDesc, page, itemsPerPage, this.searchProp)
       if (refreshStats) this.$store.dispatch("syncStats", false)
     },
-    processBatchCommand(command) {
+    processBatchCommand(command, confirm = false) {
+      if (command === "delete") {
+        this.deleteDialog = !confirm
+        if (!confirm) return
+      }
       const data = this.processbatch(command)
       if (data === null) return
       this.$axios
@@ -565,7 +602,19 @@ export default {
       this.dialog = true
     },
     deleteItem(item) {
-      this.$axios.delete(`/${this.url}/${item.id}`).then((resp) => {
+      this.deleteItemId = item.id
+      const prevAsked = localStorage.getItem("deleteAsked")
+      if (prevAsked !== null && Date.now() - prevAsked < 1000 * 60 * 30) {
+        this.acceptDeleteItem()
+        return
+      }
+      this.deleteDialog = true
+    },
+    acceptDeleteItem(user = false) {
+      if (user) {
+        localStorage.setItem("deleteAsked", Date.now())
+      }
+      this.$axios.delete(`/${this.url}/${this.deleteItemId}`).then((resp) => {
         if (this.items.length - 1 === 0 && this.options.page > 1) {
           this.options.page--
         } else {
@@ -573,6 +622,11 @@ export default {
         }
         this.$store.dispatch("syncStats", false)
       })
+      this.closeDeleteDialog()
+    },
+    closeDeleteDialog() {
+      this.deleteDialog = false
+      this.deleteItemId = null
     },
     close() {
       this.$emit("update:editMode", false)
