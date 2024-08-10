@@ -381,14 +381,19 @@ export default {
     },
   },
   watch: {
-    pinned(v) {
-      setTimeout(() => this.$store.commit("drawer", v), 100)
+    pinned: {
+      handler(v, prev) {
+        if (typeof prev === "undefined") this.$store.commit("drawer", v)
+        else setTimeout(() => this.$store.commit("drawer", v), 100)
+      },
+      immediate: true,
     },
     dark(v) {
-      this.$vuetify.theme.dark = v
+      if (v !== null) {
+        this.$vuetify.theme.dark = v
+      }
     },
   },
-
   beforeCreate() {
     this.$utils.maybeEnableDarkTheme.call(this)
   },

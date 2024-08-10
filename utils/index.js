@@ -62,7 +62,7 @@ export default {
   maybeEnableDarkTheme() {
     const hours = new Date().getHours()
     const isDayTime = hours > 6 && hours < 20
-    if (this.$store.state.dark == null) {
+    if (this.$store.state.dark === null) {
       this.$vuetify.theme.dark = !isDayTime
     } else {
       this.$vuetify.theme.dark = this.$store.state.dark

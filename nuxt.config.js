@@ -64,7 +64,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    "~plugins/localStorage.js",
+    "~/plugins/localStorage.js",
     "~/plugins/routerbase.js",
     "~/plugins/utils.js",
     "~/plugins/axios.js",
