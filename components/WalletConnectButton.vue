@@ -9,7 +9,7 @@
       <template v-if="insufficientBalance">Insuficient Balance</template>
       <template v-else>
         <v-img
-          :src="`${STATIC_PATH}/walletconnect-white.svg`"
+          :src="`${STATIC_PATH}/walletconnect.svg`"
           height="30"
           width="34"
           class="mr-2"
