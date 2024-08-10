@@ -155,11 +155,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
-import NavToolbarMobile from "@/components/NavToolbarMobile"
+import { mapGetters, mapActions } from "vuex"
+import BaseLayout from "@/layouts/base"
 import OnionButton from "@/components/OnionButton"
 import OnionIcon from "@/components/OnionIcon"
-import BaseLayout from "@/layouts/base"
+import NavToolbarMobile from "@/components/NavToolbarMobile"
 import VERSION from "@/version"
 import UIExtensionSlot from "~/components/UIExtensionSlot.vue"
 export default {
