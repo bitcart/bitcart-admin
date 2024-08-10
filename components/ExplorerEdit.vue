@@ -5,7 +5,7 @@
         <v-row>
           <v-list-item v-for="(item, key) in data" :key="key" class="pl-0">
             <v-list-item-content>
-              <v-col cols="1">
+              <v-col cols="2">
                 <p class="text-h6">{{ key.toUpperCase() }}</p>
               </v-col>
               <v-col cols="12" md="4">
@@ -54,6 +54,11 @@ export default {
       this.$emit("input", this.data)
     },
     resetItem(key) {
+      if (this.url === "") {
+        this.data[key] = ""
+        this.sendInput()
+        return
+      }
       this.$axios.get(`${this.url}/${key}`).then((r) => {
         this.data[key] = r.data
         this.sendInput()
