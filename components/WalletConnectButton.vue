@@ -11,7 +11,7 @@
         <v-img
           :src="`${STATIC_PATH}/walletconnect.svg`"
           height="30"
-          width="30"
+          width="34"
           class="mr-2"
         />Pay with WalletConnect
       </template>
