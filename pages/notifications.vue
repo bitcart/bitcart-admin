@@ -12,7 +12,14 @@ export default {
   data() {
     return {
       headers: [
-        { text: "ID", value: "id", mode: "display", copy: true },
+        {
+          text: "ID",
+          value: "id",
+          mode: "display",
+          copy: true,
+          errorText:
+            "Error loading notification provider. It may be unsupported. Please adjust settings to make notifications go through again.",
+        },
         { text: "Name", value: "name", rules: ["required"] },
         {
           text: "Provider",
