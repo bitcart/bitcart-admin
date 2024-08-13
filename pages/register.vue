@@ -46,6 +46,33 @@
                 :extra-data="extraData"
                 @update:extraData="($event) => (extraData = $event)"
               />
+              <v-layout
+                column
+                align-center
+                justify-center
+                class="auth-buttons"
+                mb-6
+              >
+                <v-btn
+                  class="sso-auth-button"
+                  color="white"
+                  background="primary"
+                  outlined
+                  @click="ssoAuth('google')"
+                >
+                  <v-icon left> mdi-google </v-icon>
+                  Sign up with Google
+                </v-btn>
+                <v-btn
+                  class="sso-auth-button"
+                  color="white"
+                  outlined
+                  @click="ssoAuth('github')"
+                >
+                  <v-icon left> mdi-github </v-icon>
+                  Sign up with Github
+                </v-btn>
+              </v-layout>
               <universal-captcha v-model="captchaCode" />
               <div>
                 Already have an account ?
@@ -178,6 +205,12 @@ export default {
             }
           })
       }
+    },
+    ssoAuth(provider) {
+      window.open(
+        this.$axios.defaults.baseURL + "/users/login/" + provider,
+        "_self"
+      )
     },
   },
 }

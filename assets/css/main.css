@@ -22,3 +22,8 @@ select:-webkit-autofill:focus,
 select:-webkit-autofill:active {
   -webkit-background-clip: text;
 }
+.sso-auth-button {
+  color: #4285f4;
+  border-color: #4285f4;
+  margin-top: 10px;
+}
