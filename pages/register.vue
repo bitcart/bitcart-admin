@@ -46,33 +46,7 @@
                 :extra-data="extraData"
                 @update:extraData="($event) => (extraData = $event)"
               />
-              <v-layout
-                column
-                align-center
-                justify-center
-                class="auth-buttons"
-                mb-6
-              >
-                <v-btn
-                  class="sso-auth-button"
-                  color="white"
-                  background="primary"
-                  outlined
-                  @click="ssoAuth('google')"
-                >
-                  <v-icon left> mdi-google </v-icon>
-                  Sign up with Google
-                </v-btn>
-                <v-btn
-                  class="sso-auth-button"
-                  color="white"
-                  outlined
-                  @click="ssoAuth('github')"
-                >
-                  <v-icon left> mdi-github </v-icon>
-                  Sign up with Github
-                </v-btn>
-              </v-layout>
+              <sso-logins :username-errors="errors" />
               <universal-captcha v-model="captchaCode" />
               <div>
                 Already have an account ?
@@ -107,6 +81,7 @@
 </template>
 <script>
 import OnionTextField from "@/components/OnionTextField"
+import SsoLogins from "@/components/SsoLogins.vue"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
 import VerifyCode from "@/components/VerifyCode.vue"
@@ -117,6 +92,7 @@ export default {
     UIExtensionSlot,
     UniversalCaptcha,
     VerifyCode,
+    SsoLogins,
   },
   middleware: "registeroff",
   data() {
@@ -206,11 +182,8 @@ export default {
           })
       }
     },
-    ssoAuth(provider) {
-      window.open(
-        this.$axios.defaults.baseURL + "/users/login/" + provider,
-        "_self"
-      )
+    updateList(newList) {
+      this.errors = newList
     },
   },
 }

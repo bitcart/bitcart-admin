@@ -28,33 +28,7 @@
               prepend-icon="lock"
               type="password"
             />
-            <v-layout
-              column
-              align-center
-              justify-center
-              class="auth-buttons"
-              mb-6
-            >
-              <v-btn
-                class="sso-auth-button"
-                color="white"
-                background="primary"
-                outlined
-                @click="ssoAuth('google')"
-              >
-                <v-icon left> mdi-google </v-icon>
-                Sign in with Google
-              </v-btn>
-              <v-btn
-                class="sso-auth-button"
-                color="white"
-                outlined
-                @click="ssoAuth('github')"
-              >
-                <v-icon left> mdi-github </v-icon>
-                Sign in with Github
-              </v-btn>
-            </v-layout>
+            <sso-logins :username-errors="usernameErrors" />
             <universal-captcha v-model="captchaCode" />
             <UIExtensionSlot name="login_form_extra" />
             <div v-if="!$store.state.policies.disable_registration">
@@ -80,6 +54,7 @@
 
 <script>
 import OnionTextField from "@/components/OnionTextField"
+import SsoLogins from "@/components/SsoLogins.vue"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
 export default {
@@ -88,6 +63,7 @@ export default {
     OnionTextField,
     UIExtensionSlot,
     UniversalCaptcha,
+    SsoLogins,
   },
   data() {
     return {
@@ -99,12 +75,6 @@ export default {
       passwordErrors: [],
       captchaCode: "",
       askForEmailVerify: false,
-    }
-  },
-  beforeMount() {
-    const error = this.$route.query.error
-    if (error) {
-      this.usernameErrors.push(error)
     }
   },
   methods: {
@@ -153,11 +123,8 @@ export default {
           })
       }
     },
-    ssoAuth(provider) {
-      window.open(
-        this.$axios.defaults.baseURL + "/users/login/" + provider,
-        "_self"
-      )
+    updateList(newList) {
+      this.usernameErrors = newList
     },
   },
 }
