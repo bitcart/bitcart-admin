@@ -63,8 +63,8 @@
 </template>
 
 <script>
-import CloseButton from "@/components/CloseButton"
 import TabbedCheckout from "@/components/TabbedCheckout"
+import CloseButton from "@/components/CloseButton"
 export default {
   auth: false,
   components: {
