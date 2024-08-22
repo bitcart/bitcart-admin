@@ -18,6 +18,7 @@
       @click="resendVerificationEmail"
       >Re-send verification email</v-btn
     >
+    <UIExtensionSlot name="profile_extra" />
     <v-form ref="changePasswordForm" @submit.prevent="sendChangePassword">
       <h1>Change password</h1>
       <v-text-field
@@ -85,10 +86,12 @@
   </div>
 </template>
 <script>
+import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import PolicySetting from "~/components/PolicySetting.vue"
 
 export default {
   components: {
+    UIExtensionSlot,
     PolicySetting,
   },
   layout: "profile",
