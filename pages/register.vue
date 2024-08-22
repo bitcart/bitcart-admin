@@ -41,8 +41,12 @@
                 prepend-icon="lock"
                 type="password"
               />
+              <UIExtensionSlot
+                name="register_form_extra"
+                :extra-data="extraData"
+                @update:extraData="($event) => (extraData = $event)"
+              />
               <universal-captcha v-model="captchaCode" />
-              <UIExtensionSlot name="register_form_extra" />
               <div>
                 Already have an account ?
                 <NuxtLink to="/login"> Sign in</NuxtLink> instead
@@ -104,6 +108,7 @@ export default {
       otpCode: "",
       error: false,
       detail: "",
+      extraData: {},
     }
   },
   auth: "guest",
@@ -121,12 +126,14 @@ export default {
             email: this.email,
             password: this.password,
             captcha_code: this.captchaCode,
+            ...this.extraData,
           })
           .then((r) => {
             if (!r.data.token) {
               this.askForEmailVerify = true
               return
             }
+            this.$router.replace({ query: [] }).catch(() => {})
             this.$auth.setUserToken(r.data.token)
             this.$auth.fetchUser().then((r) => {
               this.$store.dispatch("fetchServices")
