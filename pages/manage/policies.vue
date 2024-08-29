@@ -42,6 +42,7 @@ export default {
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
         email_settings: "Email server settings",
+        enabled_providers: "OAuth providers settings",
       }),
       details: this.$utils.getExtendSetting.call(this, "policy_details", {
         staging_updates:
@@ -55,6 +56,7 @@ export default {
         explorer_urls: "exploreredit",
         rpc_urls: "exploreredit",
         email_settings: "emailsettings",
+        enabled_providers: "providerssettings",
         captcha_type: "select",
       }),
       urls: this.$utils.getExtendSetting.call(this, "policy_urls", {

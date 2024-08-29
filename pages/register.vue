@@ -46,6 +46,7 @@
                 :extra-data="extraData"
                 @update:extraData="($event) => (extraData = $event)"
               />
+              <sso-logins :username-errors="errors" />
               <universal-captcha v-model="captchaCode" />
               <div>
                 Already have an account ?
@@ -80,6 +81,7 @@
 </template>
 <script>
 import OnionTextField from "@/components/OnionTextField"
+import SsoLogins from "@/components/SsoLogins.vue"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
 import VerifyCode from "@/components/VerifyCode.vue"
@@ -90,6 +92,7 @@ export default {
     UIExtensionSlot,
     UniversalCaptcha,
     VerifyCode,
+    SsoLogins,
   },
   middleware: "registeroff",
   data() {
@@ -178,6 +181,9 @@ export default {
             }
           })
       }
+    },
+    updateList(newList) {
+      this.errors = newList
     },
   },
 }
