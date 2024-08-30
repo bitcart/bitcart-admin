@@ -29,5 +29,14 @@ module.exports = {
       },
     ],
     "vue/multi-word-component-names": "off",
+    "new-cap": [
+      "error",
+      {
+        newIsCap: true,
+        capIsNew: false,
+        properties: true,
+        newIsCapExceptions: ["jsPDF"],
+      },
+    ],
   },
 }
