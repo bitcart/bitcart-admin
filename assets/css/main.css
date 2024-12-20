@@ -27,11 +27,11 @@ input:-webkit-autofill:active {
   -webkit-text-size-adjust: inherit !important;
 }
 
-label.theme--dark + input::-webkit-credentials-auto-fill-button{
+label.theme--dark + input::-webkit-credentials-auto-fill-button {
   background-color: #fff !important;
 }
 
-input[type=password]::-webkit-credentials-auto-fill-button{
+input[type="password"]::-webkit-credentials-auto-fill-button {
   visibility: hidden;
   display: none !important;
   pointer-events: none;
