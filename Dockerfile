@@ -14,8 +14,8 @@ RUN yarn install \
 RUN addgroup -g 19001 tor && addgroup node tor
 
 LABEL org.bitcart.image=admin
-ENV NUXT_HOST 0.0.0.0
-ENV NUXT_PORT 4000
+ENV NUXT_HOST=0.0.0.0
+ENV NUXT_PORT=4000
 
 EXPOSE ${NUXT_PORT}
 USER node
