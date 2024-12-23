@@ -1,7 +1,7 @@
 <template>
   <item-data :headers="headers" :actions="actions" :url="url" :title="title">
     <template #item.lightning_enabled="{ item }">
-      <v-switch :input-value="item.lightning_enabled" readonly />
+      <v-switch :input-value="item.lightning_enabled" disabled />
     </template>
   </item-data>
 </template>
