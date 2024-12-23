@@ -55,6 +55,32 @@
                 {{ texts[status].text }}
               </div>
             </div>
+            <ReceiptComponent :invoice="invoice" />
+            <client-only>
+              <vue-html2pdf
+                ref="transactionReceipt"
+                :show-layout="false"
+                :float-layout="true"
+                :pdf-quality="2"
+                :manual-pagination="true"
+                :pdf-format="pdfFormat"
+                :pdf-orientation="'portrait'"
+                filename="document.pdf"
+              >
+                <div slot="pdf-content">
+                  <style>
+                    @import "~assets/styles/main.css";
+                  </style>
+                  <ReceiptComponent :invoice="invoice" />
+                </div>
+              </vue-html2pdf>
+              <v-btn
+                class="mt-8"
+                color="primary"
+                @click="$refs.transactionReceipt.generatePdf()"
+                >Print</v-btn
+              >
+            </client-only>
           </v-card-text>
         </div>
       </v-card>
@@ -63,13 +89,16 @@
 </template>
 
 <script>
-import TabbedCheckout from "@/components/TabbedCheckout"
 import CloseButton from "@/components/CloseButton"
+import ReceiptComponent from "@/components/ReceiptComponent"
+import TabbedCheckout from "@/components/TabbedCheckout"
+
 export default {
   auth: false,
   components: {
     TabbedCheckout,
     CloseButton,
+    ReceiptComponent,
   },
   layout: "checkout",
   data() {
@@ -137,6 +166,7 @@ export default {
           .catch((err) => (this.errorText = err))
       })
       .catch((err) => this.setError(err))
+    console.log(document.styleSheets)
   },
   beforeDestroy() {
     if (this.websocket) {

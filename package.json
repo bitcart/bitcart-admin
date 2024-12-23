@@ -26,7 +26,8 @@
     "js-cookie": "^3.0.5",
     "nuxt-start": "^2.15.1",
     "socks-proxy-agent": "^8.0.0",
-    "vuex-persistedstate": "^4.1.0"
+    "vuex-persistedstate": "^4.1.0",
+    "vue-html2pdf": "^1.8.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.5",

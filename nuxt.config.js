@@ -71,6 +71,7 @@ export default {
     "~/plugins/eventbus.js",
     { src: "~/plugins/imageinput.js", mode: "client" },
     { src: "~/plugins/datetimepicker.js", mode: "client" },
+    { src: "~/plugins/vue-html2pdf.js", mode: "client" },
     "~/plugins/vueQR.js",
   ],
   /*
