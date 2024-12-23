@@ -28,6 +28,7 @@
               prepend-icon="lock"
               type="password"
             />
+            <sso-logins :username-errors="usernameErrors" />
             <universal-captcha v-model="captchaCode" />
             <UIExtensionSlot name="login_form_extra" />
             <div v-if="!$store.state.policies.disable_registration">
@@ -53,6 +54,7 @@
 
 <script>
 import OnionTextField from "@/components/OnionTextField"
+import SsoLogins from "@/components/SsoLogins.vue"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 import UniversalCaptcha from "@/components/UniversalCaptcha.vue"
 export default {
@@ -61,6 +63,7 @@ export default {
     OnionTextField,
     UIExtensionSlot,
     UniversalCaptcha,
+    SsoLogins,
   },
   data() {
     return {
@@ -119,6 +122,9 @@ export default {
             }
           })
       }
+    },
+    updateList(newList) {
+      this.usernameErrors = newList
     },
   },
 }
