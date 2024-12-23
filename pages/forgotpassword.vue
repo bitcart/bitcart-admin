@@ -127,6 +127,7 @@ export default {
             })
             .then((r) => {
               setsuccess()
+              this.$router.push("/login")
             })
             .catch((r) => {
               this.detail = r.response.data.detail
