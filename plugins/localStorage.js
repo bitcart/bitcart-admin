@@ -1,5 +1,5 @@
 import cookie from "cookie"
-import * as Cookies from "js-cookie"
+import Cookies from "js-cookie"
 import createPersistedState from "vuex-persistedstate"
 
 export default ({ store, req, isHMR }) => {
