@@ -211,136 +211,76 @@
         />
       </v-tab-item>
       <v-tab-item>
-        <p class="text-h4">Available plugins</p>
-        <v-row>
-          <v-col
-            v-for="plugin in marketplacePlugins"
-            :key="plugin.id"
-            md="3"
-            cols="12"
+        <div>
+          <div
+            v-if="sortedMarketplacePlugins.some((p) => p.pinned)"
+            class="mb-8"
           >
-            <v-card
-              height="100%"
-              max-width="350"
-              class="ml-1 d-flex flex-column"
-            >
-              <div class="flex-grow-1">
-                <v-card-title>
-                  {{ plugin.name }}<br />
-                  Author: {{ plugin.author }}<br />
-                  Announced: {{ new Date(plugin.created).toLocaleDateString() }}
-                </v-card-title>
-                <v-card-text class="py-0">
-                  <p class="text-h6">
-                    {{ plugin.description }}
-                  </p>
-                  <v-divider class="my-2" />
-                  <div v-if="plugin.pricing_info">
-                    <p
-                      v-if="plugin.pricing_info.fully_free"
-                      class="success--text"
-                    >
-                      Free plugin
-                    </p>
-                    <div v-else>
-                      <p>
-                        Base price: ${{ plugin.pricing_info.base_amount }}/mo
-                      </p>
-                      <p v-if="plugin.pricing_info.volume_threshold">
-                        {{ plugin.pricing_info.percentage_rate }}% fee after ${{
-                          plugin.pricing_info.volume_threshold
-                        }}
-                        volume
-                      </p>
-                      <p v-if="plugin.pricing_info.yearly_discount">
-                        {{ plugin.pricing_info.yearly_discount }}% yearly
-                        discount available
-                      </p>
+            <h3 class="text-h5 mb-4 font-weight-medium">
+              <v-icon color="amber-darken-2" class="mr-2">mdi-star</v-icon>
+              Featured Plugins
+            </h3>
+            <v-row>
+              <v-col
+                v-for="plugin in sortedMarketplacePlugins.filter(
+                  (p) => p.pinned
+                )"
+                :key="plugin.id"
+                cols="12"
+                sm="6"
+                md="4"
+                lg="3"
+                class="pa-2 ma-2"
+              >
+                <plugin-card
+                  :plugin="plugin"
+                  :plugins="plugins"
+                  :license-keys="licenseKeys"
+                  @plugin-installed="handlePluginInstalled"
+                />
+              </v-col>
+            </v-row>
+          </div>
+          <div>
+            <h3 class="text-h5 mb-4 font-weight-medium">
+              <v-icon class="mr-2">mdi-puzzle</v-icon>
+              All Plugins
+            </h3>
+            <v-row>
+              <v-col
+                v-for="plugin in sortedMarketplacePlugins"
+                :key="plugin.id"
+                cols="12"
+                sm="6"
+                md="4"
+                lg="3"
+                class="pa-2 ma-2"
+              >
+                <plugin-card
+                  :plugin="plugin"
+                  :plugins="plugins"
+                  :license-keys="licenseKeys"
+                  @plugin-installed="handlePluginInstalled"
+                />
+              </v-col>
+
+              <v-col
+                v-if="!marketplaceLoading && $utils.isEmpty(marketplacePlugins)"
+              >
+                <v-alert type="info" variant="tonal">
+                  <div class="d-flex align-center">
+                    <div>
+                      <p class="text-h6 mb-1">No plugins available</p>
+                      <p class="mb-0">Check back later for new plugins</p>
                     </div>
                   </div>
-                </v-card-text>
-              </div>
-              <v-card-actions>
-                <v-container>
-                  <v-row class="justify-center align-center">
-                    <div
-                      v-if="isPluginInstalled(plugin)"
-                      class="d-flex align-center"
-                    >
-                      <v-icon color="success" class="mr-2">
-                        mdi-check-circle
-                      </v-icon>
-                      <span class="success--text">Installed</span>
-                    </div>
-                    <v-btn
-                      v-else
-                      color="primary"
-                      @click="
-                        plugin.pricing_info.fully_free ||
-                        hasValidLicense(plugin)
-                          ? downloadPlugin(plugin)
-                          : purchasePlugin(plugin)
-                      "
-                    >
-                      {{
-                        plugin.pricing_info.fully_free ||
-                        hasValidLicense(plugin)
-                          ? "Install"
-                          : "Purchase"
-                      }}
-                    </v-btn>
-                  </v-row>
-                </v-container>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-          <v-col
-            v-if="!marketplaceLoading && $utils.isEmpty(marketplacePlugins)"
-          >
-            <p>No plugins available.</p>
-          </v-col>
-        </v-row>
+                </v-alert>
+              </v-col>
+            </v-row>
+          </div>
+        </div>
       </v-tab-item>
     </v-tabs-items>
-    <v-dialog
-      v-if="selectedPlugin"
-      v-model="showPurchaseDialog"
-      max-width="500px"
-    >
-      <v-card>
-        <v-card-title class="text-h5"
-          >Purchase {{ selectedPlugin.name }}</v-card-title
-        >
-        <v-card-text>
-          <v-form ref="purchaseForm" v-model="purchaseFormValid">
-            <v-text-field
-              v-model="purchaseData.customer_email"
-              label="Email"
-              :rules="[rules.required, rules.email]"
-            />
-            <v-checkbox
-              v-if="selectedPlugin.pricing_info.yearly_discount"
-              v-model="purchaseData.yearly"
-              :label="`Yearly subscription (${selectedPlugin.pricing_info.yearly_discount}% discount)`"
-            />
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="error" text @click="showPurchaseDialog = false">
-            Cancel
-          </v-btn>
-          <v-btn
-            color="primary"
-            :loading="purchaseLoading"
-            :disabled="!purchaseFormValid"
-            @click="createLicense"
-          >
-            Purchase
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-snackbar
       v-model="snackbar.show"
       :color="snackbar.color"
@@ -353,12 +293,14 @@
 </template>
 
 <script>
+import PluginCard from "@/components/PluginCard.vue"
 import ManagementCommand from "@/components/ManagementCommand.vue"
-import { LICENSING_SERVER, LICENSING_CHECKOUT_URL } from "@/version"
+import { LICENSING_SERVER } from "@/version"
 
 export default {
   components: {
     ManagementCommand,
+    PluginCard,
   },
   middleware: "superuserOnly",
   data() {
@@ -377,16 +319,7 @@ export default {
       ],
       marketplacePlugins: [],
       marketplaceLoading: true,
-      selectedPlugin: null,
-      purchaseFormValid: false,
-      purchaseLoading: false,
-      purchaseData: {
-        customer_email: "",
-        yearly: false,
-      },
-      rules: this.$utils.rules,
       showDialog: false,
-      showPurchaseDialog: false,
       needsRestart: false,
       restarting: false,
       expandedPanel: 0,
@@ -419,6 +352,16 @@ export default {
         { text: "Actions", value: "actions", sortable: false },
       ],
     }
+  },
+  computed: {
+    sortedMarketplacePlugins() {
+      return [...this.marketplacePlugins].sort((a, b) => {
+        if (a.pinned === b.pinned) {
+          return 0
+        }
+        return a.pinned ? -1 : 1
+      })
+    },
   },
   beforeMount() {
     this.fetchPlugins()
@@ -460,68 +403,9 @@ export default {
         this.marketplaceLoading = false
       })
     },
-    purchasePlugin(plugin) {
-      this.selectedPlugin = plugin
-      this.showPurchaseDialog = true
-    },
-    downloadPlugin(plugin) {
-      let licenseKey = ""
-      if (!plugin.pricing_info.fully_free) {
-        const license = this.licenseKeys.find(
-          (l) =>
-            l.plugin_name === plugin.name &&
-            l.plugin_author === plugin.author &&
-            l.active
-        )
-        licenseKey = license ? `?license_key=${license.license_key}` : ""
-      }
-      this.$axios
-        .get(`${LICENSING_SERVER}/plugins/${plugin.id}/download${licenseKey}`, {
-          responseType: "blob",
-        })
-        .then((resp) => {
-          const pluginFile = new File([resp.data], `${plugin.name}.bitcart`, {
-            type: "application/octet-stream",
-          })
-          const formData = new FormData()
-          formData.append("plugin", pluginFile)
-          this.$axios
-            .post("/plugins/install", formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            })
-            .then(() => {
-              this.fetchPlugins()
-              this.needsRestart = true
-            })
-        })
-    },
-    createLicense() {
-      if (!this.$refs.purchaseForm.validate()) return
-      this.purchaseLoading = true
-      this.$axios
-        .post(`${LICENSING_SERVER}/licenses`, {
-          plugin_id: this.selectedPlugin.id,
-          pricing_model: this.purchaseData.yearly ? "yearly" : "monthly",
-          customer_email: this.purchaseData.customer_email,
-        })
-        .then((resp) => {
-          this.showPurchaseDialog = false
-          this.$router.push(
-            `${LICENSING_CHECKOUT_URL}/i/${resp.data.invoice_id}`
-          )
-        })
-        .finally(() => {
-          this.purchaseLoading = false
-        })
-    },
-    isPluginInstalled(marketplacePlugin) {
-      return this.plugins.some(
-        (p) =>
-          p.name === marketplacePlugin.name &&
-          p.author === marketplacePlugin.author
-      )
+    handlePluginInstalled() {
+      this.fetchPlugins()
+      this.needsRestart = true
     },
     restartServer() {
       this.restarting = true
@@ -576,14 +460,6 @@ export default {
       this.$axios.delete(`/plugins/licenses/${item.license_key}`).then(() => {
         this.fetchLicenses()
       })
-    },
-    hasValidLicense(plugin) {
-      return this.licenseKeys.some(
-        (license) =>
-          license.plugin_name === plugin.name &&
-          license.plugin_author === plugin.author &&
-          license.active
-      )
     },
   },
 }
