@@ -192,7 +192,11 @@
         <v-btn color="primary" @click="showImage(item)"> Show </v-btn>
       </template>
       <template #item.action="{ item }">
-        <UIExtensionSlot name="item_actions">
+        <UIExtensionSlot
+          name="item_actions"
+          :alt-name="`${title.toLowerCase()}_actions`"
+          :item="item"
+        >
           <tooltip-icon
             small
             icon="mdi-content-copy"
@@ -222,6 +226,11 @@
             small
             class="mr-2"
             @click="deleteItem(item)"
+          />
+          <UIExtensionSlot
+            name="item_extra_actions"
+            :alt-name="`${title.toLowerCase()}_extra_actions`"
+            :item="item"
           />
         </UIExtensionSlot>
       </template>

@@ -10,6 +10,10 @@ export default {
       type: String,
       default: "",
     },
+    altName: {
+      type: String,
+      default: "",
+    },
     props: {
       type: [Array, Object],
       default: () => [],
@@ -19,7 +23,10 @@ export default {
     actualProps() {
       let props = this.props
       if (this.$utils.isEmpty(props)) props = []
-      let extendedProps = this.$getExtendSlot(this.name)
+      let extendedProps = []
+      if (this.altName) extendedProps = this.$getExtendSlot(this.altName)
+      if (this.$utils.isEmpty(extendedProps))
+        extendedProps = this.$getExtendSlot(this.name)
       if (this.$utils.isEmpty(extendedProps)) extendedProps = []
       return props.length > 0 ? props : extendedProps
     },

@@ -11,6 +11,20 @@
       :url="urls[policy] || ''"
       :initial-value="value"
     />
+    <div v-for="plugin in plugins" :key="plugin">
+      <h2 class="text-h5 mt-6">Plugin: {{ plugin }}</h2>
+      <PolicySetting
+        v-for="(value, setting) in pluginSettings[plugin] || {}"
+        :key="`${plugin}-${setting}`"
+        :title="pluginFields[plugin][setting].title"
+        :detail="pluginFields[plugin][setting].description"
+        :type="pluginFields[plugin][setting].type || 'checkbox'"
+        :what="setting"
+        :items="pluginFields[plugin][setting].items"
+        :policy-url="`/plugins/settings/${plugin}`"
+        :initial-value="value"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -24,6 +38,13 @@ export default {
   data() {
     return {
       policies: {},
+      plugins: [],
+      pluginSettings: {},
+      pluginFields: this.$utils.getExtendSetting.call(
+        this,
+        "plugin_fields",
+        {}
+      ),
       titles: this.$utils.getExtendSetting.call(this, "policy_descriptions", {
         disable_registration: "Disable user registration",
         require_verified_email: "Require verified email address for all users",
@@ -66,10 +87,23 @@ export default {
       }),
     }
   },
-  beforeMount() {
-    this.$axios
-      .get("/manage/policies")
-      .then((resp) => (this.policies = resp.data))
+  async beforeMount() {
+    const policiesResp = await this.$axios.get("/manage/policies")
+    this.policies = policiesResp.data
+    const pluginsResp = await this.$axios.get("/plugins/settings/list")
+    this.plugins = pluginsResp.data
+    await Promise.all(
+      this.plugins.map(async (plugin) => {
+        try {
+          const settingsResp = await this.$axios.get(
+            `/plugins/settings/${plugin}`
+          )
+          this.$set(this.pluginSettings, plugin, settingsResp.data)
+        } catch (e) {
+          console.error(`Failed to load settings for plugin ${plugin}:`, e)
+        }
+      })
+    )
   },
 }
 </script>

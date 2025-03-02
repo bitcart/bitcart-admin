@@ -107,9 +107,16 @@ export default {
     const contentDisposition = resp.headers["content-disposition"]
     let filename = "unknown"
     if (contentDisposition) {
-      const fileNameMatch = contentDisposition.match(/filename=(.+)/)
-      if (fileNameMatch.length === 2) {
-        filename = fileNameMatch[1]
+      // Try UTF-8 filename first
+      const utf8Match = contentDisposition.match(/filename\*=utf-8''(.+)/)
+      if (utf8Match && utf8Match.length === 2) {
+        filename = decodeURIComponent(utf8Match[1])
+      } else {
+        // Fallback to regular filename
+        const fileNameMatch = contentDisposition.match(/filename=(.+)/)
+        if (fileNameMatch && fileNameMatch.length === 2) {
+          filename = fileNameMatch[1]
+        }
       }
     }
     link.setAttribute("download", filename)
