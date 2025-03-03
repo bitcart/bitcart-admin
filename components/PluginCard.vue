@@ -131,6 +131,36 @@
               class="mb-4"
             />
             <v-checkbox
+              v-model="purchaseData.agreeToTerms"
+              :rules="[rules.required]"
+              color="primary"
+              hide-details="auto"
+              class="mb-4"
+            >
+              <template #label>
+                <div>
+                  I agree to the Bitcart Paid Plugins
+                  <a
+                    href="https://bitcart.ai/plugins/tos"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary text-decoration-none"
+                    @click.stop
+                    >Terms of Service</a
+                  >
+                  and
+                  <a
+                    href="https://bitcart.ai/plugins/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary text-decoration-none"
+                    @click.stop
+                    >Privacy Policy</a
+                  >
+                </div>
+              </template>
+            </v-checkbox>
+            <v-checkbox
               v-if="plugin.pricing_info.yearly_discount"
               v-model="purchaseData.yearly"
               :label="`Yearly subscription`"
@@ -226,6 +256,7 @@ export default {
       purchaseData: {
         customer_email: "",
         yearly: false,
+        agreeToTerms: false,
       },
       rules: {
         required: (v) => !!v || "This field is required",
