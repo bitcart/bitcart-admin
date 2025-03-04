@@ -41,6 +41,12 @@ export default {
             what: "restart",
           },
           {
+            title: "Reload plugins",
+            details: "Reload all plugins to apply new changes",
+            btnText: "Start reload process",
+            what: "plugin-reload",
+          },
+          {
             title: "Cleanup the server",
             details:
               "Free up server disk space by deleting unused docker images and logs of Bitcart",

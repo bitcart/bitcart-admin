@@ -10,21 +10,19 @@
       <span>Featured</span>
     </div>
 
-    <v-card-item>
-      <v-card-title class="plugin-title text-truncate">
-        {{ plugin.name }}
-      </v-card-title>
-      <v-card-subtitle class="pt-2">
-        <div class="d-flex align-center">
-          <v-icon size="small" class="mr-1">mdi-account</v-icon>
-          <span class="text-body-2">{{ plugin.author }}</span>
-        </div>
-        <div class="d-flex align-center mt-1">
-          <v-icon size="small" class="mr-1">mdi-calendar</v-icon>
-          <span class="text-body-2">{{ formatDate(plugin.created) }}</span>
-        </div>
-      </v-card-subtitle>
-    </v-card-item>
+    <v-card-title class="plugin-title text-truncate">
+      {{ plugin.name }}
+    </v-card-title>
+    <v-card-subtitle class="pt-2">
+      <div class="d-flex align-center">
+        <v-icon size="small" class="mr-1">mdi-account</v-icon>
+        <span class="text-body-2">{{ plugin.author }}</span>
+      </div>
+      <div class="d-flex align-center mt-1">
+        <v-icon size="small" class="mr-1">mdi-calendar</v-icon>
+        <span class="text-body-2">{{ formatDate(plugin.created) }}</span>
+      </div>
+    </v-card-subtitle>
 
     <v-card-text class="flex-grow-1">
       <p class="plugin-description text-body-1">{{ plugin.description }}</p>

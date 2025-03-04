@@ -16,15 +16,15 @@
       >Plugins installation failed. Images restored to original state. Please
       check and uninstall incorrect plugins</v-alert
     >
-    <v-alert v-if="needsRestart" text type="info" class="mb-4">
-      Server needs to be restarted for plugin changes to take effect
+    <v-alert v-if="needsReload" text type="info" class="mb-4">
+      Server plugins need to be reloaded for plugin changes to take effect
       <v-btn
         color="info"
         class="ml-4"
-        :loading="restarting"
-        @click="restartServer"
+        :loading="reloading"
+        @click="reloadPlugins"
       >
-        Restart Server
+        Reload Plugins
       </v-btn>
     </v-alert>
     <v-expansion-panels v-model="expandedPanel" class="mb-6">
@@ -320,8 +320,8 @@ export default {
       marketplacePlugins: [],
       marketplaceLoading: true,
       showDialog: false,
-      needsRestart: false,
-      restarting: false,
+      needsReload: false,
+      reloading: false,
       expandedPanel: 0,
       licenseDialog: false,
       licensesLoading: true,
@@ -390,12 +390,12 @@ export default {
           this.plugins = this.plugins.filter(
             (p) => p.name !== plugin.name || p.author !== plugin.author
           )
-          this.needsRestart = true
+          this.needsReload = true
         })
     },
     postprocess(data) {
       this.fetchPlugins()
-      this.needsRestart = true
+      this.needsReload = true
     },
     fetchMarketplacePlugins() {
       this.$axios.get(`${LICENSING_SERVER}/plugins`).then((resp) => {
@@ -405,17 +405,17 @@ export default {
     },
     handlePluginInstalled() {
       this.fetchPlugins()
-      this.needsRestart = true
+      this.needsReload = true
     },
-    restartServer() {
-      this.restarting = true
+    reloadPlugins() {
+      this.reloading = true
       this.$axios
-        .post("/manage/restart")
+        .post("/manage/plugin-reload")
         .then(() => {
-          this.needsRestart = false
+          this.needsReload = false
         })
         .finally(() => {
-          this.restarting = false
+          this.reloading = false
         })
     },
     fetchLicenses() {
