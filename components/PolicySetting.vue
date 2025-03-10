@@ -43,6 +43,13 @@
       :url="url"
       @input="updatePolicy"
     />
+    <providers-settings
+      v-else-if="type === 'providerssettings'"
+      :value="data"
+      :items="items"
+      :label="title"
+      @input="updatePolicy"
+    />
     <UIExtensionSlot
       v-else
       name="policy_setting_types"
@@ -62,9 +69,10 @@
 </template>
 <script>
 import AutoComplete from "@/components/AutoComplete"
-import ListEdit from "@/components/ListEdit"
-import ExplorerEdit from "@/components/ExplorerEdit"
 import EmailSettings from "@/components/EmailSettings"
+import ExplorerEdit from "@/components/ExplorerEdit"
+import ListEdit from "@/components/ListEdit"
+import ProvidersSettings from "@/components/ProvidersSettings"
 import UIExtensionSlot from "@/components/UIExtensionSlot"
 export default {
   components: {
@@ -73,6 +81,7 @@ export default {
     ListEdit,
     ExplorerEdit,
     EmailSettings,
+    ProvidersSettings,
   },
   props: {
     title: {

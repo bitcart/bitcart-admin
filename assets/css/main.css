@@ -36,3 +36,8 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   display: none !important;
   pointer-events: none;
 }
+.sso-auth-button {
+  color: #4285f4;
+  border-color: #4285f4;
+  margin-top: 10px;
+}
