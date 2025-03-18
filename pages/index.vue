@@ -1,5 +1,10 @@
 <template>
   <v-container>
+    <v-alert v-if="showWalletsWarning" type="warning" dismissible class="mb-4">
+      You have a large number of wallets ({{ $store.state.stats.wallets }}). It
+      is recommended to disable balance fetching in your profile settings for
+      better performance.
+    </v-alert>
     <v-row>
       <UIExtensionSlot
         name="dashboard"
@@ -143,6 +148,13 @@ export default {
     }
   },
   computed: {
+    showWalletsWarning() {
+      return (
+        this.$store.state.stats.wallets >= 100 &&
+        this.$auth.user &&
+        this.$auth.user.settings.fetch_balance
+      )
+    },
     walletTexts() {
       const fetchBalanceText = this.$auth.user
         ? this.$auth.user.settings.fetch_balance

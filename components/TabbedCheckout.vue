@@ -467,6 +467,9 @@
                                     title="Payment Link"
                                     :value="itemv.payment_url"
                                   />
+                                  <v-row v-if="itemv.hint" justify="center">
+                                    {{ itemv.hint }}
+                                  </v-row>
                                 </UIExtensionSlot>
                               </v-card-text>
                             </v-card>
