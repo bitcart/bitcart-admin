@@ -146,7 +146,12 @@
                       target="_blank"
                       rel="noopener noreferrer nofollow"
                     >
-                      <v-icon>mdi-web</v-icon>
+                      <v-tooltip bottom>
+                        <template #activator="{ on, attrs }">
+                          <v-icon v-bind="attrs" v-on="on">mdi-web</v-icon>
+                        </template>
+                        <span>Visit plugin website</span>
+                      </v-tooltip>
                     </v-btn>
                     <v-btn
                       v-if="plugin.docs_url"
@@ -155,7 +160,14 @@
                       target="_blank"
                       rel="noopener noreferrer nofollow"
                     >
-                      <v-icon>mdi-book-open-variant</v-icon>
+                      <v-tooltip bottom>
+                        <template #activator="{ on, attrs }">
+                          <v-icon v-bind="attrs" v-on="on"
+                            >mdi-book-open-variant</v-icon
+                          >
+                        </template>
+                        <span>View documentation</span>
+                      </v-tooltip>
                     </v-btn>
                     <v-btn
                       v-if="plugin.source_url"
@@ -164,7 +176,14 @@
                       target="_blank"
                       rel="noopener noreferrer nofollow"
                     >
-                      <v-icon>mdi-code-tags</v-icon>
+                      <v-tooltip bottom>
+                        <template #activator="{ on, attrs }">
+                          <v-icon v-bind="attrs" v-on="on"
+                            >mdi-code-tags</v-icon
+                          >
+                        </template>
+                        <span>View source code</span>
+                      </v-tooltip>
                     </v-btn>
                     <v-tooltip v-if="plugin.license" bottom>
                       <template #activator="{ on, attrs }">
