@@ -42,8 +42,9 @@
               class="d-flex justify-center success-circle success-icon"
             >
               <v-icon
+                v-if="displayStatus !== 'confirmed'"
                 :color="getIconColor(texts[displayStatus].icon)"
-                class="d-flex justify-center"
+                class="d-flex justify-center icon-static"
               >
                 {{ texts[displayStatus].icon }}
               </v-icon>
@@ -334,6 +335,14 @@ $dialog-max-height: 100%;
   border-width: 2px;
   border-style: solid;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-static {
+  position: relative;
+  z-index: 1;
 }
 
 .success-circle.confirming {
