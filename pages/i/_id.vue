@@ -38,7 +38,7 @@
           <v-card-text v-else class="no-overflow py-12">
             <close-button class="mt-n8" @closedialog="closeDialog" />
             <div
-              :class="colorClass(texts[displayStatus].icon)"
+              :class="[colorClass(texts[displayStatus].icon), displayStatus === 'confirmed' ? 'confirming' : '']"
               class="d-flex justify-center success-circle success-icon"
             >
               <v-icon
@@ -316,6 +316,16 @@ $dialog-max-height: 100%;
     transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }
 }
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .success-circle {
   border-radius: 50%;
   height: 154px;
@@ -323,7 +333,28 @@ $dialog-max-height: 100%;
   margin: 0 auto;
   border-width: 2px;
   border-style: solid;
+  position: relative;
 }
+
+.success-circle.confirming {
+  border-style: dashed;
+  animation: rotate 2s linear infinite;
+}
+
+.success-circle.confirming::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+  animation: rotate 2s linear infinite;
+}
+
 .green-color {
   border-color: #13e5b6;
 }
