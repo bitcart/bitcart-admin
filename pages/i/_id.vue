@@ -135,7 +135,7 @@ export default {
     displayStatus() {
       if (!this.invoice || !this.invoice.status) return 'pending'
       if (this.invoice.status === 'pending' && this.invoice.exception_status === 'paid_partial') return 'underpaid'
-      if (this.invoice.status === 'paid') return 'waiting_confirmation'
+      if (this.invoice.status === 'paid') return 'confirmed'
       return this.invoice.status
     },
     isFinalStatus() {

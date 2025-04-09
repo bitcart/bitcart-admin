@@ -479,11 +479,10 @@
                                 <div v-if="!zeroAmountInvoice">
                                   <div class="d-flex align-center justify-center">
                                     <display-field
-                                      title="Amount"
+                                      :title="`Amount in ${itemv.symbol.toUpperCase()}`"
                                       :value="itemv.amount"
                                       class="flex-grow-1"
                                     />
-                                    <p class="text-subtitle-1 ml-2 mb-0">{{ itemv.symbol.toUpperCase() }}</p>
                                   </div>
                                   <v-divider />
                                 </div>
