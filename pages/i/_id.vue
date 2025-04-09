@@ -26,33 +26,31 @@
         </div>
         <div v-else>
           <TabbedCheckout
-            v-if="status === 'pending'"
+            v-if="displayStatus === 'pending' || displayStatus === 'underpaid' || displayStatus === 'waiting_confirmation'"
             :checkout-page="true"
             :invoice.sync="invoice"
             :store="store"
+            :underpaid="displayStatus === 'underpaid'"
             class="px-0 pb-0"
             @closedialog="closeDialog"
           />
           <v-card-text v-else class="no-overflow py-12">
             <close-button class="mt-n8" @closedialog="closeDialog" />
             <div
-              :class="colorClass(texts[status].icon)"
+              :class="[colorClass(texts[displayStatus].icon), displayStatus === 'confirmed' ? 'confirming' : '']"
               class="d-flex justify-center success-circle success-icon"
             >
               <v-icon
-                :color="
-                  ['mdi-check', 'mdi-cash-refund'].includes(texts[status].icon)
-                    ? 'green'
-                    : 'red'
-                "
-                class="d-flex justify-center"
+                v-if="displayStatus !== 'confirmed'"
+                :color="getIconColor(texts[displayStatus].icon)"
+                class="d-flex justify-center icon-static"
               >
-                {{ texts[status].icon }}
+                {{ texts[displayStatus].icon }}
               </v-icon>
             </div>
             <div class="d-flex justify-center pt-4">
               <div class="text-subtitle-1 font-weight-bold">
-                {{ texts[status].text }}
+                {{ texts[displayStatus].text }}
               </div>
             </div>
           </v-card-text>
@@ -78,7 +76,7 @@ export default {
       showSnackbar: false,
       showPartial: false,
       showDialog: true,
-      status: "pending",
+      redirected: false,
       invoice: {},
       store: {},
       loading: true,
@@ -92,13 +90,21 @@ export default {
           icon: "mdi-close",
           text: "This invoice has been marked as invalid",
         },
-        paid: {
-          icon: "mdi-check",
-          text: "This invoice has been paid",
+        waiting_confirmation: {
+          icon: "mdi-clock-outline",
+          text: "Payment received, awaiting confirmation...",
+        },
+        underpaid: {
+          icon: "mdi-alert-circle-outline",
+          text: "Invoice underpaid. Please send the remaining amount.",
+        },
+        pending: {
+          icon: "",
+          text: "Awaiting payment...",
         },
         confirmed: {
           icon: "mdi-check",
-          text: "This invoice has been paid",
+          text: "Payment received, awaiting confirmations...",
         },
         complete: {
           icon: "mdi-check",
@@ -113,6 +119,25 @@ export default {
           text: "This invoice is invalid",
         },
       },
+    }
+  },
+  computed: {
+    displayStatus() {
+      if (!this.invoice || !this.invoice.status) return 'pending'
+      if (this.invoice.status === 'pending' && this.invoice.exception_status === 'paid_partial') return 'underpaid'
+      if (this.invoice.status === 'paid') return 'confirmed'
+      return this.invoice.status
+    },
+    isFinalStatus() {
+      return ['complete', 'expired', 'invalid', 'refunded'].includes(this.displayStatus)
+    }
+  },
+  watch: {
+    displayStatus(newStatus) {
+      if (!this.redirected && this.isFinalStatus && this.invoice.redirect_url) {
+        this.redirected = true
+        this.$utils.redirectTo(this.invoice.redirect_url)
+      }
     }
   },
   beforeCreate() {
@@ -164,24 +189,30 @@ export default {
       this.websocket = new WebSocket(url)
       this.websocket.onmessage = (event) => {
         const data = JSON.parse(event.data)
-        const status = data.status
-        if (
-          status === "pending" &&
-          this.invoice.sent_amount !== data.sent_amount
-        ) {
-          // received partial payment
-          this.invoice.exception_status = data.exception_status
-          this.invoice.sent_amount = data.sent_amount
-          this.invoice.paid_currency = data.paid_currency
-          this.invoice.payment_id = data.payment_id
+        const oldStatus = this.invoice.status
+        const oldSentAmount = this.invoice.sent_amount
+        
+        // Update invoice data
+        this.invoice.status = data.status
+        this.invoice.exception_status = data.exception_status
+        this.invoice.sent_amount = data.sent_amount
+        this.invoice.paid_currency = data.paid_currency
+        this.invoice.payment_id = data.payment_id
+
+        // Show partial payment notification if needed
+        if (data.status === 'pending' && 
+            data.exception_status === 'paid_partial' && 
+            oldSentAmount !== data.sent_amount) {
           this.$bus.$emit("showDetails")
           this.showPartial = true
         }
-        if (this.invoice.status !== status) {
+
+        // Notify parent window of status change
+        if (oldStatus !== data.status) {
           window.parent.postMessage(
             {
               invoice_id: this.invoice.id,
-              status,
+              status: data.status,
               exception_status: data.exception_status,
               sent_amount: data.sent_amount,
               paid_currency: data.paid_currency,
@@ -190,13 +221,6 @@ export default {
             "*"
           )
         }
-        if (
-          ["paid", "confirmed", "complete"].includes(status) &&
-          this.invoice.redirect_url
-        ) {
-          this.$utils.redirectTo(this.invoice.redirect_url)
-        }
-        this.status = status
       }
     },
     colorClass(icon) {
@@ -212,6 +236,10 @@ export default {
       return relativeURL
         ? baseURL.replace(/\/+$/, "") + "/" + relativeURL.replace(/^\/+/, "")
         : baseURL
+    },
+    getIconColor(icon) {
+      if (["mdi-check", "mdi-cash-refund"].includes(icon)) return "green"
+      return "red"
     },
   },
 }
@@ -279,6 +307,16 @@ $dialog-max-height: 100%;
     transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }
 }
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .success-circle {
   border-radius: 50%;
   height: 154px;
@@ -286,7 +324,36 @@ $dialog-max-height: 100%;
   margin: 0 auto;
   border-width: 2px;
   border-style: solid;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.icon-static {
+  position: relative;
+  z-index: 1;
+}
+
+.success-circle.confirming {
+  border-style: dashed;
+  animation: rotate 2s linear infinite;
+}
+
+.success-circle.confirming::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+  animation: rotate 2s linear infinite;
+}
+
 .green-color {
   border-color: #13e5b6;
 }
