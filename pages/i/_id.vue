@@ -60,40 +60,17 @@
         </div>
       </v-card>
     </v-dialog>
-    <div
-      v-if="$store.state.policies.allow_powered_by_bitcart"
-      class="d-flex justify-center"
-      style="position: fixed; bottom: 30px; left: 0; right: 0"
-    >
-      <p class="text-h6 ma-0 pa-0" :class="poweredByStyle">
-        Powered by
-        <a
-          href="https://bitcart.ai/?mtm_campaign=powered-by"
-          target="_blank"
-          class="text-decoration-none text-h6"
-        >
-          Bitcart
-        </a>
-        <UIExtensionSlot
-          v-if="hasEthPaymentMethod"
-          name="powered_by_bitcart_eth"
-          :itemv="selectedPaymentMethod"
-        />
-      </p>
-    </div>
   </v-container>
 </template>
 
 <script>
 import TabbedCheckout from "@/components/TabbedCheckout"
 import CloseButton from "@/components/CloseButton"
-import UIExtensionSlot from "@/components/UIExtensionSlot"
 export default {
   auth: false,
   components: {
     TabbedCheckout,
     CloseButton,
-    UIExtensionSlot,
   },
   layout: "checkout",
   data() {

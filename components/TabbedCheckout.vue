@@ -479,6 +479,37 @@
                     </v-container>
                   </v-card-text>
                   <v-card-actions class="justify-center">
+                    <div
+                      v-if="
+                        checkoutPage &&
+                        $store.state.policies.allow_powered_by_bitcart
+                      "
+                      class="mb-3"
+                    >
+                      <div
+                        class="d-flex align-center text-h6 ma-0 pa-0 text-decoration-none"
+                        style="color: #798599"
+                      >
+                        <span class="mr-2">Powered by</span>
+                        <a
+                          href="https://bitcart.ai/?mtm_campaign=powered-by"
+                          target="_blank"
+                        >
+                          <v-img
+                            src="/powered-by.svg"
+                            max-width="100"
+                            max-height="100"
+                            contain
+                            eager
+                          />
+                        </a>
+                      </div>
+                      <UIExtensionSlot
+                        v-if="isEthPaymentMethod"
+                        name="powered_by_bitcart_eth"
+                        :itemv="itemv"
+                      />
+                    </div>
                     <v-btn
                       v-if="!checkoutPage"
                       class="justify-center"
