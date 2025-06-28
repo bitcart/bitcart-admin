@@ -63,7 +63,7 @@
     <div
       v-if="$store.state.policies.allow_powered_by_bitcart"
       class="d-flex justify-center"
-      style="position: fixed; bottom: 30px; left: 0; right: 0; z-index: 1000"
+      style="position: fixed; bottom: 30px; left: 0; right: 0"
     >
       <p class="text-h6 ma-0 pa-0" :class="poweredByStyle">
         Powered by
