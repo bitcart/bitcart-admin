@@ -32,6 +32,7 @@
             :store="store"
             class="px-0 pb-0"
             @closedialog="closeDialog"
+            @update:itemv="selectedPaymentMethod = $event"
           />
           <v-card-text v-else class="no-overflow py-12">
             <close-button class="mt-n8" @closedialog="closeDialog" />
@@ -59,17 +60,40 @@
         </div>
       </v-card>
     </v-dialog>
+    <div
+      v-if="$store.state.policies.allow_powered_by_bitcart"
+      class="d-flex justify-center"
+      style="position: fixed; bottom: 30px; left: 0; right: 0; z-index: 1000"
+    >
+      <p class="text-h6 ma-0 pa-0" :class="poweredByStyle">
+        Powered by
+        <a
+          href="https://bitcart.ai/?mtm_campaign=powered-by"
+          target="_blank"
+          class="text-decoration-none text-h6"
+        >
+          Bitcart
+        </a>
+        <UIExtensionSlot
+          v-if="hasEthPaymentMethod"
+          name="powered_by_bitcart_eth"
+          :itemv="selectedPaymentMethod"
+        />
+      </p>
+    </div>
   </v-container>
 </template>
 
 <script>
 import TabbedCheckout from "@/components/TabbedCheckout"
 import CloseButton from "@/components/CloseButton"
+import UIExtensionSlot from "@/components/UIExtensionSlot"
 export default {
   auth: false,
   components: {
     TabbedCheckout,
     CloseButton,
+    UIExtensionSlot,
   },
   layout: "checkout",
   data() {
@@ -113,7 +137,19 @@ export default {
           text: "This invoice is invalid",
         },
       },
+      selectedPaymentMethod: null,
     }
+  },
+  computed: {
+    hasEthPaymentMethod() {
+      return (
+        this.selectedPaymentMethod?.payment_url?.startsWith("ethereum:") &&
+        this.status === "pending"
+      )
+    },
+    poweredByStyle() {
+      return this.$route.query.modal ? { "white--text": true } : {}
+    },
   },
   beforeCreate() {
     this.$vuetify.theme.dark = false // dark theme unsupported here

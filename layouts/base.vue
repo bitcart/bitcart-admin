@@ -46,7 +46,7 @@ export default {
     },
     customStyle() {
       return this.$route.query.modal
-        ? { background: "rgba(55, 58, 60, 0.4)" }
+        ? { background: "rgba(0, 0, 0, 0.85)" }
         : {}
     },
   },

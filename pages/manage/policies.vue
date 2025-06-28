@@ -1,7 +1,7 @@
 <template>
   <div>
     <PolicySetting
-      v-for="(value, policy) in policies"
+      v-for="(value, policy) in availablePolicies"
       :key="policy"
       :title="titles[policy]"
       :detail="details[policy]"
@@ -46,6 +46,8 @@ export default {
         {}
       ),
       titles: this.$utils.getExtendSetting.call(this, "policy_descriptions", {
+        allow_powered_by_bitcart:
+          "Enable powered by Bitcart section at checkout to help support the project adoption",
         disable_registration: "Disable user registration",
         require_verified_email: "Require verified email address for all users",
         allow_file_uploads: "Allow file uploads for non-superusers",
@@ -86,6 +88,17 @@ export default {
         captcha_type: ["none", "hcaptcha", "cloudflare_turnstile"],
       }),
     }
+  },
+  computed: {
+    availablePolicies() {
+      const filtered = {}
+      for (const [policy, value] of Object.entries(this.policies)) {
+        if (this.titles[policy]) {
+          filtered[policy] = value
+        }
+      }
+      return filtered
+    },
   },
   async beforeMount() {
     const policiesResp = await this.$axios.get("/manage/policies")

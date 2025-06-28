@@ -769,6 +769,12 @@ export default {
       this.paymentAddressErrors = []
       this.fetchTokenABI()
     },
+    itemv: {
+      handler(val) {
+        this.$emit("update:itemv", val)
+      },
+      immediate: true,
+    },
   },
   beforeMount() {
     this.$bus.$on("showDetails", () => {
