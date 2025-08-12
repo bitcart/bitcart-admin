@@ -231,8 +231,8 @@ export default {
           rules: ["int"],
           hint: "Number of confirmations for invoice to be considered complete",
           errors: {
-            "Transaction speed must be in range from 0 to 6":
-              "Transaction speed must be in range from 0 to 6",
+            "Transaction speed must be in range from 0 to 10":
+              "Transaction speed must be in range from 0 to 10",
           },
           help: "https://docs.bitcart.ai/guides/transaction-speed",
         },
