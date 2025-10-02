@@ -65,6 +65,7 @@ export default {
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
         email_settings: "Email server settings",
+        health_check_store_id: "Health check store ID",
       }),
       details: this.$utils.getExtendSetting.call(this, "policy_details", {
         staging_updates:
@@ -79,6 +80,7 @@ export default {
         rpc_urls: "exploreredit",
         email_settings: "emailsettings",
         captcha_type: "select",
+        health_check_store_id: "string",
       }),
       urls: this.$utils.getExtendSetting.call(this, "policy_urls", {
         explorer_urls: "/cryptos/explorer",
