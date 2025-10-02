@@ -201,6 +201,8 @@
                     :multiple="header.multiple"
                     :chips="header.multiple"
                     :rules="header.rules"
+                    :hint="header.hint"
+                    persistent-hint
                     :error-messages="errors[header.text]"
                     :label="header.text"
                     color="#90a4ae"

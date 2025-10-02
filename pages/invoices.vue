@@ -198,22 +198,6 @@ export default {
           hint: "Price of 0 means accept any payment",
         },
         {
-          text: "Currency",
-          value: "currency",
-          input: "autocomplete",
-          component: "v-combobox",
-          url: "cryptos/fiatlist",
-          mode: "create",
-          body: true,
-        },
-        { text: "Paid Currency", value: "paid_currency", mode: "display" },
-        {
-          text: "Payment method ID",
-          value: "payment_id",
-          mode: "display",
-          expand: true,
-        },
-        {
           text: "Store",
           value: "store_id",
           rules: ["required"],
@@ -223,6 +207,35 @@ export default {
           copy: true,
           mode: "create",
         },
+        {
+          text: "Currency",
+          value: "currency",
+          input: "autocomplete",
+          component: "v-combobox",
+          url: "cryptos/fiatlist",
+          mode: "create",
+          body: true,
+        },
+        {
+          text: "Payment methods",
+          value: "payment_methods",
+          input: "autocomplete",
+          url: "wallets",
+          multiple: true,
+          mode: "createonly",
+          errors: {
+            " is not connected to store": "Wallet is not connected to store",
+          },
+          hint: "Customize payment methods for this invoice",
+        },
+        { text: "Paid Currency", value: "paid_currency", mode: "display" },
+        {
+          text: "Payment method ID",
+          value: "payment_id",
+          mode: "display",
+          expand: true,
+        },
+
         {
           text: "Products",
           value: "products",
