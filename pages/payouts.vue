@@ -127,7 +127,7 @@ export default {
           value: "store_id",
           rules: ["required"],
           input: "autocomplete",
-          url: "stores",
+          url: "stores?autocomplete=true",
           copy: true,
         },
         {
@@ -135,7 +135,7 @@ export default {
           value: "wallet_id",
           rules: ["required"],
           input: "autocomplete",
-          url: "wallets",
+          url: "wallets?autocomplete=true",
           copy: true,
         },
         {
