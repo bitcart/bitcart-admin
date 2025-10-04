@@ -384,7 +384,7 @@ export default {
       editedIndex: -1,
       editedItem: Object.assign(
         ...Array.from(this.headers, (x) => [x.value, x.default]).map(
-          (k, i) => ({ [k[0]]: typeof k[1] === "undefined" ? "" : k[1] })
+          (k, i) => ({ [k[0]]: typeof k[1] === "undefined" ? null : k[1] })
         )
       ),
       items: [],
@@ -601,9 +601,6 @@ export default {
         this.editedItem[dateH.value] = new Date(this.editedItem[dateH.value])
       }
       if (imageH) {
-        if (this.editedItem[imageH.value] === null) {
-          this.editedItem[imageH.value] = ""
-        }
         if (this.editedItem[imageH.value]) {
           this.loadImage(imageH.value)
         }

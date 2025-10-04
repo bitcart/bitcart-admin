@@ -166,7 +166,7 @@
                   <template v-else-if="header.input === 'metadata'">
                     <v-row>
                       <v-col
-                        v-for="field in Object.keys(item[header.value])"
+                        v-for="field in Object.keys(item[header.value] || {})"
                         :key="field"
                         :cols="6"
                       >
@@ -433,7 +433,7 @@ export default {
           ? Object.assign(
               ...Array.from(this.headers, (x) => [x.value, x.default]).map(
                 (k, i) => ({
-                  [k[0]]: typeof k[1] === "undefined" ? "" : k[1],
+                  [k[0]]: typeof k[1] === "undefined" ? null : k[1],
                 })
               )
             )
@@ -745,11 +745,21 @@ export default {
     addItem(item) {
       this.$bus.$emit("additem", item)
     },
+    filterUnsetFields(data) {
+      const filtered = {}
+      for (const key in data) {
+        if (data[key] !== null) {
+          filtered[key] = data[key]
+        }
+      }
+      return filtered
+    },
     save() {
       this.errors = {} // clean previous errors
       if (this.$refs.form.validate()) {
         let data = Object.assign({}, this.item)
         data = this.postprocess(data)
+        data = this.filterUnsetFields(data)
         let headers = {}
         if (
           this.body ||
