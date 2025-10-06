@@ -8,6 +8,7 @@
       :title="title"
       :custom-batch-actions="batchActions"
       :actions="actions"
+      :processbatch="processbatch"
     >
       <template #before-toolbar>
         <v-row>
@@ -110,6 +111,71 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-dialog v-model="showMarkCompleteDialog" max-width="800px">
+            <v-card>
+              <v-card-title class="justify-center"
+                >Mark invoices as complete</v-card-title
+              >
+              <v-card-text>
+                <v-container>
+                  <div
+                    v-for="(invoiceData, index) in markCompleteInvoices"
+                    :key="invoiceData.invoice.id"
+                  >
+                    <v-divider v-if="index > 0" class="my-4" />
+                    <div class="text-subtitle-1 font-weight-bold mb-3">
+                      Invoice {{ invoiceData.invoice.id }}
+                      <span class="text-caption font-weight-normal ml-2"
+                        >({{ invoiceData.invoice.price }}
+                        {{ invoiceData.invoice.currency }})</span
+                      >
+                    </div>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-select
+                          v-model="invoiceData.payment_method_id"
+                          :items="invoiceData.invoice.payments"
+                          item-text="name"
+                          item-value="id"
+                          label="Payment method"
+                          :rules="[rules.required]"
+                          required
+                        />
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="invoiceData.sent_amount"
+                          label="Sent amount (optional)"
+                          type="number"
+                          step="any"
+                          hint="Leave empty to use invoice amount"
+                        />
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-combobox
+                          v-model="invoiceData.tx_hashes"
+                          label="Transaction hashes (optional)"
+                          multiple
+                          chips
+                          deletable-chips
+                          hint="Press Enter to add each transaction hash"
+                        />
+                      </v-col>
+                    </v-row>
+                  </div>
+                </v-container>
+              </v-card-text>
+              <v-card-actions class="justify-center pb-5">
+                <v-btn color="primary" @click="markCompleteSubmit"
+                  >Mark as complete</v-btn
+                >
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-row>
       </template>
       <template #item.tx_hashes="{ item }">
@@ -168,6 +234,7 @@ export default {
       search: "",
       showExportDialog: false,
       showRefundDialog: false,
+      showMarkCompleteDialog: false,
       currentItem: {},
       itemIndex: -1,
       refundType: "sent_amount_old",
@@ -180,6 +247,7 @@ export default {
       loading: false,
       snackbarColor: "success",
       snackbarText: "",
+      markCompleteInvoices: [],
       defaultExportSettings: {
         format: "CSV",
         query: false,
@@ -187,6 +255,7 @@ export default {
         allUsers: false,
       },
       exportSettings: {},
+      rules: this.$utils.rules,
       headers: [
         { text: "ID", value: "id", mode: "display", copy: true },
         {
@@ -474,6 +543,71 @@ export default {
       this.snackbarText = "Refund link copied to clipboard"
       this.showSnackbar = true
       this.$utils.copyToClipboard(`${window.location.origin}/refunds/${id}`)
+    },
+    processbatch(command) {
+      if (command === "mark_complete") {
+        if (!this.showMarkCompleteDialog) {
+          const selectedInvoices = this.$refs.itemdata.selected
+          if (selectedInvoices.length === 0) {
+            return null
+          }
+          const invoicesWithoutPayments = selectedInvoices.filter(
+            (inv) => !inv.payments || inv.payments.length === 0
+          )
+          if (invoicesWithoutPayments.length > 0) {
+            this.snackbarColor = "error"
+            this.snackbarText =
+              invoicesWithoutPayments.length === 1
+                ? `Invoice ${invoicesWithoutPayments[0].id} has no payment methods available`
+                : `${invoicesWithoutPayments.length} invoices have no payment methods available`
+            this.showSnackbar = true
+            return null
+          }
+          this.markCompleteInvoices = selectedInvoices.map((invoice) => ({
+            invoice,
+            payment_method_id: "",
+            sent_amount: "",
+            tx_hashes: [],
+          }))
+          this.showMarkCompleteDialog = true
+          return null
+        } else {
+          this.showMarkCompleteDialog = false
+          const options = this.markCompleteInvoices.map((invoiceData) => {
+            const opt = {
+              payment_method_id: invoiceData.payment_method_id,
+            }
+            if (
+              invoiceData.sent_amount !== "" &&
+              invoiceData.sent_amount !== null
+            ) {
+              const amount = parseFloat(invoiceData.sent_amount)
+              if (!isNaN(amount)) {
+                opt.sent_amount = amount
+              }
+            }
+            if (invoiceData.tx_hashes && invoiceData.tx_hashes.length > 0) {
+              opt.tx_hashes = invoiceData.tx_hashes
+            }
+            return opt
+          })
+          return { options }
+        }
+      } else {
+        return {}
+      }
+    },
+    markCompleteSubmit() {
+      const missingPaymentMethod = this.markCompleteInvoices.find(
+        (inv) => !inv.payment_method_id
+      )
+      if (missingPaymentMethod) {
+        this.snackbarColor = "error"
+        this.snackbarText = `Please select a payment method for invoice ${missingPaymentMethod.invoice.id}`
+        this.showSnackbar = true
+        return
+      }
+      this.$refs.itemdata.processBatchCommand("mark_complete", true)
     },
   },
 }
