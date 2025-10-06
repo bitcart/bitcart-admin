@@ -203,7 +203,10 @@
           :key="itemv"
           @click="copyText(itemv)"
         >
-          <v-list-item-title>{{ item.product_names[itemv] }}</v-list-item-title>
+          <v-list-item-title
+            >{{ item.product_names[itemv] }} x
+            {{ item.product_quantities[itemv] }}</v-list-item-title
+          >
         </v-list-item>
       </template>
     </item-data>
