@@ -68,6 +68,18 @@ export default {
           help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#how-do-i-display-a-checkout-hint-for-customers",
         },
         {
+          text: "Transaction speed",
+          value: "transaction_speed",
+          rules: ["int"],
+          hint: "Number of confirmations for invoice to be considered complete",
+          errors: {
+            "Transaction speed must be in range from 0 to 10":
+              "Transaction speed must be in range from 0 to 10",
+          },
+          help: "https://docs.bitcart.ai/guides/transaction-speed",
+          expand: true,
+        },
+        {
           text: "Additional xpub data",
           value: "additional_xpub_data",
           input: "dynamic",
