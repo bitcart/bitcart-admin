@@ -496,7 +496,7 @@
                           target="_blank"
                         >
                           <v-img
-                            src="/powered-by.svg"
+                            :src="`${STATIC_PATH}/powered-by.svg`"
                             max-width="100"
                             max-height="100"
                             contain
