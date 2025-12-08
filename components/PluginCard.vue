@@ -245,6 +245,10 @@ export default {
       type: Array,
       required: true,
     },
+    autoPurchase: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -260,6 +264,22 @@ export default {
         required: (v) => !!v || "This field is required",
         email: (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
       },
+      hasTriggeredAutoPurchase: false,
+    }
+  },
+  mounted() {
+    if (
+      this.autoPurchase &&
+      !this.hasTriggeredAutoPurchase &&
+      !this.plugin.pricing_info.fully_free &&
+      !this.hasValidLicense(this.plugin) &&
+      !this.isPluginInstalled(this.plugin)
+    ) {
+      this.hasTriggeredAutoPurchase = true
+      this.$emit("auto-purchase-triggered")
+      this.$nextTick(() => {
+        this.showPurchaseDialog = true
+      })
     }
   },
   methods: {

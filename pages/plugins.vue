@@ -231,8 +231,28 @@
       </v-tab-item>
       <v-tab-item>
         <div>
+          <v-alert
+            v-if="filteredPluginId"
+            type="info"
+            dismissible
+            class="mb-4"
+            @input="clearFilter"
+          >
+            <div class="d-flex align-center">
+              <v-icon class="mr-2">mdi-filter</v-icon>
+              <span
+                >Showing plugin
+                <strong>{{
+                  filteredPlugin ? filteredPlugin.name : filteredPluginId
+                }}</strong></span
+              >
+            </div>
+          </v-alert>
           <div
-            v-if="sortedMarketplacePlugins.some((p) => p.pinned)"
+            v-if="
+              !filteredPluginId &&
+              displayedMarketplacePlugins.some((p) => p.pinned)
+            "
             class="mb-8"
           >
             <h3 class="text-h5 mb-4 font-weight-medium">
@@ -241,7 +261,7 @@
             </h3>
             <v-row>
               <v-col
-                v-for="plugin in sortedMarketplacePlugins.filter(
+                v-for="plugin in displayedMarketplacePlugins.filter(
                   (p) => p.pinned
                 )"
                 :key="plugin.id"
@@ -255,19 +275,26 @@
                   :plugin="plugin"
                   :plugins="plugins"
                   :license-keys="licenseKeys"
+                  :auto-purchase="
+                    autoPurchase && plugin.id === filteredPluginId
+                  "
                   @plugin-installed="handlePluginInstalled"
+                  @auto-purchase-triggered="handleAutoPurchaseTriggered"
                 />
               </v-col>
             </v-row>
           </div>
           <div>
-            <h3 class="text-h5 mb-4 font-weight-medium">
+            <h3
+              v-if="!filteredPluginId"
+              class="text-h5 mb-4 font-weight-medium"
+            >
               <v-icon class="mr-2">mdi-puzzle</v-icon>
               All Plugins
             </h3>
             <v-row>
               <v-col
-                v-for="plugin in sortedMarketplacePlugins"
+                v-for="plugin in displayedMarketplacePlugins"
                 :key="plugin.id"
                 cols="12"
                 sm="6"
@@ -279,12 +306,19 @@
                   :plugin="plugin"
                   :plugins="plugins"
                   :license-keys="licenseKeys"
+                  :auto-purchase="
+                    autoPurchase && plugin.id === filteredPluginId
+                  "
                   @plugin-installed="handlePluginInstalled"
+                  @auto-purchase-triggered="handleAutoPurchaseTriggered"
                 />
               </v-col>
 
               <v-col
-                v-if="!marketplaceLoading && $utils.isEmpty(marketplacePlugins)"
+                v-if="
+                  !marketplaceLoading &&
+                  $utils.isEmpty(displayedMarketplacePlugins)
+                "
               >
                 <v-alert type="info" variant="tonal">
                   <div class="d-flex align-center">
@@ -370,6 +404,8 @@ export default {
         },
         { text: "Actions", value: "actions", sortable: false },
       ],
+      filteredPluginId: null,
+      autoPurchase: false,
     }
   },
   computed: {
@@ -381,13 +417,52 @@ export default {
         return a.pinned ? -1 : 1
       })
     },
+    displayedMarketplacePlugins() {
+      if (this.filteredPluginId) {
+        return this.sortedMarketplacePlugins.filter(
+          (p) => p.id === this.filteredPluginId
+        )
+      }
+      return this.sortedMarketplacePlugins
+    },
+    filteredPlugin() {
+      if (this.filteredPluginId) {
+        return this.marketplacePlugins.find(
+          (p) => p.id === this.filteredPluginId
+        )
+      }
+      return null
+    },
   },
-  beforeMount() {
+  watch: {
+    "$route.query": {
+      handler() {
+        this.handleQueryParams()
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    this.handleQueryParams()
     this.fetchPlugins()
     this.fetchMarketplacePlugins()
     this.fetchLicenses()
   },
   methods: {
+    handleQueryParams() {
+      const pluginId = this.$route.query.plugin_id
+      const action = this.$route.query.action
+      if (pluginId) {
+        this.activeTab = 1
+        this.filteredPluginId = pluginId
+        if (action === "buy") {
+          this.autoPurchase = true
+        }
+      } else {
+        this.filteredPluginId = null
+        this.autoPurchase = false
+      }
+    },
     fetchPlugins() {
       this.$axios.get("/plugins").then((resp) => {
         this.plugins = resp.data.plugins
@@ -425,6 +500,7 @@ export default {
     handlePluginInstalled() {
       this.fetchPlugins()
       this.needsReload = true
+      this.autoPurchase = false
     },
     reloadPlugins() {
       this.reloading = true
@@ -479,6 +555,16 @@ export default {
       this.$axios.delete(`/plugins/licenses/${item.license_key}`).then(() => {
         this.fetchLicenses()
       })
+    },
+    handleAutoPurchaseTriggered() {
+      this.autoPurchase = false
+    },
+    clearFilter() {
+      this.filteredPluginId = null
+      this.autoPurchase = false
+      if (this.$route.query.plugin_id || this.$route.query.action) {
+        this.$router.push({ query: {} })
+      }
     },
   },
 }

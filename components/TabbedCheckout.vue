@@ -248,14 +248,46 @@
             >
               <v-list-item
                 v-if="
-                  checkoutPage &&
-                  (isEthPaymentMethod || itemv.currency === 'trx') &&
-                  !itemv.user_address
+                  checkoutPage && isEthBasedPaymentMethod && !itemv.user_address
                 "
                 class="ma-0 pa-0"
               >
                 <v-list-item-content class="ma-0 pa-0">
+                  <v-card v-if="showPluginMessage" flat>
+                    <v-card-text class="text-center">
+                      <p class="text-h6 mb-4">For Server Owners</p>
+                      <p class="text-body-1 mb-2">
+                        Buy the ETH payments plugin to disable address prompt
+                        for ETH, POL, TRX, BNB and USDT, USDC and other tokens.
+                      </p>
+                      <UIExtensionSlot name="eth_plugin_message_extra" />
+                      <p class="text-body-2">
+                        Demo the plugin at:<br />
+                        <a
+                          href="https://testnet.bitcart.ai"
+                          target="_blank"
+                          class="text-decoration-none"
+                        >
+                          testnet.bitcart.ai
+                        </a>
+                      </p>
+                    </v-card-text>
+                    <v-card-actions class="d-flex justify-center">
+                      <v-btn color="primary" @click="showPluginMessage = false">
+                        OK
+                      </v-btn>
+                      <v-btn color="primary" @click="buyETHPlugin"> Buy </v-btn>
+                      <v-btn
+                        color="primary"
+                        href="https://docs.bitcart.ai/guides/eth-payments-plugin"
+                        target="_blank"
+                      >
+                        Docs
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
                   <v-form
+                    v-else
                     ref="paymentSelectionForm"
                     @submit.prevent="updatePaymentDetails()"
                   >
@@ -301,6 +333,18 @@
                         />
                       </v-card-text>
                       <v-container>
+                        <v-row
+                          v-if="$store.state.policies.allow_eth_plugin_info"
+                          justify="center"
+                          class="py-1"
+                        >
+                          <v-btn
+                            color="primary"
+                            @click="showPluginMessage = true"
+                          >
+                            Skip
+                          </v-btn>
+                        </v-row>
                         <v-row justify="center" class="py-1">
                           <v-btn
                             color="primary"
@@ -505,7 +549,7 @@
                         </a>
                       </div>
                       <UIExtensionSlot
-                        v-if="isEthPaymentMethod"
+                        v-if="isEthBasedPaymentMethod"
                         name="powered_by_bitcart_eth"
                         :itemv="itemv"
                       />
@@ -637,6 +681,7 @@ import DisplayField from "@/components/DisplayField"
 import MetamaskButton from "@/components/MetamaskButton"
 import WalletConnectButton from "@/components/WalletConnectButton"
 import UIExtensionSlot from "@/components/UIExtensionSlot"
+import { ETH_PLUGIN_ID } from "@/version"
 export default {
   components: {
     CloseButton,
@@ -691,6 +736,7 @@ export default {
       tabsRef: null,
       emailFormRef: null,
       additionalFormRef: null,
+      showPluginMessage: false,
     }
   },
   computed: {
@@ -769,6 +815,9 @@ export default {
     },
     isEthPaymentMethod() {
       return this.itemv.payment_url.startsWith("ethereum:")
+    },
+    isEthBasedPaymentMethod() {
+      return this.isEthPaymentMethod || this.itemv.currency === "trx"
     },
     needEmail() {
       return (
@@ -935,6 +984,16 @@ export default {
     },
     openInWallet(url) {
       window.open(url)
+    },
+    buyETHPlugin() {
+      const route = this.$router.resolve({
+        path: "/plugins",
+        query: {
+          plugin_id: ETH_PLUGIN_ID,
+          action: "buy",
+        },
+      })
+      window.open(route.href, "_blank")
     },
   },
 }

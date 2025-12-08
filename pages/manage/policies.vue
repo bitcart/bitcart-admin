@@ -66,6 +66,8 @@ export default {
         rpc_urls: "WalletConnect RPC URLs",
         email_settings: "Email server settings",
         health_check_store_id: "Health check store ID",
+        allow_eth_plugin_info:
+          "Allow information about ETH plugin to be displayed at checkout if it's not enabled",
       }),
       details: this.$utils.getExtendSetting.call(this, "policy_details", {
         staging_updates:
