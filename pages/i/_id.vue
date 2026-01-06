@@ -26,7 +26,7 @@
         </div>
         <div v-else>
           <TabbedCheckout
-            v-if="displayStatus === 'pending' || displayStatus === 'underpaid' || displayStatus === 'waiting_confirmation'"
+            v-if="displayStatus === 'pending' || displayStatus === 'underpaid'"
             :checkout-page="true"
             :invoice.sync="invoice"
             :store="store"
