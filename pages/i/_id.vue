@@ -38,11 +38,11 @@
           <v-card-text v-else class="no-overflow py-12">
             <close-button class="mt-n8" @closedialog="closeDialog" />
             <div
-              :class="[colorClass(texts[displayStatus].icon), displayStatus === 'confirmed' ? 'confirming' : '']"
+              :class="[colorClass(texts[displayStatus].icon), displayStatus === 'waiting_confirmation' ? 'confirming' : '']"
               class="d-flex justify-center success-circle success-icon"
             >
               <v-icon
-                v-if="displayStatus !== 'confirmed'"
+                v-if="displayStatus !== 'waiting_confirmation'"
                 :color="getIconColor(texts[displayStatus].icon)"
                 class="d-flex justify-center icon-static"
               >
@@ -136,7 +136,7 @@ export default {
     displayStatus() {
       if (!this.invoice || !this.invoice.status) return 'pending'
       if (this.invoice.status === 'pending' && this.invoice.exception_status === 'paid_partial') return 'underpaid'
-      if (this.invoice.status === 'paid') return 'confirmed'
+      if (this.invoice.status === 'paid') return 'waiting_confirmation'
       return this.invoice.status
     },
     isFinalStatus() {
@@ -334,6 +334,7 @@ $dialog-max-height: 100%;
   margin: 0 auto;
   border-width: 2px;
   border-style: solid;
+  border-color: currentColor;
   position: relative;
   display: flex;
   align-items: center;
