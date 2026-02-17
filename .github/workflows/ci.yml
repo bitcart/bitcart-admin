@@ -20,3 +20,10 @@ jobs:
     with:
       setup-node: "true"
       node-package-manager: "yarn"
+
+  zizmor:
+    name: zizmor
+    uses: bitcart/bitcart-actions/.github/workflows/zizmor-audit.yml@master
+    permissions:
+      contents: read
+      security-events: write
