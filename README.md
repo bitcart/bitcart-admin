@@ -1,6 +1,6 @@
 # Bitcart Admin Panel
 
-[![CircleCI](https://circleci.com/gh/bitcart/bitcart-admin.svg?style=svg)](https://circleci.com/gh/bitcart/bitcart-admin)
+[![CI](https://github.com/bitcart/bitcart-admin/actions/workflows/ci.yml/badge.svg)](https://github.com/bitcart/bitcart-admin/actions/workflows/ci.yml)
 
 This is the Bitcart Admin Panel.
 
