@@ -18,7 +18,7 @@ jobs:
     name: lint
     uses: bitcart/bitcart-actions/.github/workflows/lint.yml@master
     with:
-      setup-node: "true"
+      setup-node: true
       node-package-manager: "yarn"
 
   zizmor:
