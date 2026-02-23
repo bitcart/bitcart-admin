@@ -88,6 +88,7 @@ export default {
         server: false,
         full_control: false,
         token: false,
+        metrics: false,
       },
       customTitles: this.$utils.getExtendSetting.call(
         this,
@@ -98,6 +99,7 @@ export default {
             "Make the app access everything in your account, all current and further permissions included.",
           token:
             "The app will be able to list, modify and delete all your API keys.",
+          metrics: "The app will be able to view your Prometheus metrics.",
         }
       ),
     }
@@ -125,7 +127,11 @@ export default {
       const permissions = []
       for (const permission of this.permissions) {
         let permissionName
-        if (permission === "server" || permission === "token") {
+        if (
+          permission === "server" ||
+          permission === "token" ||
+          permission === "metrics"
+        ) {
           permissionName = `${permission}_management`
         } else if (permission === "full_control") {
           permissionName = permission
@@ -157,7 +163,12 @@ export default {
       return typeof val === "undefined" ? true : val
     },
     check(val) {
-      if (val !== "server" && val !== "token" && val !== "full_control") {
+      if (
+        val !== "server" &&
+        val !== "token" &&
+        val !== "full_control" &&
+        val !== "metrics"
+      ) {
         val = val.slice(0, -1)
       }
       if (val !== "full_control") {
