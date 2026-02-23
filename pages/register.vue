@@ -161,7 +161,7 @@ export default {
         this.detail = ""
         this.error = false
         this.$axios
-          .post(`users/verify/finalize/${this.otpCode}?add_token=true`)
+          .post("/users/verify/finalize?add_token=true", { code: this.otpCode })
           .then((r) => {
             this.$auth.setUserToken(r.data.token)
             this.$auth.fetchUser().then((r) => {
