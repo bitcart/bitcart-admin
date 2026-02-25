@@ -41,6 +41,7 @@ export default {
           rules: ["required"],
           help: "https://docs.bitcart.ai/your-first-invoice#creating-a-wallet",
           errors: { "Wallet key invalid": "Invalid xpub" },
+          dynamicTextDependsOn: ["currency"],
           dynamicText: (v, schema) => {
             if (schema && schema[v.currency]) {
               return schema[v.currency].xpub_name
@@ -52,6 +53,7 @@ export default {
           text: "Contract",
           value: "contract",
           input: "autocomplete",
+          dynamicAutocompletesDependsOn: ["currency"],
           url: (item) => `cryptos/tokens/${item.currency}`,
           component: "v-combobox",
           errors: { "Invalid contract": "Invalid contract" },

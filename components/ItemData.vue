@@ -86,9 +86,11 @@
               :title="title"
               :on.sync="dialog"
               :item.sync="editedItem"
+              :original-item="editing ? items[editedIndex] : null"
               :edit-mode="editing"
               :postprocess="postprocess"
               :postclose="postclose"
+              :presave="presave"
             >
               <template #dialog>
                 <slot name="dialog" />
@@ -362,6 +364,10 @@ export default {
       default: (command) => {
         return {}
       },
+    },
+    presave: {
+      type: Function,
+      default: null,
     },
   },
   data() {
