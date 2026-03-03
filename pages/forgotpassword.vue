@@ -121,7 +121,8 @@ export default {
         }
         if (this.code) {
           this.$axios
-            .post(`/users/reset_password/finalize/${this.code}`, {
+            .post("/users/reset_password/finalize", {
+              code: this.code,
               password: this.password,
               logout_all: this.logoutAll,
             })
@@ -143,7 +144,11 @@ export default {
           .then((r) => {
             setsuccess()
           })
-          .catch(() => setsuccess())
+          .catch((r) => {
+            this.detail = r.response.data.detail
+            this.loading = false
+            this.error = true
+          })
       }
     },
   },

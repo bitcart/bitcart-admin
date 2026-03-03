@@ -68,6 +68,7 @@ export default {
         health_check_store_id: "Health check store ID",
         allow_eth_plugin_info:
           "Allow information about ETH plugin to be displayed at checkout if it's not enabled",
+        log_retention_days: "Logs retention period (days)",
       }),
       details: this.$utils.getExtendSetting.call(this, "policy_details", {
         staging_updates:
@@ -83,6 +84,7 @@ export default {
         email_settings: "emailsettings",
         captcha_type: "select",
         health_check_store_id: "string",
+        log_retention_days: "number",
       }),
       urls: this.$utils.getExtendSetting.call(this, "policy_urls", {
         explorer_urls: "/cryptos/explorer",

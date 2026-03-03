@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div>
+    <UIExtensionSlot name="presave_dialogs" />
     <v-dialog
       v-model="dialog"
       max-width="650px"
@@ -406,6 +407,14 @@ export default {
         return {}
       },
     },
+    originalItem: {
+      type: Object,
+      default: null,
+    },
+    presave: {
+      type: Function,
+      default: null,
+    },
   },
   data() {
     const autosearchA = Array.from(
@@ -515,19 +524,30 @@ export default {
     },
     item: {
       handler(val) {
-        if (val.currency !== this.oldItem.currency) {
-          this.headers.forEach((header) => {
-            if (header.dynamicText) {
-              this.$set(
-                header,
-                "text",
-                header.dynamicText(val, this.cachedSchema)
-              )
-            }
-          })
+        const headersWithDynamicText = this.headers.filter((h) => h.dynamicText)
+        for (const header of headersWithDynamicText) {
+          const dependsOn = header.dynamicTextDependsOn
+          const changed = dependsOn.some(
+            (field) => val[field] !== this.oldItem[field]
+          )
+          if (changed) {
+            this.$set(
+              header,
+              "text",
+              header.dynamicText(val, this.cachedSchema)
+            )
+          }
         }
-        if (this.dynamicAutocompletes && val.currency !== this.oldItem.currency)
-          this.fetchAutocompletes()
+        if (this.dynamicAutocompletes) {
+          const autoHeaders = this.headers.filter(
+            (h) => h.input === "autocomplete" && typeof h.url === "function"
+          )
+          const autoChanged = autoHeaders.some((h) => {
+            const dependsOn = h.dynamicAutocompletesDependsOn
+            return dependsOn.some((field) => val[field] !== this.oldItem[field])
+          })
+          if (autoChanged) this.fetchAutocompletes()
+        }
         this.oldItem = Object.assign({}, val)
       },
       deep: true,
@@ -754,64 +774,81 @@ export default {
       }
       return filtered
     },
-    save() {
+    async save() {
       this.errors = {} // clean previous errors
-      if (this.$refs.form.validate()) {
-        let data = Object.assign({}, this.item)
-        data = this.postprocess(data)
-        data = this.filterUnsetFields(data)
-        let headers = {}
-        if (
-          this.body ||
-          this.headers.some((x) => x.input === "image" || x.input === "file")
-        ) {
-          const header = this.headers.find(
-            (x) => x.input === "image" || x.input === "file"
-          )
-          const dataForm = new FormData()
-          if (header) {
-            if (data[header.value]) {
-              dataForm.append(
-                header.value,
-                header.input === "image"
-                  ? this.dataURLtoBlob(data[header.value])
-                  : data[header.value]
-              )
-            }
-            delete data[header.value]
+      if (!this.$refs.form.validate()) return
+      if (this.editMode) {
+        if (this.presave) {
+          const abort = await this.presave({
+            item: this.item,
+            originalItem: this.originalItem,
+            url: this.url,
+          })
+          if (abort) return
+        }
+        const results = await this.$getExtendMethod("presave", {
+          item: this.item,
+          originalItem: this.originalItem,
+          url: this.url,
+        })
+        if (results.some((r) => r)) return
+      }
+      this.performSave()
+    },
+    performSave() {
+      let data = Object.assign({}, this.item)
+      data = this.postprocess(data)
+      data = this.filterUnsetFields(data)
+      let headers = {}
+      if (
+        this.body ||
+        this.headers.some((x) => x.input === "image" || x.input === "file")
+      ) {
+        const header = this.headers.find(
+          (x) => x.input === "image" || x.input === "file"
+        )
+        const dataForm = new FormData()
+        if (header) {
+          if (data[header.value]) {
+            dataForm.append(
+              header.value,
+              header.input === "image"
+                ? this.dataURLtoBlob(data[header.value])
+                : data[header.value]
+            )
           }
-          delete data.action
-          dataForm.append("data", JSON.stringify(data))
-          data = dataForm
-          headers = { "content-type": "application/x-www-form-urlencoded" }
+          delete data[header.value]
         }
-        if (this.editMode) {
-          const url =
-            this.getEditUrl(this.item) || `/${this.url}/${this.item.id}`
-          this.$axios
-            .patch(url, data, headers)
-            .then((resp) => {
-              if (resp.status === 200) {
-                resp.data.password = ""
-                this.$bus.$emit("updateitem", resp.data, this.itemIndex)
-                this.$emit("update:item", Object.assign({}, this.defaultItem))
-                this.$store.dispatch("syncStats", false)
-                this.dialog = false
-              }
-            })
-            .catch((err) => this.handleErr(err))
-        } else {
-          this.$axios
-            .post(`/${this.url}`, data, headers)
-            .then((resp) => {
-              if (resp.status === 200) {
-                this.addItem(resp.data)
-                this.$emit("update:item", Object.assign({}, this.defaultItem))
-                this.dialog = false
-              }
-            })
-            .catch((err) => this.handleErr(err))
-        }
+        delete data.action
+        dataForm.append("data", JSON.stringify(data))
+        data = dataForm
+        headers = { "content-type": "application/x-www-form-urlencoded" }
+      }
+      if (this.editMode) {
+        const url = this.getEditUrl(this.item) || `/${this.url}/${this.item.id}`
+        this.$axios
+          .patch(url, data, headers)
+          .then((resp) => {
+            if (resp.status === 200) {
+              resp.data.password = ""
+              this.$bus.$emit("updateitem", resp.data, this.itemIndex)
+              this.$emit("update:item", Object.assign({}, this.defaultItem))
+              this.$store.dispatch("syncStats", false)
+              this.dialog = false
+            }
+          })
+          .catch((err) => this.handleErr(err))
+      } else {
+        this.$axios
+          .post(`/${this.url}`, data, headers)
+          .then((resp) => {
+            if (resp.status === 200) {
+              this.addItem(resp.data)
+              this.$emit("update:item", Object.assign({}, this.defaultItem))
+              this.dialog = false
+            }
+          })
+          .catch((err) => this.handleErr(err))
       }
     },
     removeMultiple(arr, item) {

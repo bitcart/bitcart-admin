@@ -9,5 +9,6 @@
   "products",
   "invoices",
   "payouts",
-  "files"
+  "files",
+  "metrics"
 ]

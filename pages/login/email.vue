@@ -104,7 +104,7 @@ export default {
   mounted() {
     if (this.code) {
       this.$axios
-        .post(`/users/verify/finalize/${this.code}`, {})
+        .post("/users/verify/finalize", { code: this.code })
         .then((r) => {
           this.detail = "Email successfully verified"
           this.codeLoading = false
@@ -150,7 +150,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.error = false
         this.$axios
-          .post(`users/verify/finalize/${this.code}`)
+          .post("/users/verify/finalize", { code: this.code })
           .then((r) => {
             this.detail = "Email successfully verified"
             this.codeLoading = false
