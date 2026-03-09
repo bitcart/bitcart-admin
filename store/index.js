@@ -65,19 +65,23 @@ export const mutations = {
   },
 }
 export const actions = {
-  async nuxtServerInit({ commit, dispatch }, { req, $axios }) {
-    await dispatch("loadEnv", { env: this.$config, req })
+  async loadAppData({ commit }) {
     try {
-      const { data } = await $axios.get("/manage/policies")
-      const { data: services } = await $axios.get("/tor/services")
-      const { data: updatedata } = await $axios.get("/update/check")
+      const { data } = await this.$axios.get("/manage/policies")
+      const { data: services } = await this.$axios.get("/tor/services")
+      const { data: updatedata } = await this.$axios.get("/update/check")
       commit("policies", data)
       commit("services", services)
       commit("updatedata", updatedata)
-      commit("apiError", null) // reset error
+      commit("apiError", null)
     } catch (e) {
       commit("apiError", e)
     }
+  },
+  async nuxtServerInit({ dispatch }, { req, route }) {
+    await dispatch("loadEnv", { env: this.$config, req })
+    if (!route || route.name === null) return
+    await dispatch("loadAppData")
   },
   async loadEnv({ commit }, { env, req }) {
     let onionURL = null
