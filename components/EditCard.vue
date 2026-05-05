@@ -19,6 +19,7 @@
             Select wallet type
             <v-radio-group v-model="walletType">
               <v-radio
+                v-if="!isHotWalletOnly"
                 key="watchonly"
                 label="Watch-only (no private keys stored)"
                 value="watchonly"
@@ -36,7 +37,7 @@
             <code v-text="walletSeed" />
           </v-card-text>
           <v-card-actions class="justify-center">
-            <v-btn v-if="!walletSeed" color="primary" @click="createWallet"
+            <v-btn v-if="!walletSeed" color="primary" :loading="creatingSeed" :disabled="creatingSeed" @click="createWallet"
               >Create</v-btn
             >
             <v-btn
@@ -65,6 +66,7 @@
                       : 'v-container'
                   "
                   v-for="header in dialogData"
+                  v-show="!header.dynamicVisibility || header.dynamicVisibility(item, cachedSchema)"
                   :key="header.value"
                   :cols="['image', 'textarea'].includes(header.input) ? 12 : 6"
                 >
@@ -188,6 +190,8 @@
                     :rules="header.rules"
                     :error-messages="errors[header.text]"
                     :label="header.text"
+                    :hint="header.hint"
+                    :persistent-hint="!!header.hint"
                     :append-icon="header.help ? 'mdi-help-circle-outline' : ''"
                     @click:append="$utils.redirectTo(header.help, true)"
                   />
@@ -323,7 +327,7 @@
           <v-card-actions>
             <div class="flex-grow-1" />
             <v-btn color="#1e88e5" text @click="dialog = false"> Cancel </v-btn>
-            <v-btn color="#1e88e5" text type="submit"> Save </v-btn>
+            <v-btn color="#1e88e5" text type="submit" :loading="saving" :disabled="saving"> Save </v-btn>
           </v-card-actions>
         </v-card>
       </v-form>
@@ -448,9 +452,12 @@ export default {
             )
           : {},
       showPassword: false,
+      saving: false,
+      creatingSeed: false,
       showCreateWalletDialog: false,
       walletType: "watchonly",
       walletSeed: "",
+      torEnabled: true,
       rules: this.$utils.rules,
       oldItem: Object.assign({}, this.item),
       cachedSchema: {},
@@ -460,6 +467,16 @@ export default {
     return dt
   },
   computed: {
+    isHotWalletOnly() {
+      if (!this.cachedSchema || !this.item.currency) return false
+      const schema = this.cachedSchema[this.item.currency]
+      return schema && schema.hot_wallet_only
+    },
+    supportsTor() {
+      if (!this.cachedSchema || !this.item.currency) return false
+      const schema = this.cachedSchema[this.item.currency]
+      return schema && schema.supports_tor
+    },
     dialog: {
       get() {
         return this.on
@@ -519,7 +536,7 @@ export default {
     showCreateWalletDialog(val) {
       if (!val) {
         this.walletSeed = ""
-        this.walletType = "watchonly"
+        this.walletType = this.isHotWalletOnly ? "seed" : "watchonly"
       }
     },
     item: {
@@ -796,6 +813,7 @@ export default {
       this.performSave()
     },
     performSave() {
+      this.saving = true
       let data = Object.assign({}, this.item)
       data = this.postprocess(data)
       data = this.filterUnsetFields(data)
@@ -829,6 +847,7 @@ export default {
         this.$axios
           .patch(url, data, headers)
           .then((resp) => {
+            this.saving = false
             if (resp.status === 200) {
               resp.data.password = ""
               this.$bus.$emit("updateitem", resp.data, this.itemIndex)
@@ -837,18 +856,19 @@ export default {
               this.dialog = false
             }
           })
-          .catch((err) => this.handleErr(err))
+          .catch((err) => { this.saving = false; this.handleErr(err) })
       } else {
         this.$axios
           .post(`/${this.url}`, data, headers)
           .then((resp) => {
+            this.saving = false
             if (resp.status === 200) {
               this.addItem(resp.data)
               this.$emit("update:item", Object.assign({}, this.defaultItem))
               this.dialog = false
             }
           })
-          .catch((err) => this.handleErr(err))
+          .catch((err) => { this.saving = false; this.handleErr(err) })
       }
     },
     removeMultiple(arr, item) {
@@ -866,6 +886,7 @@ export default {
       this.$set(this.item, key, value)
     },
     createWallet() {
+      this.creatingSeed = true
       this.$axios
         .post("/wallets/create", {
           currency: this.item.currency,
@@ -873,9 +894,15 @@ export default {
         })
         .then((r) => {
           this.update("xpub", r.data.key)
-          this.update("additional_xpub_data", r.data.additional_data)
+          this.update("additional_xpub_data", r.data.additional_data || {})
           this.walletSeed = r.data.seed
+          // Auto-enable lightning for coins that have it on by default (e.g. BTCLND)
+          const schema = this.cachedSchema[this.item.currency]
+          if (schema && schema.lightning_default) {
+            this.$set(this.item, "lightning_enabled", true)
+          }
         })
+        .finally(() => { this.creatingSeed = false })
     },
   },
 }
