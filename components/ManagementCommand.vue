@@ -56,6 +56,10 @@ export default {
       type: Function,
       default: (data) => {},
     },
+    followJob: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -63,9 +67,51 @@ export default {
       error: false,
       detail: false,
       loading: false,
+      stopped: false,
     }
   },
+  beforeDestroy() {
+    this.stopped = true
+  },
   methods: {
+    finish(error, detail) {
+      this.done = true
+      this.error = error
+      this.detail = detail
+      this.loading = false
+    },
+    schedulePoll(jobId) {
+      setTimeout(this.pollJob, 3000, jobId)
+    },
+    pollJob(jobId) {
+      this.$axios
+        .get(`/manage/jobs/${jobId}`)
+        .then((resp) => {
+          if (this.stopped) return
+          if (resp.data.state === "running") {
+            this.schedulePoll(jobId)
+            return
+          }
+          const ok = resp.data.state === "done"
+          this.finish(
+            !ok,
+            ok
+              ? "Finished successfully!"
+              : `Failed (${resp.data.state}):\n${resp.data.log}`
+          )
+          return Promise.resolve()
+            .then(() => this.postprocess(resp.data))
+            .catch((err) => this.finish(true, err.message))
+        })
+        .catch((err) => {
+          if (this.stopped) return
+          if (!err.response || err.response.status >= 500) {
+            this.schedulePoll(jobId)
+            return
+          }
+          this.finish(true, err.response.data.detail)
+        })
+    },
     manage(what) {
       let data = null
       let headers = null
@@ -92,10 +138,15 @@ export default {
       this.$axios
         .post(`/${this.commandPrefix}/${what}`, data, headers)
         .then((resp) => {
-          this.done = true
-          this.error = resp.data.status === "error"
-          this.detail = resp.data.message
-          this.loading = false
+          if (
+            this.followJob &&
+            resp.data.status === "success" &&
+            resp.data.job_id
+          ) {
+            this.pollJob(resp.data.job_id)
+            return
+          }
+          this.finish(resp.data.status === "error", resp.data.message)
           this.postprocess(resp.data)
         })
         .catch((err) => {

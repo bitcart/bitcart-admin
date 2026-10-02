@@ -7,6 +7,7 @@
       btn-text="Start backup process"
       what="backups/backup"
       :postprocess="downloadBackup"
+      follow-job
       class="pb-3"
     />
     <p class="text-h4">Restore backup</p>
@@ -17,7 +18,7 @@
     ></v-file-input>
     <ManagementCommand
       title="Restore backup"
-      details="Restores a backup from a .tar.gz file. Maximum 50 MB"
+      details="Restores a backup from a .tar.zst or .tar.gz file, optionally encrypted (.enc). Maximum 50 MB"
       btn-text="Start restore process"
       what="backups/restore"
       class="pb-3"
@@ -104,14 +105,26 @@ export default {
     })
   },
   methods: {
-    downloadBackup(data) {
-      if (data.file_id) {
-        this.$axios
-          .get(`/manage/backups/download/${data.file_id}`, {
+    downloadBackup(job) {
+      if (job.state === "done" && job.result?.provider === "local") {
+        return this.$axios
+          .get(`/manage/backups/download/${job.id}`, {
             responseType: "blob",
           })
           .then((resp) => {
             this.$utils.downloadFile(resp)
+          })
+          .catch((err) => {
+            if (!err.response) throw new Error("Download failed: network error")
+            return err.response.data.text().then((text) => {
+              let detail
+              try {
+                detail = JSON.parse(text).detail
+              } catch (e) {
+                detail = text
+              }
+              throw new Error(`Download failed: ${detail}`)
+            })
           })
       }
     },

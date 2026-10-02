@@ -125,6 +125,7 @@ export default {
       showDialog: false,
       showInvalidDomainDialog: false,
       deploymentInfo: { finished: false },
+      stopped: false,
       initialInstallData: {
         mode: { name: "Manual", sshSettings: {} },
         domainSettings: { domain: null, https: true },
@@ -237,6 +238,7 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener("keyup", this.handler)
+    this.stopped = true
   },
   methods: {
     getAdditionalServices(enabledServices) {
@@ -330,12 +332,28 @@ export default {
           if (!this.isManualDeployment) this.pollDeployment(r.data.id)
         })
     },
+    scheduleDeploymentPoll(deployId) {
+      if (!this.stopped) setTimeout(this.pollDeployment, 3000, deployId)
+    },
     pollDeployment(deployId) {
-      this.$axios.get(`/configurator/deploy-result/${deployId}`).then((r) => {
-        this.deploymentInfo = r.data
-        if (!this.deploymentInfo.finished)
-          setTimeout(this.pollDeployment, 3000, deployId)
-      })
+      this.$axios
+        .get(`/configurator/deploy-result/${deployId}`)
+        .then((r) => {
+          this.deploymentInfo = r.data
+          if (!this.deploymentInfo.finished)
+            this.scheduleDeploymentPoll(deployId)
+        })
+        .catch((err) => {
+          if (!err.response || err.response.status >= 500) {
+            this.scheduleDeploymentPoll(deployId)
+            return
+          }
+          this.deploymentInfo = {
+            finished: true,
+            success: false,
+            output: err.response.data.detail,
+          }
+        })
     },
   },
 }
