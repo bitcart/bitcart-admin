@@ -169,6 +169,9 @@ export default {
           value: this.$auth.user
             ? this.$auth.user.settings.balance_currency
             : 0,
+          note: this.$store.state.missingRates.length
+            ? `Not included, no exchange rate: ${this.$store.state.missingRates.join(", ")}`
+            : null,
         },
         {
           header: "Total wallets connected:",

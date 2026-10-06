@@ -10,6 +10,7 @@
           {{ text.mainValue || $store.state.stats[text.key] || 0 }}
           {{ text.value }}
         </h1>
+        <div v-if="text.note" class="mt-2">{{ text.note }}</div>
       </v-card-text>
     </div>
     <v-card-actions>

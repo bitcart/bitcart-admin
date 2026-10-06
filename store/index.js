@@ -10,7 +10,9 @@ export const state = () => ({
     payouts: 0,
   },
   balance: 0.0,
+  missingRates: [],
   syncInfo: [],
+  ratesInfo: [],
   policies: {},
   services: {},
   path: "/",
@@ -36,8 +38,14 @@ export const mutations = {
   setBalance(state, value) {
     state.balance = value
   },
+  setMissingRates(state, value) {
+    state.missingRates = value
+  },
   setSyncInfo(state, value) {
     state.syncInfo = value
+  },
+  setRatesInfo(state, value) {
+    state.ratesInfo = value
   },
   onion(state, value) {
     state.onion = value
@@ -119,14 +127,18 @@ export const actions = {
         .get("/users/stats")
         .then((resp) => commit("setStats", resp.data))
       if (this.state.auth.user.settings.fetch_balance) {
-        this.$axios
-          .get("/wallets/balance")
-          .then((resp) => commit("setBalance", resp.data))
+        this.$axios.get("/wallets/balance").then((resp) => {
+          commit("setBalance", resp.data.balance)
+          commit("setMissingRates", resp.data.missing_rates)
+        })
       }
       if (this.state.auth.user.is_superuser) {
         this.$axios
           .get("/manage/syncinfo")
           .then((resp) => commit("setSyncInfo", resp.data))
+        this.$axios
+          .get("/manage/ratesinfo")
+          .then((resp) => commit("setRatesInfo", resp.data))
       }
     }
     if (alwaysRun) {
@@ -207,6 +219,9 @@ export const getters = {
   },
   syncInfo({ syncInfo }) {
     return syncInfo
+  },
+  ratesInfo({ ratesInfo }) {
+    return ratesInfo
   },
   drawer({ drawer }) {
     return drawer

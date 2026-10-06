@@ -89,6 +89,22 @@
     </template>
     <template #default>
       <v-container fluid>
+        <template v-if="$auth.loggedIn && $auth.user.is_superuser">
+          <v-alert
+            v-for="item in failedRateSources"
+            :key="item.name"
+            type="warning"
+            dense
+            dismissible
+          >
+            {{ item.name }} exchange rates
+            {{
+              item.fetched_at
+                ? `are ${formatAge(item.age)} old, the last refresh failed`
+                : "are not available"
+            }}: {{ item.last_error }}
+          </v-alert>
+        </template>
         <slot />
         <nuxt />
         <div v-if="$auth.loggedIn && $auth.user.is_superuser">
@@ -309,6 +325,7 @@ export default {
       "onionURL",
       "showSnow",
       "syncInfo",
+      "ratesInfo",
       "drawer",
       "pinned",
       "dark",
@@ -346,6 +363,9 @@ export default {
     },
     unsyncedInfo() {
       return this.syncInfo.filter((x) => !x.synchronized)
+    },
+    failedRateSources() {
+      return this.ratesInfo.filter((x) => x.last_error)
     },
     availableProfileItems() {
       return this.$utils.getExtendSetting
@@ -407,6 +427,10 @@ export default {
   },
   methods: {
     ...mapActions(["setDrawer", "setPinned", "setDark"]),
+    formatAge(seconds) {
+      const minutes = Math.round(seconds / 60)
+      return minutes < 60 ? `${minutes} min` : `${Math.round(minutes / 60)} h`
+    },
     drawerOn() {
       if (this.$device.isMobile || this.pinned) return
       this.$store.commit("drawer", true)
