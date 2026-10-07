@@ -213,15 +213,17 @@
             class="mr-2"
             @click="editItem(item)"
           />
-          <tooltip-icon
-            v-for="action in actions"
-            :key="action.icon"
-            :icon="action.icon"
-            :text="action.text"
-            small
-            class="mr-2"
-            @click="action.process(item, items.indexOf(item))"
-          />
+          <template v-for="action in actions">
+            <tooltip-icon
+              v-if="!action.show || action.show(item)"
+              :key="action.icon"
+              :icon="action.icon"
+              :text="action.text"
+              small
+              class="mr-2"
+              @click="action.process(item, items.indexOf(item))"
+            />
+          </template>
           <tooltip-icon
             icon="delete"
             text="Delete"
