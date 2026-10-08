@@ -54,6 +54,8 @@
                 {{
                   expiringSoon
                     ? "Invoice expiring soon..."
+                    : underpaid
+                    ? "Invoice underpaid..."
                     : "Awaiting payment..."
                 }}
               </p>
@@ -475,20 +477,13 @@
                             <v-card flat class="pa-0 ma-0">
                               <v-card-text>
                                 <div v-if="!zeroAmountInvoice">
-                                  <p class="d-flex justify-center">Amount</p>
-                                  <p
-                                    class="d-flex justify-center"
-                                    :class="
-                                      getAmountClass(
-                                        itemv.amount.length +
-                                          itemv.symbol.length +
-                                          1
-                                      )
-                                    "
-                                  >
-                                    {{ itemv.amount }}
-                                    {{ itemv.symbol.toUpperCase() }}
-                                  </p>
+                                  <div class="d-flex align-center justify-center">
+                                    <display-field
+                                      :title="`Amount in ${itemv.symbol.toUpperCase()}`"
+                                      :value="itemv.amount"
+                                      class="flex-grow-1"
+                                    />
+                                  </div>
                                   <v-divider />
                                 </div>
                                 <UIExtensionSlot
@@ -696,6 +691,10 @@ export default {
       default: true,
     },
     checkoutPage: {
+      type: Boolean,
+      default: false,
+    },
+    underpaid: {
       type: Boolean,
       default: false,
     },
