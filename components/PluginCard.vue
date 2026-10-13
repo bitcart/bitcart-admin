@@ -73,15 +73,59 @@
       </div>
     </v-card-text>
 
-    <v-card-actions class="pa-4 pt-0">
-      <div v-if="isPluginInstalled(plugin)" class="d-flex align-center">
-        <v-icon color="success" size="small" class="mr-1"
-          >mdi-check-circle</v-icon
+    <v-card-actions class="pa-4 pt-0 flex-column align-stretch">
+      <template v-if="installedPlugin">
+        <div class="d-flex align-center">
+          <template v-if="installedPlugin.compatible === false">
+            <v-icon color="warning" size="small" class="mr-1"
+              >mdi-alert-circle</v-icon
+            >
+            <span class="warning--text font-weight-medium"
+              >Incompatible with Bitcart {{ bitcartVersion }}</span
+            >
+          </template>
+          <template v-else-if="updateAvailable">
+            <v-icon color="info" size="small" class="mr-1"
+              >mdi-arrow-up-circle</v-icon
+            >
+            <span class="info--text font-weight-medium"
+              >Update available: {{ installedPlugin.version }} to
+              {{ plugin.plugin_version }}</span
+            >
+          </template>
+          <template v-else>
+            <v-icon color="success" size="small" class="mr-1"
+              >mdi-check-circle</v-icon
+            >
+            <span class="text-success font-weight-medium">Installed</span>
+          </template>
+        </div>
+        <v-btn
+          v-if="updateAvailable"
+          color="primary"
+          variant="elevated"
+          block
+          class="text-button font-weight-bold mt-2"
+          :loading="installing"
+          @click="downloadPlugin(plugin)"
         >
-        <span class="text-success font-weight-medium">Installed</span>
+          <v-icon size="small" class="mr-1">mdi-update</v-icon>
+          Update
+        </v-btn>
+        <div
+          v-else-if="installedPlugin.compatible === false"
+          class="text-body-2 mt-2"
+        >
+          {{ requiredBitcartText }}
+        </div>
+      </template>
+      <div v-else-if="!plugin.plugin_version" class="d-flex align-center">
+        <v-icon size="small" class="mr-1">mdi-information-outline</v-icon>
+        <span class="text-body-2">{{ requiredBitcartText }}</span>
       </div>
       <v-btn
         v-else
+        :loading="installing"
         :color="
           plugin.pricing_info.fully_free || hasValidLicense(plugin)
             ? 'primary'
@@ -249,6 +293,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    bitcartVersion: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -265,7 +313,30 @@ export default {
         email: (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
       },
       hasTriggeredAutoPurchase: false,
+      installing: false,
     }
+  },
+  computed: {
+    installedPlugin() {
+      return this.plugins.find(
+        (p) => p.name === this.plugin.name && p.author === this.plugin.author
+      )
+    },
+    updateAvailable() {
+      return (
+        !!this.installedPlugin &&
+        !!this.plugin.plugin_version &&
+        this.isNewerVersion(
+          this.plugin.plugin_version,
+          this.installedPlugin.version
+        )
+      )
+    },
+    requiredBitcartText() {
+      const constraint = this.plugin.latest_bitcart_constraint
+      if (!constraint) return "No version available yet"
+      return `Requires Bitcart ${this.$utils.formatBitcartConstraint(constraint)}`
+    },
   },
   mounted() {
     if (
@@ -273,7 +344,7 @@ export default {
       !this.hasTriggeredAutoPurchase &&
       !this.plugin.pricing_info.fully_free &&
       !this.hasValidLicense(this.plugin) &&
-      !this.isPluginInstalled(this.plugin)
+      !this.installedPlugin
     ) {
       this.hasTriggeredAutoPurchase = true
       this.$emit("auto-purchase-triggered")
@@ -283,12 +354,17 @@ export default {
     }
   },
   methods: {
-    isPluginInstalled(marketplacePlugin) {
-      return this.plugins.some(
-        (p) =>
-          p.name === marketplacePlugin.name &&
-          p.author === marketplacePlugin.author
-      )
+    isNewerVersion(candidate, current) {
+      return candidate.localeCompare(current, undefined, { numeric: true }) > 0
+    },
+    async errorMessage(error, fallback) {
+      let detail = error.response?.data?.detail
+      if (error.response?.data instanceof Blob) {
+        try {
+          detail = JSON.parse(await error.response.data.text()).detail
+        } catch {}
+      }
+      return typeof detail === "string" ? detail : fallback
     },
     hasValidLicense(plugin) {
       return this.licenseKeys.some(
@@ -301,8 +377,8 @@ export default {
     purchasePlugin() {
       this.showPurchaseDialog = true
     },
-    downloadPlugin() {
-      let licenseKey = ""
+    async downloadPlugin() {
+      const params = { bitcart_version: this.bitcartVersion }
       if (!this.plugin.pricing_info.fully_free) {
         const license = this.licenseKeys.find(
           (l) =>
@@ -310,35 +386,41 @@ export default {
             l.plugin_author === this.plugin.author &&
             l.active
         )
-        licenseKey = license ? `?license_key=${license.license_key}` : ""
+        if (license) params.license_key = license.license_key
       }
-      this.$axios
-        .get(
-          `${LICENSING_SERVER}/plugins/${this.plugin.id}/download${licenseKey}`,
+      this.installing = true
+      try {
+        const download = await this.$axios.get(
+          `${LICENSING_SERVER}/plugins/${this.plugin.id}/download`,
+          { params, responseType: "blob" }
+        )
+        const pluginFile = new File(
+          [download.data],
+          `${this.plugin.name}.bitcart`,
           {
-            responseType: "blob",
+            type: "application/octet-stream",
           }
         )
-        .then((resp) => {
-          const pluginFile = new File(
-            [resp.data],
-            `${this.plugin.name}.bitcart`,
-            {
-              type: "application/octet-stream",
-            }
-          )
-          const formData = new FormData()
-          formData.append("plugin", pluginFile)
-          this.$axios
-            .post("/plugins/install", formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            })
-            .then(() => {
-              this.$emit("plugin-installed")
-            })
+        const formData = new FormData()
+        formData.append("plugin", pluginFile)
+        const install = await this.$axios.post("/plugins/install", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
+        if (install.data.status === "error") {
+          this.$emit("plugin-install-failed", install.data.message)
+          return
+        }
+        this.$emit("plugin-installed")
+      } catch (error) {
+        this.$emit(
+          "plugin-install-failed",
+          await this.errorMessage(error, "Failed to install plugin")
+        )
+      } finally {
+        this.installing = false
+      }
     },
     createLicense() {
       if (!this.$refs.purchaseForm.validate()) return

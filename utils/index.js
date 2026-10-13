@@ -280,4 +280,10 @@ export default {
     const [, fractionAmount] = valueStr.split(".")
     return fractionAmount ? fractionAmount.length : 0
   },
+  formatBitcartConstraint(constraint) {
+    return constraint
+      .replace(/\s*([<>=!~]=?)\s*/g, "$1 ")
+      .replace(/\s*,\s*/g, ", ")
+      .trim()
+  },
 }

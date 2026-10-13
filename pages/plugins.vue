@@ -136,6 +136,17 @@
                   </p>
                 </v-card-text>
               </div>
+              <v-card-text
+                v-if="plugin.compatible === false"
+                class="pb-0 d-flex align-center warning--text text-body-2"
+                :title="plugin.incompatible_reason"
+              >
+                <v-icon color="warning" small class="mr-1"
+                  >mdi-alert-circle</v-icon
+                >
+                Requires Bitcart
+                {{ $utils.formatBitcartConstraint(plugin.constraints.bitcart) }}
+              </v-card-text>
               <v-card-actions>
                 <v-container>
                   <v-row class="pb-2">
@@ -275,10 +286,12 @@
                   :plugin="plugin"
                   :plugins="plugins"
                   :license-keys="licenseKeys"
+                  :bitcart-version="bitcartVersion"
                   :auto-purchase="
                     autoPurchase && plugin.id === filteredPluginId
                   "
                   @plugin-installed="handlePluginInstalled"
+                  @plugin-install-failed="handlePluginInstallFailed"
                   @auto-purchase-triggered="handleAutoPurchaseTriggered"
                 />
               </v-col>
@@ -306,10 +319,12 @@
                   :plugin="plugin"
                   :plugins="plugins"
                   :license-keys="licenseKeys"
+                  :bitcart-version="bitcartVersion"
                   :auto-purchase="
                     autoPurchase && plugin.id === filteredPluginId
                   "
                   @plugin-installed="handlePluginInstalled"
+                  @plugin-install-failed="handlePluginInstallFailed"
                   @auto-purchase-triggered="handleAutoPurchaseTriggered"
                 />
               </v-col>
@@ -348,7 +363,7 @@
 <script>
 import PluginCard from "@/components/PluginCard.vue"
 import ManagementCommand from "@/components/ManagementCommand.vue"
-import { LICENSING_SERVER } from "@/version"
+import VERSION, { LICENSING_SERVER } from "@/version"
 
 export default {
   components: {
@@ -406,6 +421,7 @@ export default {
       ],
       filteredPluginId: null,
       autoPurchase: false,
+      bitcartVersion: VERSION,
     }
   },
   computed: {
@@ -444,8 +460,7 @@ export default {
   },
   mounted() {
     this.handleQueryParams()
-    this.fetchPlugins()
-    this.fetchMarketplacePlugins()
+    this.fetchPlugins().finally(() => this.fetchMarketplacePlugins())
     this.fetchLicenses()
   },
   methods: {
@@ -464,9 +479,10 @@ export default {
       }
     },
     fetchPlugins() {
-      this.$axios.get("/plugins").then((resp) => {
+      return this.$axios.get("/plugins").then((resp) => {
         this.plugins = resp.data.plugins
         this.failed = !resp.data.success
+        this.bitcartVersion = resp.data.bitcart_version || VERSION
         this.loading = false
       })
     },
@@ -492,15 +508,22 @@ export default {
       this.needsReload = true
     },
     fetchMarketplacePlugins() {
-      this.$axios.get(`${LICENSING_SERVER}/plugins`).then((resp) => {
-        this.marketplacePlugins = resp.data
-        this.marketplaceLoading = false
-      })
+      this.$axios
+        .get(`${LICENSING_SERVER}/plugins`, {
+          params: { bitcart_version: this.bitcartVersion },
+        })
+        .then((resp) => {
+          this.marketplacePlugins = resp.data
+          this.marketplaceLoading = false
+        })
     },
     handlePluginInstalled() {
       this.fetchPlugins()
       this.needsReload = true
       this.autoPurchase = false
+    },
+    handlePluginInstallFailed(message) {
+      this.snackbar = { show: true, text: message, color: "error" }
     },
     reloadPlugins() {
       this.reloading = true
