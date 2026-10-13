@@ -276,6 +276,11 @@ export default {
   decimalStr(value, divisibility) {
     return parseFloat(value).toFixed(divisibility)
   },
+  roundDown(valueStr, divisibility) {
+    const [whole, fraction = ""] = valueStr.split(".")
+    if (!divisibility) return whole
+    return `${whole}.${fraction.padEnd(divisibility, "0").slice(0, divisibility)}`
+  },
   getDivisibility(valueStr) {
     const [, fractionAmount] = valueStr.split(".")
     return fractionAmount ? fractionAmount.length : 0

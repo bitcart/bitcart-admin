@@ -166,6 +166,20 @@
                         />
                       </v-col>
                     </v-row>
+                    <v-row
+                      v-for="txHash of invoiceData.tx_hashes"
+                      :key="txHash"
+                    >
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="invoiceData.tx_amounts[txHash]"
+                          :label="`Amount of ${txHash} (optional)`"
+                          type="number"
+                          step="any"
+                          hint="Fill in for every transaction or none"
+                        />
+                      </v-col>
+                    </v-row>
                   </div>
                 </v-container>
               </v-card-text>
@@ -500,8 +514,8 @@ export default {
             (item.sent_amount * matchedPayment.rate) / r.data,
             matchedPayment.divisibility
           )
-          this.sentPrice = this.$utils.decimalStr(
-            item.sent_amount * matchedPayment.rate,
+          this.sentPrice = this.$utils.roundDown(
+            item.sent_price,
             this.$utils.getDivisibility(item.price)
           )
           this.currentItem = item
@@ -571,6 +585,7 @@ export default {
             payment_method_id: "",
             sent_amount: "",
             tx_hashes: [],
+            tx_amounts: {},
           }))
           this.showMarkCompleteDialog = true
           return null
@@ -591,6 +606,10 @@ export default {
             }
             if (invoiceData.tx_hashes && invoiceData.tx_hashes.length > 0) {
               opt.tx_hashes = invoiceData.tx_hashes
+              const txAmounts = this.getTxAmounts(invoiceData)
+              if (txAmounts.length === invoiceData.tx_hashes.length) {
+                opt.tx_amounts = Object.fromEntries(txAmounts)
+              }
             }
             return opt
           })
@@ -600,6 +619,11 @@ export default {
         return {}
       }
     },
+    getTxAmounts(invoiceData) {
+      return invoiceData.tx_hashes
+        .map((txHash) => [txHash, invoiceData.tx_amounts[txHash]])
+        .filter(([, amount]) => amount !== undefined && amount !== "")
+    },
     markCompleteSubmit() {
       const missingPaymentMethod = this.markCompleteInvoices.find(
         (inv) => !inv.payment_method_id
@@ -607,6 +631,16 @@ export default {
       if (missingPaymentMethod) {
         this.snackbarColor = "error"
         this.snackbarText = `Please select a payment method for invoice ${missingPaymentMethod.invoice.id}`
+        this.showSnackbar = true
+        return
+      }
+      const partialTxAmounts = this.markCompleteInvoices.find((inv) => {
+        const filled = this.getTxAmounts(inv).length
+        return filled > 0 && filled < inv.tx_hashes.length
+      })
+      if (partialTxAmounts) {
+        this.snackbarColor = "error"
+        this.snackbarText = `Enter an amount for every transaction of invoice ${partialTxAmounts.invoice.id}, or none`
         this.showSnackbar = true
         return
       }

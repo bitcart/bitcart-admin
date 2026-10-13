@@ -157,12 +157,13 @@
                   <v-list-item-subtitle>
                     <span
                       v-if="
-                        parseFloat(currentPrice) < parseFloat(invoice.price)
+                        parseFloat(itemv.effective_price) <
+                        parseFloat(invoice.price)
                       "
                     >
                       <strike>{{ invoice.price }}</strike>
                       <span class="font-weight-black">
-                        {{ currentPrice }}
+                        {{ itemv.effective_price }}
                       </span>
                     </span>
                     <span v-else>
@@ -197,12 +198,7 @@
                   <v-list-item-title
                     class="text-subtitle-1 font-weight-regular align-right"
                   >
-                    +{{
-                      $utils.decimalStr(
-                        parseFloat(itemv.amount) - parseFloat(expectedAmount),
-                        itemv.divisibility
-                      )
-                    }}
+                    +{{ itemv.network_fee }}
                     {{ itemv.symbol.toUpperCase() }}
                   </v-list-item-title>
                 </v-list-item-action>
@@ -746,20 +742,14 @@ export default {
     itemv() {
       return this.invoice.payments[this.selectedCurrency]
     },
-    currentPrice() {
-      return this.$utils.decimalStr(
-        this.itemv.amount * this.itemv.rate,
-        this.$utils.getDivisibility(this.invoice.price)
-      )
-    },
     expectedAmount() {
       return this.$utils.decimalStr(
-        this.invoice.price / this.itemv.rate,
+        this.itemv.amount - this.itemv.network_fee,
         this.itemv.divisibility
       )
     },
     networkFeeIncluded() {
-      return parseFloat(this.itemv.amount) > parseFloat(this.expectedAmount)
+      return parseFloat(this.itemv.network_fee) > 0
     },
     currentCurrency() {
       return this.itemv.currency
@@ -810,7 +800,7 @@ export default {
       return (
         this.store.checkout_settings &&
         this.store.checkout_settings.show_recommended_fee &&
-        this.itemv.recommended_fee !== 0
+        parseFloat(this.itemv.recommended_fee) !== 0
       )
     },
     isEthPaymentMethod() {
