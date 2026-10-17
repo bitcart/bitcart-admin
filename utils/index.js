@@ -1,3 +1,5 @@
+const RATE_SIGNIFICANT_DIGITS = 3
+
 function isNull(v) {
   return typeof v === "undefined" || v === "" || v == null
 }
@@ -276,10 +278,15 @@ export default {
   decimalStr(value, divisibility) {
     return parseFloat(value).toFixed(divisibility)
   },
-  roundDown(valueStr, divisibility) {
-    const [whole, fraction = ""] = valueStr.split(".")
-    if (!divisibility) return whole
-    return `${whole}.${fraction.padEnd(divisibility, "0").slice(0, divisibility)}`
+  formatRate(rate, divisibility) {
+    const value = parseFloat(rate)
+    const significantPlaces = value
+      ? RATE_SIGNIFICANT_DIGITS - 1 - Math.floor(Math.log10(Math.abs(value)))
+      : 0
+    return new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: divisibility,
+      maximumFractionDigits: Math.max(divisibility, significantPlaces),
+    }).format(rate)
   },
   getDivisibility(valueStr) {
     const [, fractionAmount] = valueStr.split(".")

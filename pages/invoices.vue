@@ -514,10 +514,7 @@ export default {
             (item.sent_amount * matchedPayment.rate) / r.data,
             matchedPayment.divisibility
           )
-          this.sentPrice = this.$utils.roundDown(
-            item.sent_price,
-            this.$utils.getDivisibility(item.price)
-          )
+          this.sentPrice = item.sent_price
           this.currentItem = item
           this.itemIndex = itemIndex
           this.showRefundDialog = true

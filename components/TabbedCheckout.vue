@@ -125,7 +125,13 @@
                 >
                 <v-list-item-title :class="rateClass">
                   1 {{ itemv.symbol.toUpperCase() }} =
-                  {{ itemv.rate_str }}
+                  {{
+                    $utils.formatRate(
+                      itemv.rate,
+                      $utils.getDivisibility(invoice.price)
+                    )
+                  }}
+                  {{ invoice.currency }}
                 </v-list-item-title>
               </v-list-item-action>
             </v-list-item>
@@ -151,7 +157,7 @@
                   <v-list-item-title
                     class="text-subtitle-1 font-weight-regular align-right"
                   >
-                    {{ networkFeeIncluded ? expectedAmount : itemv.amount }}
+                    {{ itemv.subtotal }}
                     {{ itemv.symbol.toUpperCase() }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
@@ -741,12 +747,6 @@ export default {
     },
     itemv() {
       return this.invoice.payments[this.selectedCurrency]
-    },
-    expectedAmount() {
-      return this.$utils.decimalStr(
-        this.itemv.amount - this.itemv.network_fee,
-        this.itemv.divisibility
-      )
     },
     networkFeeIncluded() {
       return parseFloat(this.itemv.network_fee) > 0
