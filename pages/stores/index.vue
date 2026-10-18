@@ -269,6 +269,22 @@ export default {
           help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#what-is-custom-logo-link",
         },
         {
+          text: "Support email",
+          value: "support_email",
+          rules: ["email"],
+          hint: "Where customers can contact you about a payment",
+        },
+        {
+          text: "Support URL",
+          value: "support_url",
+          rules: ["url"],
+          hint: "An http or https link, shown instead of the support email when both are set",
+          errors: {
+            "Support URL must be an absolute http or https URL":
+              "Support URL must be an absolute http or https URL",
+          },
+        },
+        {
           text: "Use Dark Mode",
           value: "use_dark_mode",
           input: "switch",
