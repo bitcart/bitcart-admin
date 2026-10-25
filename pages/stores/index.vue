@@ -328,6 +328,11 @@ export default {
           value: "pos_screen_enabled",
           input: "switch",
         },
+        {
+          text: "(New checkout) Return buyers to the redirect URL automatically after payment",
+          value: "auto_redirect",
+          input: "switch",
+        },
       ],
       themeHeaders: [
         {
