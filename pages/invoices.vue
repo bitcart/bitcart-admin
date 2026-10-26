@@ -542,8 +542,7 @@ export default {
         .post(`/invoices/${this.currentItem.id}/refunds`, {
           amount: refundAmount,
           currency: refundCurrency,
-          admin_host: window.location.origin,
-          sent_email: this.sendCustomerEmail,
+          send_email: this.sendCustomerEmail,
         })
         .then((r) => {
           this.loading = false
