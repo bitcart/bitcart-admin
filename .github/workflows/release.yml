@@ -23,5 +23,4 @@ jobs:
         type=raw,value=${{ github.event.release.tag_name }}
         type=raw,value=stable
       dockerhub-user: ${{ vars.DOCKERHUB_USER }}
-    secrets:
-      dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+      dockerhub-oidc-connection-id: ${{ vars.DOCKERHUB_OIDC_CONNECTIONID }}
