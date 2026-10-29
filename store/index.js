@@ -217,6 +217,10 @@ export const getters = {
       ? onionStoreHost + rootPath
       : env.storeHost.replace(/^https?:\/\//, "")
   },
+  checkoutURL({ onion, policies, env }) {
+    const rootPath = env.rootPath === "/" ? "" : env.rootPath
+    return onion || !policies.checkout_url ? rootPath : policies.checkout_url
+  },
   syncInfo({ syncInfo }) {
     return syncInfo
   },

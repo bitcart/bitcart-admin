@@ -902,7 +902,7 @@ export default {
       if (!id) {
         id = this.qrItem.id
       }
-      this.$router.push({ path: `/i/${id}` })
+      window.location.href = `${this.$store.getters.checkoutURL}/i/${id}`
     },
     updateEmail() {
       const ref = this.emailFormRef || this.$refs.emailForm

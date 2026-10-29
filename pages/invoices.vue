@@ -449,7 +449,7 @@ export default {
   },
   head() {
     return {
-      script: [{ src: `${this.STATIC_PATH}/modal/bitcart.js` }],
+      script: [{ src: `${this.$store.getters.checkoutURL}/modal/bitcart.js` }],
     }
   },
   methods: {
@@ -555,7 +555,9 @@ export default {
       this.snackbarColor = "success"
       this.snackbarText = "Refund link copied to clipboard"
       this.showSnackbar = true
-      this.$utils.copyToClipboard(`${window.location.origin}/refunds/${id}`)
+      const checkoutURL =
+        this.$store.state.policies.checkout_url || window.location.origin
+      this.$utils.copyToClipboard(`${checkoutURL}/refunds/${id}`)
     },
     processbatch(command) {
       if (command === "mark_complete") {
