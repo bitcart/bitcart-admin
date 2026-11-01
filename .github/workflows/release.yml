@@ -10,12 +10,6 @@ permissions:
 jobs:
   run:
     uses: bitcart/bitcart-actions/.github/workflows/build-docker-image.yml@master
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-      attestations: write
-      artifact-metadata: write
     with:
       dockerfile: Dockerfile
       image-name: ${{ vars.DOCKERHUB_USER }}/bitcart-admin
@@ -24,3 +18,10 @@ jobs:
         type=raw,value=stable
       dockerhub-user: ${{ vars.DOCKERHUB_USER }}
       dockerhub-oidc-connection-id: ${{ vars.DOCKERHUB_OIDC_CONNECTIONID }}
+
+    permissions:
+      contents: read
+      packages: write # publishing to GHCR
+      id-token: write # OIDC for provenance
+      attestations: write # github attestations
+      artifact-metadata: write # artifact storage metadata (recommended by actions/attest)
