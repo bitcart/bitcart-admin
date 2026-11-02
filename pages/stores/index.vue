@@ -237,6 +237,16 @@ export default {
           help: "https://docs.bitcart.ai/guides/transaction-speed",
         },
         {
+          text: "Confirmation timeout",
+          value: "confirmation_timeout",
+          rules: ["int"],
+          hint: "In minutes after invoice expiration. Paid invoices that don't confirm by then become invalid",
+          errors: {
+            "Confirmation timeout must not be negative":
+              "Confirmation timeout must not be negative",
+          },
+        },
+        {
           text: "Underpaid percentage",
           value: "underpaid_percentage",
           hint: "Consider the invoice paid even if the paid amount is ... % less than expected",

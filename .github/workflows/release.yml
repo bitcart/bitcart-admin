@@ -4,11 +4,16 @@ on:
   release:
     types: [created]
 
+concurrency:
+  group: ${{ github.workflow_ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
 jobs:
   run:
+    name: run
     uses: bitcart/bitcart-actions/.github/workflows/build-docker-image.yml@master
     with:
       dockerfile: Dockerfile
