@@ -195,6 +195,12 @@
                     :is="header.component || 'v-autocomplete'"
                     v-else-if="header.input === 'autocomplete'"
                     ref="autocomplete"
+                    v-sortable-chips="
+                      header.reorderable
+                        ? (movedId, targetId) =>
+                            moveMultiple(header.value, movedId, targetId)
+                        : null
+                    "
                     :loading="loadingSearches[header.value]"
                     :items="searchItems[header.value]"
                     :search-input.sync="autosearches[header.value]"
@@ -216,12 +222,21 @@
                       <v-chip
                         v-bind="data.attrs"
                         :input-value="data.selected"
+                        :draggable="header.reorderable"
                         close
                         @click="data.select"
                         @click:close="
                           removeMultiple(item[header.value], data.item)
                         "
                       >
+                        <v-icon
+                          v-if="header.reorderable"
+                          left
+                          small
+                          style="cursor: grab"
+                        >
+                          mdi-drag-vertical
+                        </v-icon>
                         {{ data.item.name ? data.item.name : data.item }}
                       </v-chip>
                     </template>
@@ -333,6 +348,7 @@
 
 <script>
 import debounce from "lodash.debounce"
+import SortableJS from "sortablejs"
 import UIExtensionSlot from "@/components/UIExtensionSlot.vue"
 let components = { UIExtensionSlot }
 if (process.env.NODE_ENV === "production") {
@@ -340,8 +356,38 @@ if (process.env.NODE_ENV === "production") {
   const VCombobox = require("vuetify/lib/components/VCombobox").default
   components = Object.assign({}, components, { VAutocomplete, VCombobox })
 }
+const undoSortableDomMove = ({ from, item, oldIndex }) => {
+  item.remove()
+  from.insertBefore(item, from.children[oldIndex])
+}
+const sortableChips = {
+  inserted(el, { value: onMove }, vnode) {
+    if (!onMove) return
+    el.sortableChips = SortableJS.create(
+      el.querySelector(".v-select__selections"),
+      {
+        draggable: ".v-chip",
+        forceFallback: true,
+        filter: ".v-chip__close",
+        preventOnFilter: false,
+        onUpdate(event) {
+          undoSortableDomMove(event)
+          const { selectedItems } = vnode.componentInstance
+          onMove(
+            selectedItems[event.oldIndex].id,
+            selectedItems[event.newIndex].id
+          )
+        },
+      }
+    )
+  },
+  unbind(el) {
+    if (el.sortableChips) el.sortableChips.destroy()
+  },
+}
 export default {
   components,
+  directives: { sortableChips },
   props: {
     on: {
       type: Boolean,
@@ -856,6 +902,13 @@ export default {
       if (index >= 0) {
         arr.splice(index, 1)
       }
+    },
+    moveMultiple(key, movedId, targetId) {
+      const values = [...this.item[key]]
+      const from = values.indexOf(movedId)
+      const to = values.indexOf(targetId)
+      values.splice(to, 0, values.splice(from, 1)[0])
+      this.handleAutocomplete(key, values)
     },
     handleAutocomplete(key, value) {
       const oldval = this.item[key]

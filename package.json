@@ -26,6 +26,7 @@
     "js-cookie": "^3.0.5",
     "nuxt-start": "^2.15.1",
     "socks-proxy-agent": "^8.0.0",
+    "sortablejs": "^1.15.7",
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {

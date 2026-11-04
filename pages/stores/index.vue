@@ -137,6 +137,8 @@ export default {
           url: "wallets?autocomplete=true",
           multiple: true,
           sortable: false,
+          reorderable: true,
+          hint: "Drag wallets to set their order at checkout",
         },
         {
           text: "Notifications",
