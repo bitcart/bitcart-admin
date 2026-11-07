@@ -56,6 +56,13 @@
           </v-card-title>
 
           <v-card-text>
+            <v-alert
+              v-if="formError"
+              type="error"
+              text
+              style="white-space: pre-line"
+              >{{ formError }}</v-alert
+            >
             <v-container>
               <v-row>
                 <component
@@ -481,6 +488,7 @@ export default {
       searchItems: {},
       autosearches: autosearchA.length > 0 ? Object.assign(...autosearchA) : {},
       errors: {},
+      formError: "",
       dynamicAutocompletes: false,
       fields: dsearchA.length > 0 ? Object.assign(...dsearchA) : {},
       defaultItem:
@@ -772,6 +780,7 @@ export default {
       }
       this.$emit("update:item", Object.assign({}, this.defaultItem))
       this.errors = {}
+      this.formError = ""
       this.showPassword = false
       this.$refs.form.resetValidation()
       const item = this.headers.find((x) => x.input === "progress")
@@ -780,19 +789,33 @@ export default {
       }
       this.postclose()
     },
+    describeError(err) {
+      const detail = err.response && err.response.data.detail
+      if (typeof detail === "string") return detail
+      if (Array.isArray(detail)) {
+        return detail
+          .map((item) => {
+            const field = (item.loc || []).slice(1).join(".")
+            return field ? `${field}: ${item.msg}` : item.msg
+          })
+          .join("\n")
+      }
+      return "The request failed. Please try again."
+    },
     handleErr(err) {
-      if (err.response) {
-        const errText = err.response.data.detail
-        for (const header of this.headers) {
-          if (header.errors) {
-            for (const [error, message] of Object.entries(header.errors)) {
-              if (errText.includes(error)) {
-                this.$set(this.errors, header.text, [message])
-              }
+      const errText = this.describeError(err)
+      let shownOnField = false
+      for (const header of this.headers) {
+        if (header.errors) {
+          for (const [error, message] of Object.entries(header.errors)) {
+            if (errText.includes(error)) {
+              this.$set(this.errors, header.text, [message])
+              shownOnField = true
             }
           }
         }
       }
+      if (!shownOnField) this.formError = errText
     },
     dataURLtoBlob(dataurl) {
       if (!dataurl) {
@@ -822,6 +845,7 @@ export default {
     },
     async save() {
       this.errors = {} // clean previous errors
+      this.formError = ""
       if (!this.$refs.form.validate()) return
       if (this.editMode) {
         if (this.presave) {

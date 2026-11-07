@@ -60,7 +60,6 @@ export default {
         captcha_secretkey: "Captcha secret key",
         admin_theme_url: "Admin theme css URL",
         captcha_type: "Captcha type",
-        use_html_templates: "Use HTML templates",
         global_templates: "Global templates",
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",

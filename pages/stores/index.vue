@@ -303,12 +303,6 @@ export default {
           help: "https://docs.bitcart.ai/support-and-community/faq/stores-faq#what-is-the-use-dark-mode-setting",
         },
         {
-          text: "Use HTML templates",
-          value: "use_html_templates",
-          input: "switch",
-          help: "https://docs.bitcart.ai/guides/templates#html-templates",
-        },
-        {
           text: "Require email on checkout",
           value: "email_required",
           input: "switch",
