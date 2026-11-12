@@ -472,14 +472,57 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 }
 
 /* Vuetify hardcodes dark surfaces (#1E1E1E / #363636); align with the theme */
-.v-application.theme--dark .v-card.v-sheet,
-.v-application.theme--dark .v-expansion-panel,
-.v-application.theme--dark .v-picker__body,
+/* no !important here, so Vuetify color classes (color="primary" etc.) still win */
+.v-application .theme--dark.v-sheet,
+.v-application .theme--dark.v-card,
+.v-application .theme--dark.v-expansion-panels .v-expansion-panel,
+.v-application .theme--dark.v-picker__body,
+.v-application .theme--dark.v-small-dialog__menu-content,
 .theme--dark.v-menu__content .v-list,
 .theme--dark.v-menu__content .v-sheet,
 .theme--dark.v-dialog > .v-card,
 .v-application .theme--dark.v-list {
   background-color: #12151c;
+}
+.v-application .v-stepper.v-sheet,
+.v-application .v-expansion-panels:not(.v-expansion-panels--accordion) {
+  border-radius: var(--bc-radius) !important;
+}
+.v-application .v-stepper.v-sheet:not(.v-sheet--outlined) {
+  border: 1px solid var(--bc-border);
+  box-shadow: var(--bc-shadow) !important;
+}
+.v-application .v-stepper__header {
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--bc-border);
+}
+.v-application .v-expansion-panels .v-expansion-panel {
+  border: 1px solid var(--bc-border);
+}
+.v-application .v-expansion-panels .v-expansion-panel::before {
+  box-shadow: none !important;
+}
+.v-application .v-expansion-panels .v-expansion-panel::after {
+  border-color: transparent !important;
+}
+.v-application .theme--dark.v-btn.v-btn--has-bg {
+  background-color: #1b1f29;
+  border: 1px solid var(--bc-border);
+}
+.v-application .theme--light.v-btn.v-btn--has-bg {
+  background-color: #eef0f4;
+}
+/* tab panes blend into whatever they sit on */
+.v-application .v-tabs-items.v-tabs-items {
+  background-color: transparent;
+}
+/* nested surfaces: avoid grey-in-grey boxes */
+.v-application .v-card .theme--dark.v-sheet:not(.v-btn):not(.v-chip),
+.v-application .v-stepper .theme--dark.v-sheet:not(.v-btn):not(.v-chip),
+.v-application .v-expansion-panel .theme--dark.v-sheet:not(.v-btn):not(.v-chip),
+.v-application .v-stepper .theme--dark.v-card,
+.v-application .v-expansion-panel .theme--dark.v-card {
+  background-color: transparent;
 }
 /* tables carry no color props, so it is safe to force the surface here */
 .v-application .theme--dark.v-data-table {
