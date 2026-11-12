@@ -48,14 +48,14 @@ export default {
       { rel: "icon", type: "image/x-icon", href: "favicon.ico" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Material+Icons",
       },
     ],
   },
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: "#fff" },
+  loading: { color: "#9E60F4", height: "3px" },
   /*
    ** Global CSS
    */
@@ -72,6 +72,7 @@ export default {
     { src: "~/plugins/imageinput.js", mode: "client" },
     { src: "~/plugins/datetimepicker.js", mode: "client" },
     "~/plugins/vueQR.js",
+    { src: "~/plugins/apexcharts.js", mode: "client" },
   ],
   /*
    ** Nuxt.js dev-modules
@@ -160,7 +161,10 @@ export default {
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module
    */
-  vuetify: { optionsPath: "~/vuetify.options.js" },
+  vuetify: {
+    optionsPath: "~/vuetify.options.js",
+    defaultAssets: { font: false, icons: "mdi" },
+  },
   /*
    ** Build configuration
    */
