@@ -2,8 +2,8 @@
   <v-row align="center" justify="center">
     <v-col cols="12" sm="8" md="4">
       <v-form ref="form" @submit.prevent="verifyEmail">
-        <v-card class="elevation-12">
-          <v-toolbar color="primary" dark flat>
+        <v-card class="auth-card">
+          <v-toolbar flat>
             <v-spacer />
             <v-toolbar-title>{{
               codeInput ? "Verify" : "Send verification email"
