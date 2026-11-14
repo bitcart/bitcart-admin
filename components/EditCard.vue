@@ -493,11 +493,15 @@ export default {
       fields: dsearchA.length > 0 ? Object.assign(...dsearchA) : {},
       defaultItem:
         this.headers.length > 0
-          ? Object.assign(
-              ...Array.from(this.headers, (x) => [x.value, x.default]).map(
-                (k, i) => ({
-                  [k[0]]: typeof k[1] === "undefined" ? null : k[1],
-                })
+          ? JSON.parse(
+              JSON.stringify(
+                Object.assign(
+                  ...Array.from(this.headers, (x) => [x.value, x.default]).map(
+                    (k, i) => ({
+                      [k[0]]: typeof k[1] === "undefined" ? null : k[1],
+                    })
+                  )
+                )
               )
             )
           : {},
@@ -778,7 +782,7 @@ export default {
       for (const key in this.autosearches) {
         this.autosearches[key] = null
       }
-      this.$emit("update:item", Object.assign({}, this.defaultItem))
+      this.$emit("update:item", this.freshItem())
       this.errors = {}
       this.formError = ""
       this.showPassword = false
@@ -902,7 +906,7 @@ export default {
             if (resp.status === 200) {
               resp.data.password = ""
               this.$bus.$emit("updateitem", resp.data, this.itemIndex)
-              this.$emit("update:item", Object.assign({}, this.defaultItem))
+              this.$emit("update:item", this.freshItem())
               this.$store.dispatch("syncStats", false)
               this.dialog = false
             }
@@ -914,7 +918,7 @@ export default {
           .then((resp) => {
             if (resp.status === 200) {
               this.addItem(resp.data)
-              this.$emit("update:item", Object.assign({}, this.defaultItem))
+              this.$emit("update:item", this.freshItem())
               this.dialog = false
             }
           })
@@ -935,12 +939,17 @@ export default {
       this.handleAutocomplete(key, values)
     },
     handleAutocomplete(key, value) {
-      const oldval = this.item[key]
-      // TODO: find a more generic way of handling this
-      if (key === "provider" && value !== oldval) {
-        this.$set(this.item, "data", {})
+      if (value !== this.item[key]) {
+        for (const header of this.headers.filter(
+          (x) => x.input === "dynamic" && x.choice === key
+        )) {
+          this.$set(this.item, header.value, {})
+        }
       }
       this.$set(this.item, key, value)
+    },
+    freshItem() {
+      return JSON.parse(JSON.stringify(this.defaultItem))
     },
     createWallet() {
       this.$axios

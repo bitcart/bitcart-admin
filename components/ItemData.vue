@@ -388,9 +388,13 @@ export default {
       whatToCopy: "",
       loading: true,
       editedIndex: -1,
-      editedItem: Object.assign(
-        ...Array.from(this.headers, (x) => [x.value, x.default]).map(
-          (k, i) => ({ [k[0]]: typeof k[1] === "undefined" ? null : k[1] })
+      editedItem: JSON.parse(
+        JSON.stringify(
+          Object.assign(
+            ...Array.from(this.headers, (x) => [x.value, x.default]).map(
+              (k, i) => ({ [k[0]]: typeof k[1] === "undefined" ? null : k[1] })
+            )
+          )
         )
       ),
       items: [],
