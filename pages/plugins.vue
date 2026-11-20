@@ -31,6 +31,9 @@
       <v-expansion-panel>
         <v-expansion-panel-header> License Keys </v-expansion-panel-header>
         <v-expansion-panel-content>
+          <v-alert v-if="staleLicensesNote" type="warning" dense text>
+            {{ staleLicensesNote }}
+          </v-alert>
           <v-data-table
             :headers="licenseHeaders"
             :items="licenseKeys"
@@ -86,6 +89,9 @@
               <v-chip :color="value ? 'success' : 'error'" small>
                 {{ value ? "Active" : "Inactive" }}
               </v-chip>
+            </template>
+            <template #item.version_constraint="{ value }">
+              {{ value || "All" }}
             </template>
             <template #item.next_billing_date="{ value }">
               {{ value ? new Date(value).toLocaleDateString() : "N/A" }}
@@ -407,6 +413,7 @@ export default {
         { text: "Author", value: "plugin_author" },
         { text: "Description", value: "plugin_description" },
         { text: "License Key", value: "license_key" },
+        { text: "Versions", value: "version_constraint" },
         {
           text: "Next Billing",
           value: "next_billing_date",
@@ -425,6 +432,14 @@ export default {
     }
   },
   computed: {
+    staleLicensesNote() {
+      const stale = this.licenseKeys.filter((l) => l.stale)
+      if (!stale.length) return ""
+      const note = "Couldn't refresh license info, showing saved data"
+      if (stale.some((l) => !l.refreshed_at)) return note
+      const oldest = stale.map((l) => l.refreshed_at).sort()[0]
+      return `${note} from ${new Date(oldest).toLocaleString()}`
+    },
     sortedMarketplacePlugins() {
       return [...this.marketplacePlugins].sort((a, b) => {
         if (a.pinned === b.pinned) {
