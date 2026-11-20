@@ -8,7 +8,7 @@ export default ({ store, req, isHMR }) => {
   }
 
   createPersistedState({
-    paths: ["dark", "pinned"],
+    paths: ["dark", "pinned", "collapsed"],
     storage: {
       getItem: (key) => {
         if (process.server) {
