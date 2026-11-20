@@ -105,6 +105,7 @@
             }}: {{ item.last_error }}
           </v-alert>
         </template>
+        <UIExtensionSlot name="admin_alerts" />
         <slot />
         <nuxt />
         <div v-if="$auth.loggedIn && $auth.user.is_superuser">

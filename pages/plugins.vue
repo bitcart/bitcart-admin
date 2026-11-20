@@ -460,8 +460,9 @@ export default {
   },
   mounted() {
     this.handleQueryParams()
-    this.fetchPlugins().finally(() => this.fetchMarketplacePlugins())
-    this.fetchLicenses()
+    Promise.allSettled([this.fetchPlugins(), this.fetchLicenses()]).then(() =>
+      this.fetchMarketplacePlugins()
+    )
   },
   methods: {
     handleQueryParams() {
@@ -508,9 +509,11 @@ export default {
       this.needsReload = true
     },
     fetchMarketplacePlugins() {
+      const licenseKeys = this.licenseKeys.map((l) => l.license_key).join(",")
       this.$axios
         .get(`${LICENSING_SERVER}/plugins`, {
           params: { bitcart_version: this.bitcartVersion },
+          headers: licenseKeys ? { "X-License-Key": licenseKeys } : {},
         })
         .then((resp) => {
           this.marketplacePlugins = resp.data
@@ -538,7 +541,7 @@ export default {
     },
     fetchLicenses() {
       this.licensesLoading = true
-      this.$axios
+      return this.$axios
         .get("/plugins/licenses")
         .then((response) => {
           this.licenseKeys = response.data
@@ -557,7 +560,7 @@ export default {
       this.$axios
         .post("/plugins/licenses", this.editedLicense)
         .then(() => {
-          this.fetchLicenses()
+          this.fetchLicenses().then(() => this.fetchMarketplacePlugins())
           this.closeLicenseDialog()
           this.snackbar = {
             show: true,
@@ -576,7 +579,7 @@ export default {
     deleteLicense(item) {
       console.log(item)
       this.$axios.delete(`/plugins/licenses/${item.license_key}`).then(() => {
-        this.fetchLicenses()
+        this.fetchLicenses().then(() => this.fetchMarketplacePlugins())
       })
     },
     handleAutoPurchaseTriggered() {
