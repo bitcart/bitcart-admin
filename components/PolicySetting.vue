@@ -46,6 +46,8 @@
     <UIExtensionSlot
       v-else
       name="policy_setting_types"
+      :type="type"
+      :what="what"
       :data="data"
       :url="url"
       :update-policy="updatePolicy"

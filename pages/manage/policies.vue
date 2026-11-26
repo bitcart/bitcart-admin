@@ -58,16 +58,16 @@ export default {
           "Allow access to configurator for unauthorized users",
         captcha_sitekey: "Captcha site key",
         captcha_secretkey: "Captcha secret key",
-        admin_theme_url: "Admin theme css URL",
         captcha_type: "Captcha type",
+        admin_theme_url: "Admin theme css URL",
         global_templates: "Global templates",
         explorer_urls: "Block explorer URLs",
         rpc_urls: "WalletConnect RPC URLs",
-        email_settings: "Email server settings",
         health_check_store_id: "Health check store ID",
         allow_eth_plugin_info:
           "Allow information about ETH plugin to be displayed at checkout if it's not enabled",
         log_retention_days: "Logs retention period (days)",
+        email_settings: "Email server settings",
       }),
       details: this.$utils.getExtendSetting.call(this, "policy_details", {
         staging_updates:
@@ -96,13 +96,11 @@ export default {
   },
   computed: {
     availablePolicies() {
-      const filtered = {}
-      for (const [policy, value] of Object.entries(this.policies)) {
-        if (this.titles[policy]) {
-          filtered[policy] = value
-        }
-      }
-      return filtered
+      return Object.fromEntries(
+        Object.keys(this.titles)
+          .filter((policy) => this.titles[policy] && policy in this.policies)
+          .map((policy) => [policy, this.policies[policy]])
+      )
     },
   },
   async beforeMount() {
