@@ -46,7 +46,11 @@
                 :extra-data="extraData"
                 @update:extraData="($event) => (extraData = $event)"
               />
-              <universal-captcha v-model="captchaCode" />
+              <universal-captcha
+                ref="captcha"
+                v-model="captchaCode"
+                action="register"
+              />
               <div>
                 Already have an account ?
                 <NuxtLink to="/login"> Sign in</NuxtLink> instead
@@ -140,6 +144,7 @@ export default {
             })
           })
           .catch((err) => {
+            this.$refs.captcha?.reset()
             if (err.response) {
               const detail = err.response.data.detail
               if (

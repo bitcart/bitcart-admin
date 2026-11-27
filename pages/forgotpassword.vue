@@ -23,7 +23,11 @@
                 prepend-icon="email"
                 type="email"
               />
-              <universal-captcha v-model="captchaCode" />
+              <universal-captcha
+                ref="captcha"
+                v-model="captchaCode"
+                action="forgot_password"
+              />
             </div>
             <div v-else>
               <v-text-field

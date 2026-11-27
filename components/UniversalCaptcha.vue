@@ -1,11 +1,14 @@
 <template>
   <turnstile-captcha
     v-if="$store.state.policies.captcha_type === 'cloudflare_turnstile'"
+    ref="captcha"
     v-model="captchaCode"
     :sitekey="$store.state.policies.captcha_sitekey"
+    :action="action"
   />
   <vue-hcaptcha
     v-else-if="$store.state.policies.captcha_type === 'hcaptcha'"
+    ref="captcha"
     v-model="captchaCode"
     :sitekey="$store.state.policies.captcha_sitekey"
     :theme="$vuetify.theme.dark ? 'dark' : 'light'"
@@ -27,6 +30,10 @@ export default {
       type: String,
       default: "",
     },
+    action: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -41,6 +48,10 @@ export default {
   methods: {
     processCaptcha(token) {
       this.captchaCode = token
+    },
+    reset() {
+      this.captchaCode = ""
+      if (this.$refs.captcha) this.$refs.captcha.reset()
     },
   },
 }

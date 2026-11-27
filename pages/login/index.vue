@@ -28,7 +28,11 @@
               prepend-icon="lock"
               type="password"
             />
-            <universal-captcha v-model="captchaCode" />
+            <universal-captcha
+              ref="captcha"
+              v-model="captchaCode"
+              action="login"
+            />
             <UIExtensionSlot name="login_form_extra" />
             <div v-if="!$store.state.policies.disable_registration">
               Don't have an account?
@@ -101,6 +105,7 @@ export default {
             })
           })
           .catch((err) => {
+            this.$refs.captcha?.reset()
             if (err.response) {
               const status = err.response.data.detail.status
               const detail = err.response.data.detail
