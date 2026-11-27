@@ -43,6 +43,17 @@
       :url="url"
       @input="updatePolicy"
     />
+    <v-combobox
+      v-else-if="type === 'stringlist'"
+      v-model="data"
+      :label="title"
+      :error-messages="errors"
+      append-icon=""
+      multiple
+      chips
+      deletable-chips
+      @change="updateStringList"
+    />
     <UIExtensionSlot
       v-else
       name="policy_setting_types"
@@ -113,6 +124,8 @@ export default {
   data() {
     return {
       data: this.initialValue,
+      savedData: this.initialValue,
+      errors: [],
     }
   },
   methods: {
@@ -120,6 +133,22 @@ export default {
       this.$axios
         .post(this.policyUrl, { [this.what]: value })
         .then((r) => this.$emit("updated"))
+    },
+    updateStringList(value) {
+      this.errors = []
+      this.$axios
+        .post(this.policyUrl, { [this.what]: value })
+        .then((r) => {
+          this.savedData = r.data[this.what]
+          this.$emit("updated")
+        })
+        .catch((err) => {
+          const detail = err.response && err.response.data.detail
+          this.errors = [
+            typeof detail === "string" ? detail : "Failed to save changes",
+          ]
+        })
+        .finally(() => (this.data = [...this.savedData]))
     },
     updateListEdit(value) {
       const obj = Object.fromEntries(

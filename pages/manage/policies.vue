@@ -68,10 +68,13 @@ export default {
           "Allow information about ETH plugin to be displayed at checkout if it's not enabled",
         log_retention_days: "Logs retention period (days)",
         email_settings: "Email server settings",
+        allowed_internal_hosts: "Allowed internal hosts",
       }),
       details: this.$utils.getExtendSetting.call(this, "policy_details", {
         staging_updates:
           "Note: update process will take longer than usual. Requires at least 2GB RAM on the server to re-build docker images.",
+        allowed_internal_hosts:
+          "Hosts in your local network or on this server which can be used in webhooks, store email servers, lightning peers and plugins, by name or IP, optionally with a port. For example: n8n:5678 or 192.168.1.5. Note: anyone will be able to send webhooks to them, even without an account if a store allows anonymous invoices, so better add the port too.",
       }),
       types: this.$utils.getExtendSetting.call(this, "policy_types", {
         captcha_sitekey: "string",
@@ -81,6 +84,7 @@ export default {
         explorer_urls: "exploreredit",
         rpc_urls: "exploreredit",
         email_settings: "emailsettings",
+        allowed_internal_hosts: "stringlist",
         captcha_type: "select",
         health_check_store_id: "string",
         log_retention_days: "number",
