@@ -48,6 +48,8 @@
       v-model="data"
       :label="title"
       :error-messages="errors"
+      :loading="saving"
+      :readonly="saving"
       append-icon=""
       multiple
       chips
@@ -125,6 +127,7 @@ export default {
     return {
       data: this.initialValue,
       savedData: this.initialValue,
+      saving: false,
       errors: [],
     }
   },
@@ -136,6 +139,7 @@ export default {
     },
     updateStringList(value) {
       this.errors = []
+      this.saving = true
       this.$axios
         .post(this.policyUrl, { [this.what]: value })
         .then((r) => {
@@ -148,7 +152,10 @@ export default {
             typeof detail === "string" ? detail : "Failed to save changes",
           ]
         })
-        .finally(() => (this.data = [...this.savedData]))
+        .finally(() => {
+          this.data = [...this.savedData]
+          this.saving = false
+        })
     },
     updateListEdit(value) {
       const obj = Object.fromEntries(
