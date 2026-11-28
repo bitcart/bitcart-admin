@@ -22,6 +22,10 @@ export default {
       type: String,
       required: true,
     },
+    action: {
+      type: String,
+      required: true,
+    },
     value: {
       type: String,
       required: true,
@@ -37,6 +41,7 @@ export default {
     turnstileOptions() {
       return {
         sitekey: this.sitekey,
+        action: this.action,
         theme: this.$vuetify.theme.dark ? "dark" : "light",
         callback: this.callback,
         "error-callback": this.errorCallback,
@@ -70,7 +75,7 @@ export default {
     await ensureTurnstile()
     this.render()
   },
-  beforeUnmount() {
+  beforeDestroy() {
     this.remove()
     clearTimeout(this.resetTimeout)
   },
@@ -86,9 +91,10 @@ export default {
       this.startResetTimeout()
     },
     reset() {
-      if (window.turnstile) {
+      clearTimeout(this.resetTimeout)
+      if (window.turnstile && this.widgetId) {
         this.$emit("input", "")
-        window.turnstile.reset()
+        window.turnstile.reset(this.widgetId)
       }
     },
     remove() {
@@ -104,6 +110,7 @@ export default {
       )
     },
     startResetTimeout() {
+      clearTimeout(this.resetTimeout)
       this.resetTimeout = setTimeout(() => {
         this.reset()
       }, 295 * 1000)

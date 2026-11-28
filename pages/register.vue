@@ -46,7 +46,11 @@
                 :extra-data="extraData"
                 @update:extraData="($event) => (extraData = $event)"
               />
-              <universal-captcha v-model="captchaCode" />
+              <universal-captcha
+                ref="captcha"
+                v-model="captchaCode"
+                action="register"
+              />
               <div>
                 Already have an account ?
                 <NuxtLink to="/login"> Sign in</NuxtLink> instead
@@ -140,15 +144,15 @@ export default {
             })
           })
           .catch((err) => {
-            if (err.response) {
+            if (this.$refs.captcha?.handleError(err)) {
+              this.errors = ["Failed captcha"]
+            } else if (err.response) {
               const detail = err.response.data.detail
               if (
                 typeof detail === "string" &&
                 detail.includes("users_email")
               ) {
                 this.errors = ["That username is already taken"]
-              } else if (detail.status === 403) {
-                this.errors = ["Failed captcha"]
               } else if (detail) {
                 this.errors = [detail]
               }

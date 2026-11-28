@@ -27,7 +27,11 @@
                   prepend-icon="email"
                   type="email"
                 />
-                <universal-captcha v-model="captchaCode" />
+                <universal-captcha
+                  ref="captcha"
+                  v-model="captchaCode"
+                  action="verify_email"
+                />
               </div>
               <v-progress-circular v-else-if="codeLoading" indeterminate />
 
@@ -142,7 +146,9 @@ export default {
             this.reqLoading = false
             this.error = true
             const detail = e.response?.data?.detail
-            this.errors = detail ? [detail] : []
+            if (this.$refs.captcha?.handleError(e))
+              this.errors = ["Failed captcha"]
+            else this.errors = detail ? [detail] : []
           })
       }
     },

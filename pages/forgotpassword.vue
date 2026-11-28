@@ -23,7 +23,11 @@
                 prepend-icon="email"
                 type="email"
               />
-              <universal-captcha v-model="captchaCode" />
+              <universal-captcha
+                ref="captcha"
+                v-model="captchaCode"
+                action="forgot_password"
+              />
             </div>
             <div v-else>
               <v-text-field
@@ -145,7 +149,9 @@ export default {
             setsuccess()
           })
           .catch((r) => {
-            this.detail = r.response.data.detail
+            this.detail = this.$refs.captcha?.handleError(r)
+              ? "Failed captcha"
+              : r.response.data.detail
             this.loading = false
             this.error = true
           })
