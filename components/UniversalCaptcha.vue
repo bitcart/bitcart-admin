@@ -53,6 +53,10 @@ export default {
       this.captchaCode = ""
       if (this.$refs.captcha) this.$refs.captcha.reset()
     },
+    handleError(err) {
+      this.reset()
+      return err.response?.data?.detail?.status === 403
+    },
   },
 }
 </script>

@@ -143,11 +143,11 @@ export default {
             setsuccess()
           })
           .catch((e) => {
-            this.$refs.captcha?.reset()
             this.reqLoading = false
             this.error = true
             const detail = e.response?.data?.detail
-            if (detail?.status === 403) this.errors = ["Failed captcha"]
+            if (this.$refs.captcha?.handleError(e))
+              this.errors = ["Failed captcha"]
             else this.errors = detail ? [detail] : []
           })
       }

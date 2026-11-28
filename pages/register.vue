@@ -144,16 +144,15 @@ export default {
             })
           })
           .catch((err) => {
-            this.$refs.captcha?.reset()
-            if (err.response) {
+            if (this.$refs.captcha?.handleError(err)) {
+              this.errors = ["Failed captcha"]
+            } else if (err.response) {
               const detail = err.response.data.detail
               if (
                 typeof detail === "string" &&
                 detail.includes("users_email")
               ) {
                 this.errors = ["That username is already taken"]
-              } else if (detail.status === 403) {
-                this.errors = ["Failed captcha"]
               } else if (detail) {
                 this.errors = [detail]
               }

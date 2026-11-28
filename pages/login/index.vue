@@ -105,17 +105,16 @@ export default {
             })
           })
           .catch((err) => {
-            this.$refs.captcha?.reset()
-            if (err.response) {
+            if (this.$refs.captcha?.handleError(err)) {
+              this.usernameErrors = ["Failed captcha"]
+            } else if (err.response) {
               const status = err.response.data.detail.status
               const detail = err.response.data.detail
               if (status === 404) {
                 this.usernameErrors = ["That user does not exist"]
               } else if (status === 401) {
                 this.passwordErrors = ["Invalid password"]
-              } else if (status === 403)
-                this.usernameErrors = ["Failed captcha"]
-              else if (detail) {
+              } else if (detail) {
                 this.usernameErrors = [detail]
                 if (detail === "Email is not verified") {
                   this.askForEmailVerify = true
