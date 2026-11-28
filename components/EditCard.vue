@@ -271,6 +271,19 @@
                     image-min-scaling="contain"
                   />
                   <div v-else-if="header.input === 'tabbed'" />
+                  <v-combobox
+                    v-else-if="header.input === 'stringlist'"
+                    :error-messages="errors[header.text]"
+                    :label="header.text"
+                    :hint="header.hint"
+                    persistent-hint
+                    :value="item[header.value]"
+                    append-icon=""
+                    multiple
+                    chips
+                    deletable-chips
+                    @change="update(header.value, $event)"
+                  />
                   <v-select
                     v-else-if="header.input === 'select'"
                     :items="header.items"

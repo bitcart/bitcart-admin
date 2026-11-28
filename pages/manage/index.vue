@@ -9,6 +9,9 @@
     <template #item.is_verified="{ item }">
       <v-switch v-model="item.is_verified" @change="updateUser(item)" />
     </template>
+    <template #item.allowed_internal_hosts="{ item }">
+      {{ item.allowed_internal_hosts.join(", ") }}
+    </template>
   </item-data>
 </template>
 <script>
@@ -58,6 +61,13 @@ export default {
           value: "is_verified",
           input: "switch",
           default: false,
+        },
+        {
+          text: "Allowed internal hosts",
+          value: "allowed_internal_hosts",
+          mode: "edit",
+          input: "stringlist",
+          hint: "This user's stores can send email through these hosts in your local network or on this server, and their wallets can open lightning channels to them. By name or IP, optionally with a port. For example: mail.lan:587",
         },
         { text: "Created date", value: "created", mode: "display" },
         {
